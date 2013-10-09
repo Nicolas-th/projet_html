@@ -1,0 +1,43 @@
+<html>
+<head>
+	<title></title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&v=3.exp"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>-->
+    <script src="js/recherche_lieux.js"></script>
+    <style>
+      html, body{
+        margin:0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+      ul{
+      	list-style-type: none;
+      	cursor: pointer;
+      }
+    </style>
+</head>
+<body>
+  <p>Indiquez votre trajet :</p>
+	<form id="formulaire_itineraire">
+		<label for="lieux_depart">Lieu de départ</label>
+		<input type="text" name="lieux_depart" id="lieux_depart" value="Rue de la République, Montreuil, France"/>
+		<input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" value="CjQsAAAA6OVhw_CjIGOy6rUeHzlJKNnPVKSo1V3wGlGcmpzojULY_5IF5w4dwHAf8GLAfV9YEhDG_Efu3RF8UH8o7mzobGD0GhQOIGpT03O4zyL4j9sGSx83B68KlQ"/>
+		<ul id="resultats_lieux_depart"></ul>
+		<label for="lieux_depart">Lieu d'arrivée</label>
+		<input type="text" name="lieux_arrive" id="lieux_arrive" value="Tour Eiffel, Avenue Anatole France, Paris, France"/>
+		<input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" value="CkRAAAAADJyLI1L71mIMBj9FLTbN33UlO1y9zoERE-kT3SUxADbL0ilvhsrRUpJGZMf8xO8YBdNObW2VcIZQPg66aUpKwhIQKlbe0obzejCnV2x0WRYMlhoUZRRNYou3ZU-oqm_GU3YPA-kPno8"/>
+		<ul id="resultats_lieux_arrive"></ul>
+		<input type="submit" value="Rechercher"/>
+	</form>
+
+	<div id="instructions"></div>
+	<div id="test"></div>
+
+  <div id="map" style="width:100%; height:400px; opacity:0;"></div>
+
+</body>
+</html>
