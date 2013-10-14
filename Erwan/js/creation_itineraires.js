@@ -13,6 +13,51 @@ $(function(){
   }
 
   function init_map(position_in){
+
+    var styles = [
+                  {
+                    "featureType": "landscape",
+                    "stylers": [
+                      { "color": "#808080" }
+                    ]
+                  },{
+                    "featureType": "road.highway",
+                    "stylers": [
+                      { "color": "#4a4c4c" }
+                    ]
+                  },{
+                    "featureType": "road.arterial",
+                    "stylers": [
+                      { "color": "#4a4f52" }
+                    ]
+                  },{
+                    "featureType": "road.local",
+                    "stylers": [
+                      { "color": "#999899" }
+                    ]
+                  },{
+                    "featureType": "poi",
+                    "elementType": "geometry",
+                    "stylers": [
+                      { "color": "#9c9c9c" }
+                    ]
+                  },{
+                    "elementType": "labels.text",
+                    "stylers": [
+                      { "weight": 0.2 },
+                      { "color": "#000000" }
+                    ]
+                  },{
+                    "featureType": "transit",
+                    "elementType": "labels.icon",
+                    "stylers": [
+                      { "hue": "#1100ff" }
+                    ]
+                  },{
+                  }
+                ];
+    var styleMap = new google.maps.StyledMapType(styles, {name: "Projet HTML"});
+
     var position = new google.maps.LatLng(position_in.coords.latitude,position_in.coords.longitude);
     map = new google.maps.Map(document.getElementById('map'), {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -20,9 +65,13 @@ $(function(){
       zoom: 15
     });
 
+    map.mapTypes.set('map_style', styleMap);
+    map.setMapTypeId('map_style');
+
     direction = new google.maps.DirectionsRenderer({
         map   : map, 
-        panel : panel 
+        panel : panel, 
+        //suppressMarkers: true
     });
   }
 
@@ -130,7 +179,12 @@ $(function(){
             if(typeof(waypoints)=='undefined')
                 placer_points(response);*/
 
-            var directionsRenderer = new google.maps.DirectionsRenderer;
+            var directionsRenderer = new google.maps.DirectionsRenderer({
+              suppressMarkers: true,
+              polylineOptions : {
+                strokeColor : '#f6de65'
+              }
+            });
             directionsRenderer.setMap(map);
             directionsRenderer.setDirections(response);
 
@@ -247,7 +301,8 @@ $(function(){
                                 ville : depart_itineraire.address_components[1].long_name,
                                 latitude : depart_itineraire.geometry.location.lb,
                                 longitude : depart_itineraire.geometry.location.mb,
-                                nom : depart_itineraire.address_components[0].long_name+', '+depart_itineraire.address_components[1].long_name
+                                nom : depart_itineraire.address_components[0].long_name+', '+depart_itineraire.address_components[1].long_name,
+                                categorie : 'depart'
                               }
                 }
                 if(i>=lieux_choisis.length){
@@ -258,7 +313,8 @@ $(function(){
                                 ville : arrivee_itineraire.address_components[1].long_name,
                                 latitude : arrivee_itineraire.geometry.location.lb,
                                 longitude : arrivee_itineraire.geometry.location.mb,
-                                nom : arrivee_itineraire.address_components[0].long_name+', '+arrivee_itineraire.address_components[1].long_name
+                                nom : arrivee_itineraire.address_components[0].long_name+', '+arrivee_itineraire.address_components[1].long_name,
+                                categorie : 'arrivee'
                               }
                 }else{
                     var infos_lieu = null;
@@ -271,6 +327,7 @@ $(function(){
                       success: function(data, textStatus, jqXHR){
                         if(data.code=='200'){
                             infos_lieu = data.infos;
+                            infos_lieu['categorie'] = infos_lieu['id_categorie']; // Temporairement
                         }
                       }
                     });
@@ -285,6 +342,9 @@ $(function(){
                 var latLng_depart = new google.maps.LatLng(trajets[key].depart.latitude,trajets[key].depart.longitude);
                 var latLng_arrivee = new google.maps.LatLng(trajets[key].arrivee.latitude,trajets[key].arrivee.longitude);
                 trace_itineraire(latLng_depart,latLng_arrivee);
+                /* Prévoir l'affichage des points repères */
+                ajouter_marker(latLng_depart,trajets[key].depart.nom,trajets[key].depart.categorie);
+                ajouter_marker(latLng_arrivee,trajets[key].arrivee.nom,trajets[key].arrivee.categorie);
               }
 
              console.log('trajets');
@@ -300,6 +360,17 @@ $(function(){
         }
       }
     });
+  }
+
+  function ajouter_marker(latLng_in,nom_in,categorie_in){
+    var image = 'images/maps_icons/icon_'+categorie_in+'.png';
+    var marker = new google.maps.Marker({
+        position: latLng_in,
+        map: map,
+        icon: image,
+        title: nom_in
+    });
+    marker.setMap(map);
   }
 
 
