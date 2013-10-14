@@ -1,11 +1,11 @@
 <html>
 <head>
-	<title></title>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <title></title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&v=3.exp"></script>
-    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>-->
+    <script src="js/classes.js"></script>
     <script src="js/itineraires.js"></script>
     <style>
       html, body{
@@ -15,28 +15,29 @@
         height: 100%;
       }
       ul{
-      	list-style-type: none;
-      	cursor: pointer;
+        list-style-type: none;
+        cursor: pointer;
       }
     </style>
 </head>
 <body>
+  <p>Indiquez votre trajet :</p>
+  <form id="formulaire_itineraire">
+    <label for="lieux_depart">Lieu de départ</label>
+    <input type="text" name="lieux_depart" id="lieux_depart" value="Avenue Victor Hugo, Saint-Mandé, France"/>
+    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" value="CjQsAAAAqM0NBgyOq8MdaFbPDnhdvyfZetmGqAGkIY_qimlsvIwkGsGjxcCHvALCy-R59643EhCpgxxRF2vtG2y81J2moInLGhRbpeR_YvfD65P0cfC9IlDinJjcUA"/>
+    <ul id="resultats_lieux_depart"></ul>
+    <label for="lieux_depart">Lieu d'arrivée</label>
+    <input type="text" name="lieux_arrive" id="lieux_arrive" value="Rue Poncelet, Paris, France"/>
+    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" value="CiQfAAAAq2pJOdKeFm4ERTruchUOqrz6jQFpUttZu2g07Vmd9y4SEMxQg4REaUv6WCWGNue1jjAaFLVZBaaQcmPU9iv4arY227u9zdDz"/>
+    <ul id="resultats_lieux_arrive"></ul>
+    <input type="submit" value="Rechercher"/>
+  </form>
 
-	<form id="formulaire_itineraire">
-		<label for="lieux_depart">Lieu de départ</label>
-		<input type="text" name="lieux_depart" id="lieux_depart"/>
-		<input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart"/>
-		<ul id="resultats_lieux_depart"></ul>
-		<label for="lieux_depart">Lieu d'arrivée</label>
-		<input type="text" name="lieux_arrive" id="lieux_arrive"/>
-		<input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive"/>
-		<ul id="resultats_lieux_arrive"></ul>
-		<input type="submit" value="Rechercher"/>
-	</form>
+  <div id="instructions"></div>
+  <div id="test"></div>
 
-	<div id="map" style="width:100%; height:400px;"></div>
-	<div id="instructions"></div>
-	<div id="test"></div>
+  <div id="map" style="width:100%; height:400px; opacity:0;"></div>
 
 </body>
 </html>
