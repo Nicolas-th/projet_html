@@ -51,7 +51,7 @@ function (){
 						},
 						{
 							value : nbdislike,
-							color : "like"
+							color : "red"
 						}			
 					];
 	
