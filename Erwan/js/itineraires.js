@@ -51,7 +51,7 @@ $(function(){
 	 	carte = new Carte();
 		carte.initialisation(document.getElementById('map'));
 		carte.setStyle(stylesCarte);
-		carte.setMoyenTransport(google.maps.DirectionsTravelMode.WALKING);
+		//carte.setMoyenTransport(google.maps.DirectionsTravelMode.WALKING);
 	    navigator.geolocation.getCurrentPosition(function(position) {
 	      carte.setCenter(position);
 	    });
@@ -116,14 +116,14 @@ function placer_points(directionService_reponse){
 	  dataType: 'json',
 	  success: function(data, textStatus, jqXHR){
 	    if(data.code=='200'){
-	      console.log(data.lieux);
+	      //console.log(data.lieux);
 
 	      var form_lieux = '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
 	      form_lieux += '<form id="form_lieux">';
 
 	      for(key in data.lieux) {
 	        lieu = data.lieux[key];
-	        console.log(lieu);
+	        //console.log(lieu);
 
 	        form_lieux+='<div>';
 	        form_lieux+=  '<input type="checkbox" name="lieux_itineraire" id="'+lieu.id+'" value="'+lieu.id+'">';
@@ -194,15 +194,8 @@ function placer_points(directionService_reponse){
 	            trajets.push({depart : depart, arrivee : arrivee});
 	            depart = arrivee;
 	         }
-	         console.log(trajets);
-	         for(key in trajets){
-	            var latLng_depart = new google.maps.LatLng(trajets[key].depart.latitude,trajets[key].depart.longitude);
-	            var latLng_arrivee = new google.maps.LatLng(trajets[key].arrivee.latitude,trajets[key].arrivee.longitude);
-	            carte.traceItineraire(latLng_depart,latLng_arrivee);
-
-	            carte.ajouterMarker(latLng_depart,trajets[key].depart.nom,trajets[key].depart.categorie);
-	            carte.ajouterMarker(latLng_arrivee,trajets[key].arrivee.nom,trajets[key].arrivee.categorie);
-	          }
+	         //console.log(trajets);
+	        carte.tracerItineraires(trajets,0);
 
 	         $('#map').css('opacity','1');
 
