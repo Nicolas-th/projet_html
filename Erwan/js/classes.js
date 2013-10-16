@@ -52,7 +52,7 @@ var Carte = function() {
 	        optimizeWaypoints: preferencesItineraire.optimisationTrajet,
 	        travelMode  : preferencesItineraire.moyenTransport
 	    }
-
+	    
 	    var directionsService = new google.maps.DirectionsService();
 	    directionsService.route(request, function(response, status){
 	        if(status == google.maps.DirectionsStatus.OK){
@@ -70,6 +70,8 @@ var Carte = function() {
 	            if(typeof(callback)=='function'){
             		callback(response)
             	}
+	        }else if (status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT){
+	        	console.log('OVER_QUERY_LIMIT');
 	        }
 	    });
 	}
@@ -92,6 +94,21 @@ var Carte = function() {
       for(key in markers){
           markers[key].setMap(null);
       }
+	}
+
+	this.tracerItineraires = function(trajets_in,key_in){
+		console.log('test');
+		if(typeof(trajets_in[key_in])!='undefined'){
+	        var latLng_depart = new google.maps.LatLng(trajets_in[key_in].depart.latitude,trajets_in[key_in].depart.longitude);
+	        var latLng_arrivee = new google.maps.LatLng(trajets_in[key_in].arrivee.latitude,trajets_in[key_in].arrivee.longitude);
+	        traceItineraire(latLng_depart,latLng_arrivee);
+
+	        ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie);
+	        ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie);
+
+	        key_in++;
+	        tracerItineraires(trajets_in,key_in);
+	    }
 	}
 };
 
