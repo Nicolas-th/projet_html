@@ -57,14 +57,16 @@ $(function(){
 	    });
 
 
-	    $( "#lieux_depart" ).keypress(function(){
-      		var val_lieux_depart = $( "#lieux_depart" ).val();
-      		new Autocompletion('lieux_depart','resultats_lieux_depart');
+	    $('#lieux_depart').keypress(function(){
+      		//var val_lieux_depart = $( "#lieux_depart" ).val();
+      		var autocomplete = new Autocompletion($('#lieux_depart'),$('#resultats_lieux_depart'));
+      		autocomplete.rechercher();
       	});
 
-      	$( "#lieux_arrive" ).keypress(function(){
-      		var val_lieux_depart = $( "#lieux_arrive" ).val();
-      		new Autocompletion('lieux_arrive','resultats_lieux_arrive');
+      	$('#lieux_arrive').keypress(function(){
+      		//var val_lieux_depart = $( "#lieux_arrive" ).val();
+      		new Autocompletion($('#lieux_arrive'),$('#resultats_lieux_arrive'));
+      		autocomplete.rechercher();
       	});
 
       	/* Gestion du formulaire */

@@ -1,47 +1,59 @@
 /* Carte */
 var Carte = function() {
-	var carte;
-	var itineraires = [];
-	var markers = [];
-	var preferencesItineraire = {
+	this.carte = null;
+	this.itineraires = [];
+	this.markers = [];
+	this.preferencesItineraire = {
 		moyenTransport : google.maps.DirectionsTravelMode.TRANSIT,
 		optimisationTrajet : true,
 		couleurItineraire : '#f6de65',
 		suppressionMarkers : true
 	};
+};
 
-	this.initialisation = function(divCarte){
-	    carte = new google.maps.Map(divCarte, {
+Carte.prototype = {
+
+	initialisation : function(divCarte){
+	    this.carte = new google.maps.Map(divCarte, {
 	      mapTypeId: google.maps.MapTypeId.ROADMAP,
 	      zoom: 15
 	    });
+	},
 
-	    /*direction = new google.maps.DirectionsRenderer({
-	        map   : map, 
-	        panel : panel
-	    });*/
-	}
-
-	this.setStyle = function(style_in){
+	setStyle : function(style_in){
 		var styleCarte = new google.maps.StyledMapType(style_in);
-		carte.mapTypes.set('map_style', styleCarte);
-	    carte.setMapTypeId('map_style');
-	}
+		this.carte.mapTypes.set('map_style', styleCarte);
+	    this.carte.setMapTypeId('map_style');
+	},
 
-	this.setCenter = function(position_in){
+	setCenter : function(position_in){
 		var positionCentre = new google.maps.LatLng(position_in.coords.latitude,position_in.coords.longitude);
-		carte.setCenter(positionCentre);
-	}
+		this.carte.setCenter(positionCentre);
+	},
 
-	this.setMoyenTransport = function(moyenTransport_in){
-		preferencesItineraire.moyenTransport = moyenTransport_in;
-	}
+	setMoyenTransport : function(moyenTransport_in){
+		this.preferencesItineraire.moyenTransport = moyenTransport_in;
+	},
 
-	this.setOptimisationTrajet = function(optimisation_in){
-		preferencesItineraire.optimisationTrajet = optimisation_in;
-	}
+	setOptimisationTrajet : function(optimisation_in){
+		this.preferencesItineraire.optimisationTrajet = optimisation_in;
+	},
 
-	this.traceItineraire = function(latLngDepart,latLngArrivee,pointsDePassage,callback){
+	tracerItineraires : function(trajets_in,key_in){
+		if(typeof(trajets_in[key_in])!='undefined'){
+	        var latLng_depart = new google.maps.LatLng(trajets_in[key_in].depart.latitude,trajets_in[key_in].depart.longitude);
+	        var latLng_arrivee = new google.maps.LatLng(trajets_in[key_in].arrivee.latitude,trajets_in[key_in].arrivee.longitude);
+	        this.traceItineraire(latLng_depart,latLng_arrivee);
+
+	        this.ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie);
+	        this.ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie);
+
+	        key_in++;
+	        this.tracerItineraires(trajets_in,key_in);
+	    }
+	},
+
+	traceItineraire : function(latLngDepart,latLngArrivee,pointsDePassage,callback){
 		var waypoints = [];
 		if(typeof(pointsDePassage)!='undefined' && pointsDePassage!=null)	waypoints = pointsDePassage;
 
@@ -49,106 +61,105 @@ var Carte = function() {
 	        origin      : latLngDepart,
 	        destination : latLngArrivee,
 	        waypoints : waypoints,
-	        optimizeWaypoints: preferencesItineraire.optimisationTrajet,
-	        travelMode  : preferencesItineraire.moyenTransport
+	        optimizeWaypoints: this.preferencesItineraire.optimisationTrajet,
+	        travelMode  : this.preferencesItineraire.moyenTransport
 	    }
+
+	    var current_object = this; // Permet d'accéder à l'instance this au sein du callback de directionsService.route
 	    
 	    var directionsService = new google.maps.DirectionsService();
 	    directionsService.route(request, function(response, status){
 	        if(status == google.maps.DirectionsStatus.OK){
 	            var directionsRenderer = new google.maps.DirectionsRenderer({
-	              suppressMarkers: preferencesItineraire.suppressionMarkers,
+	              suppressMarkers: current_object.preferencesItineraire.suppressionMarkers,
 	              polylineOptions : {
-	                strokeColor : preferencesItineraire.couleurItineraire
+	                strokeColor : current_object.preferencesItineraire.couleurItineraire
 	              }
 	            });
-	            directionsRenderer.setMap(carte);
+	            directionsRenderer.setMap(current_object.carte);
 	            directionsRenderer.setDirections(response);
 
-	            itineraires.push(directionsRenderer);
+	            current_object.itineraires.push(directionsRenderer);
 
 	            if(typeof(callback)=='function'){
             		callback(response)
             	}
 	        }else if (status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT){
 	        	console.log('OVER_QUERY_LIMIT');
+	        	setTimeout(
+	        		function(){
+	        			current_object.traceItineraire(latLngDepart,latLngArrivee,pointsDePassage,callback)
+	        		},
+	        		1000
+	        	);
 	        }
 	    });
-	}
+	},
 
-	this.ajouterMarker = function(latLng_in,nom_in,categorie_in){
+	ajouterMarker : function(latLng_in,nom_in,categorie_in){
 		var image = 'images/maps_icons/icon_'+categorie_in+'.png';
 	    var marker = new google.maps.Marker({
 	        position: latLng_in,
 	        icon: image,
 	        title: nom_in
 	    });
-	    marker.setMap(carte);
-	    markers.push(marker);
-	}
+	    marker.setMap(this.carte);
+	    this.markers.push(marker);
+	},
 
-	this.nettoyer = function(){
-      for(key in itineraires){
-          itineraires[key].setMap(null);
+	nettoyer : function(){
+      for(key in this.itineraires){
+          this.itineraires[key].setMap(null);
       }
-      for(key in markers){
-          markers[key].setMap(null);
+      for(key in this.markers){
+          this.markers[key].setMap(null);
       }
-	}
-
-	this.tracerItineraires = function(trajets_in,key_in){
-		console.log('test');
-		if(typeof(trajets_in[key_in])!='undefined'){
-	        var latLng_depart = new google.maps.LatLng(trajets_in[key_in].depart.latitude,trajets_in[key_in].depart.longitude);
-	        var latLng_arrivee = new google.maps.LatLng(trajets_in[key_in].arrivee.latitude,trajets_in[key_in].arrivee.longitude);
-	        traceItineraire(latLng_depart,latLng_arrivee);
-
-	        ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie);
-	        ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie);
-
-	        key_in++;
-	        tracerItineraires(trajets_in,key_in);
-	    }
 	}
 };
+
+var Autocompletion = function(inputText_in,divResultats_in){
+	this.inputText = inputText_in;
+	this.divResultats = divResultats_in;
+	
+}
 
 
 /* Autocomplétion */
 var Autocompletion = function(inputText_in,divResultats_in){
 
-	var inputText = $('#'+idInputText);
-	var divResultats = $('#'+idDivResultats);
+	this.inputText = inputText_in;
+	this.divResultats = divResultats_in;
+}
 
-	/*this.setInputText = function(idInputText){
-		inputText = $('#'+idInputText);
-	}
+Autocompletion.prototype = {
 
-	this.setDivResultats = function(idDivResultats){
-		divResultats = $('#'+idDivResultats);
-	}*/
-	// Arguments passés en paramètres de la classe
-
-	this.rechercher = function(lieuRecherche){
+	rechercher : function(){
+		var lieuRecherche = this.inputText.val();
 		var service = new google.maps.places.AutocompleteService();
+		var autocomplete = this;
 	    service.getQueryPredictions({ input: lieuRecherche }, function(reponse, status){
 	      if(status == google.maps.places.PlacesServiceStatus.OK) {
-	        this.afficherResultats(reponse);
+	        autocomplete.afficherResultats(reponse);
 	      }
 	    });
-	}
+	},
 
-	this.afficherResultats = function(resultatsRecherche){
+	afficherResultats : function(resultatsRecherche){
 		var htmlContent = '';
 		for (var i = 0; i<resultatsRecherche.length; i++) {
 			htmlContent += '<li id="'+resultatsRecherche[i].reference+'">' + resultatsRecherche[i].description + '</li>';
 		}
-		divResultats.html(htmlContent);
-		divResultats.find('li').click(function(){
-          inputText.val($(this).html());
-          inputText.siblings('input[type="hidden"]').val($(this).attr('id'));
-          divResultats.html(htmlContent);
-          $('#'+id_input_autocompletion+'+input[type="hidden"]').val($(this).attr('id'));
-          $('#resultats_'+id_input_autocompletion).empty();
+		this.divResultats.html(htmlContent);
+
+		var local_inputText = this.inputText;
+		var local_divResultats = this.divResultats;
+		this.divResultats.find('li').click(function(){
+          local_inputText.val($(this).html());
+          local_inputText.siblings('input[type="hidden"]').val($(this).attr('id'));
+          local_divResultats.html(htmlContent);
+          local_inputText.siblings('+input[type="hidden"]').val($(this).attr('id'));
+          local_divResultats.empty();
       	});
 	}
+
 };
