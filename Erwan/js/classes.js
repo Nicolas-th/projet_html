@@ -1,4 +1,14 @@
-/* Carte */
+
+/**** Utils *****/
+
+/* Fonction permettant de retourner une copie de tab_in, sans la case correspondantà à value_in  */
+function deleteValueFromArray(tab_in,value_in){
+	return tab_out = $.grep(tab_in, function(current_val) {
+	  return current_val != value_in;
+	});
+}
+
+/**** Carte ****/
 var Carte = function() {
 	this.carte = null;
 	this.itineraires = [];
@@ -43,17 +53,17 @@ Carte.prototype = {
 		if(typeof(trajets_in[key_in])!='undefined'){
 	        var latLng_depart = new google.maps.LatLng(trajets_in[key_in].depart.latitude,trajets_in[key_in].depart.longitude);
 	        var latLng_arrivee = new google.maps.LatLng(trajets_in[key_in].arrivee.latitude,trajets_in[key_in].arrivee.longitude);
-	        this.traceItineraire(latLng_depart,latLng_arrivee);
+	        this.traceItineraire(latLng_depart,latLng_arrivee,null,null,'itineraires_lieux');
 
-	        this.ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie);
-	        this.ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie);
+	        this.ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie,'itineraires_lieux');
+	        this.ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie,'itineraires_lieux');
 
 	        key_in++;
 	        this.tracerItineraires(trajets_in,key_in);
 	    }
 	},
 
-	traceItineraire : function(latLngDepart,latLngArrivee,pointsDePassage,callback){
+	traceItineraire : function(latLngDepart,latLngArrivee,pointsDePassage,callback,type_itineraire){
 		var waypoints = [];
 		if(typeof(pointsDePassage)!='undefined' && pointsDePassage!=null)	waypoints = pointsDePassage;
 
@@ -79,16 +89,22 @@ Carte.prototype = {
 	            directionsRenderer.setMap(current_object.carte);
 	            directionsRenderer.setDirections(response);
 
-	            current_object.itineraires.push(directionsRenderer);
+	            if(typeof(type_itineraire)=='undefined'){
+			    	type_itineraire = null;
+			    }
+			    current_object.itineraires.push({itineraire : directionsRenderer, type : type_itineraire});
 
 	            if(typeof(callback)=='function'){
-            		callback(response)
+            		callback(response);
             	}
+
+            	return directionsRenderer;
 	        }else if (status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT){
 	        	console.log('OVER_QUERY_LIMIT');
 	        	setTimeout(
 	        		function(){
-	        			current_object.traceItineraire(latLngDepart,latLngArrivee,pointsDePassage,callback)
+	        			var directionsRenderer = current_object.traceItineraire(latLngDepart,latLngArrivee,pointsDePassage,callback);
+	        			return directionsRenderer;
 	        		},
 	        		1000
 	        	);
@@ -96,35 +112,67 @@ Carte.prototype = {
 	    });
 	},
 
-	ajouterMarker : function(latLng_in,nom_in,categorie_in){
-		var image = 'images/maps_icons/icon_'+categorie_in+'.png';
+	supprimerItineraire : function(itineraire_in){
+		console.log('efface_itineraire');
+		console.log(itineraire_in);
+		itineraire_in.setMap(null);
+		this.itineraires = deleteValueFromArray(this.itineraires,itineraire_in);
+	},
+
+	ajouterMarker : function(latLng_in,nom_in,categorie_in,type_marker){
+		var image = 'http://maps.google.com/mapfiles/marker.png';
+		if(categorie_in!=null && categorie_in!='defaut'){
+			image = 'images/maps_icons/icon_'+categorie_in+'.png';
+		}
 	    var marker = new google.maps.Marker({
 	        position: latLng_in,
 	        icon: image,
 	        title: nom_in
 	    });
 	    marker.setMap(this.carte);
-	    this.markers.push(marker);
+
+	    if(typeof(type_marker)=='undefined'){
+	    	type_marker = null;
+	    }
+	    this.markers.push({marker : marker, type : type_marker});
+	    return marker;
 	},
 
-	nettoyer : function(){
-      for(key in this.itineraires){
-          this.itineraires[key].setMap(null);
-      }
-      for(key in this.markers){
-          this.markers[key].setMap(null);
-      }
+	changePositionMarker : function(marker_in,latLngPosition){
+		marker_in.setPosition(latLngPosition);
+	},
+
+	supprimerMarker : function(marker_in){
+		console.log('efface_marker');
+		console.log(marker_in);
+		marker_in.setMap(null);
+		this.markers = deleteValueFromArray(this.markers,marker_in);
+	},
+
+	nettoyer : function(type,callback){
+		console.log('nettoyer : '+type);
+		for(key_m in this.markers){
+			var current = this.markers[key_m];
+			if((typeof(type)!='undefined' && typeof(current.type)!='undefined' && current.type==type) || typeof(type)=='undefined' || type=='all'){
+				carte.supprimerMarker(current.marker);
+			}
+		}
+
+		for(key_i in this.itineraires){
+			var current = this.itineraires[key_i];
+			if((typeof(type)!='undefined' && typeof(current.type)!='undefined' && current.type==type) || typeof(type)=='undefined' || type=='all'){
+				carte.supprimerItineraire(current.itineraire);
+			}
+		}
+
+		if(typeof(callback)=='function'){
+			callback();
+		}
 	}
 };
 
-var Autocompletion = function(inputText_in,divResultats_in){
-	this.inputText = inputText_in;
-	this.divResultats = divResultats_in;
-	
-}
 
-
-/* Autocomplétion */
+/**** Autocomplétion ****/
 var Autocompletion = function(inputText_in,divResultats_in){
 
 	this.inputText = inputText_in;

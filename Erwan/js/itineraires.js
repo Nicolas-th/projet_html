@@ -1,6 +1,9 @@
 /* Déclaration des variables globales */
 var carte = null;
-var infos_itineraire = new Array(); // A supprimer dans un futur proche car pas très "propre"
+var infos_itineraire = new Array(); // A supprimer dans un futur proche car pas très "propre" -> utiliser la classe Carte pour ça
+var suiviPosition = null;
+var markerPosition = null;
+var itinerairePosition = null;
 var stylesCarte = [
   {
     "featureType": "landscape",
@@ -88,7 +91,10 @@ $(function(){
 					    if (status == google.maps.places.PlacesServiceStatus.OK) {
 					      var latLng_depart = new google.maps.LatLng(lieu_depart.geometry.location.lb,lieu_depart.geometry.location.mb)
 					      var latLng_arrivee = new google.maps.LatLng(lieu_arrivee.geometry.location.lb,lieu_arrivee.geometry.location.mb)
-					      carte.traceItineraire(latLng_depart,latLng_arrivee,null,placer_points);
+					      carte.traceItineraire(latLng_depart,latLng_arrivee,null,placer_points,'itineraires_lieux');
+					      
+					     
+
 					    }
 					  });
 					}
@@ -147,59 +153,66 @@ function placer_points(directionService_reponse){
 	            lieux_choisis.push($(this).val());
 	         });
 
-	         carte.nettoyer();
+			carte.nettoyer('all',function(){
 
-	         var trajets = [];
-	         for(var i=0; i<=lieux_choisis.length;i++){
-	            
+				if(suiviPosition!=null){
+					navigator.geolocation.clearWatch(suiviPosition);
+				}
+				suiviPosition = navigator.geolocation.watchPosition(function(position) {
+					suivi_position(position);
+				});
 
-	            /* Ici créer les différents trajets */
-	            if(i==0){
-	                var depart_itineraire = infos_itineraire['lieu_depart'];
-	                depart = {
-	                            adresse : depart_itineraire.address_components[0].long_name,
-	                            ville : depart_itineraire.address_components[1].long_name,
-	                            latitude : depart_itineraire.geometry.location.lb,
-	                            longitude : depart_itineraire.geometry.location.mb,
-	                            nom : depart_itineraire.address_components[0].long_name+', '+depart_itineraire.address_components[1].long_name,
-	                            categorie : 'depart'
-	                          }
-	            }
-	            if(i>=lieux_choisis.length){
-	                var arrivee_itineraire = infos_itineraire['lieu_arrivee'];
-	                arrivee = {
-	                            adresse : arrivee_itineraire.address_components[0].long_name,
-	                            ville : arrivee_itineraire.address_components[1].long_name,
-	                            latitude : arrivee_itineraire.geometry.location.lb,
-	                            longitude : arrivee_itineraire.geometry.location.mb,
-	                            nom : arrivee_itineraire.address_components[0].long_name+', '+arrivee_itineraire.address_components[1].long_name,
-	                            categorie : 'arrivee'
-	                          }
-	            }else{
-	                var infos_lieu = null;
-	                $.ajax({
-	                  type: "POST",
-	                  url: 'ajax/get_lieu_by_id.xhr.php',
-	                  data: { 'id_lieu': lieux_choisis[i] },
-	                  dataType: 'json',
-	                  async:false,
-	                  success: function(data, textStatus, jqXHR){
-	                    if(data.code=='200'){
-	                        infos_lieu = data.infos;
-	                        infos_lieu['categorie'] = infos_lieu['id_categorie']; // Temporairement
-	                    }
-	                  }
-	                });
-	                arrivee = infos_lieu;
-	            }
+		         var trajets = [];
+		         for(var i=0; i<=lieux_choisis.length;i++){
+		            
 
-	            trajets.push({depart : depart, arrivee : arrivee});
-	            depart = arrivee;
-	         }
-	         //console.log(trajets);
-	        carte.tracerItineraires(trajets,0);
+		            /* Ici créer les différents trajets */
+		            if(i==0){
+		                var depart_itineraire = infos_itineraire['lieu_depart'];
+		                depart = {
+		                            adresse : depart_itineraire.address_components[0].long_name,
+		                            ville : depart_itineraire.address_components[1].long_name,
+		                            latitude : depart_itineraire.geometry.location.lb,
+		                            longitude : depart_itineraire.geometry.location.mb,
+		                            nom : depart_itineraire.address_components[0].long_name+', '+depart_itineraire.address_components[1].long_name,
+		                            categorie : 'depart'
+		                          }
+		            }
+		            if(i>=lieux_choisis.length){
+		                var arrivee_itineraire = infos_itineraire['lieu_arrivee'];
+		                arrivee = {
+		                            adresse : arrivee_itineraire.address_components[0].long_name,
+		                            ville : arrivee_itineraire.address_components[1].long_name,
+		                            latitude : arrivee_itineraire.geometry.location.lb,
+		                            longitude : arrivee_itineraire.geometry.location.mb,
+		                            nom : arrivee_itineraire.address_components[0].long_name+', '+arrivee_itineraire.address_components[1].long_name,
+		                            categorie : 'arrivee'
+		                          }
+		            }else{
+		                var infos_lieu = null;
+		                $.ajax({
+		                  type: "POST",
+		                  url: 'ajax/get_lieu_by_id.xhr.php',
+		                  data: { 'id_lieu': lieux_choisis[i] },
+		                  dataType: 'json',
+		                  async:false,
+		                  success: function(data, textStatus, jqXHR){
+		                    if(data.code=='200'){
+		                        infos_lieu = data.infos;
+		                        infos_lieu['categorie'] = infos_lieu['id_categorie']; // Temporairement
+		                    }
+		                  }
+		                });
+		                arrivee = infos_lieu;
+		            }
 
-	         $('#map').css('opacity','1');
+		            trajets.push({depart : depart, arrivee : arrivee});
+		            depart = arrivee;
+		         }
+		         carte.tracerItineraires(trajets,0);
+		    });
+
+	        $('#map').css('opacity','1');
 
 	        return false;
 	      });
@@ -209,4 +222,23 @@ function placer_points(directionService_reponse){
 	    }
 	  }
 	});
+}
+
+function suivi_position(position){
+	if(carte!=null && typeof(infos_itineraire['lieu_depart'])!='undefined'){
+		carte.setCenter(position);
+
+		carte.nettoyer('current_position');
+
+		var latlngPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+		/*if(markerPosition==null){*/
+			markerPosition = carte.ajouterMarker(latlngPosition,'Vous êtes ici !',null,'current_position');
+		/*}else{
+			carte.changePositionMarker(markerPosition,latlngPosition);
+		}*/
+
+		var latlngDepart = new google.maps.LatLng(infos_itineraire['lieu_depart'].geometry.location.lb, infos_itineraire['lieu_depart'].geometry.location.mb);
+		itinerairePosition = carte.traceItineraire(latlngPosition,latlngDepart,null,null,'current_position');
+	}
 }
