@@ -1,6 +1,7 @@
 /* Déclaration des variables globales */
 var carte = null;
-var infos_itineraire = new Array(); // A supprimer dans un futur proche car pas très "propre" -> utiliser la classe Carte pour ça
+var trajets = [];
+var infos_itineraire = []; // A supprimer dans un futur proche car pas très "propre" -> utiliser la classe Carte pour ça
 var suiviPosition = null;
 var markerPosition = null;
 var itinerairePosition = null;
@@ -133,29 +134,34 @@ function placer_points(directionService_reponse){
 	    if(data.code=='200'){
 	      //console.log(data.lieux);
 
-	      var form_lieux = '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
-	      form_lieux += '<form id="form_lieux">';
+	      var form_lieux = '<form id="form_lieux">';
+	      form_lieux += '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
+	      form_lieux += '	<ul class="liste_lieux">';
 
 	      for(key in data.lieux) {
 	        lieu = data.lieux[key];
 	        //console.log(lieu);
 
-	        form_lieux+='<div>';
+	        form_lieux+='<li>';
 	        form_lieux+=  '<input type="checkbox" name="lieux_itineraire" id="'+lieu.id+'" value="'+lieu.id+'">';
-	        form_lieux+=  '<label for="id="'+lieu.id+'"">'+lieu.nom+'</label>';
-	        form_lieux+='</div>';
+	        form_lieux+=  '<label for="'+lieu.id+'">'+lieu.nom+'</label>';
+	        form_lieux+='</li>';
 
 	      }
 
-	      form_lieux+='<input type="submit" value="Valider">';
+	      form_lieux+='	</ul>';
+	      form_lieux+='<input type="submit" value="Valider" id="validation_lieux">';
 	      form_lieux+='</form>';
 
 	      $('#instructions').html(form_lieux);
 
+
+	      /* Validation du choix des lieux */
 	      $('#instructions form').submit(function(evt){
 	        evt.preventDefault();
+
+	        var lieux_choisis = [];
 	        
-	         var lieux_choisis = [];
 	         $('#instructions form input:checked').each(function() {
 	            lieux_choisis.push($(this).val());
 	         });
@@ -169,7 +175,7 @@ function placer_points(directionService_reponse){
 					suivi_position(position);
 				});
 
-		         var trajets = [];
+		         trajets = [];
 		         for(var i=0; i<=lieux_choisis.length;i++){
 		            
 
@@ -182,7 +188,8 @@ function placer_points(directionService_reponse){
 		                            latitude : depart_itineraire.geometry.location.lb,
 		                            longitude : depart_itineraire.geometry.location.mb,
 		                            nom : depart_itineraire.address_components[0].long_name+', '+depart_itineraire.address_components[1].long_name,
-		                            categorie : 'depart'
+		                            categorie : 'depart',
+		                            type : 'borne'
 		                          }
 		            }
 		            if(i>=lieux_choisis.length){
@@ -193,7 +200,8 @@ function placer_points(directionService_reponse){
 		                            latitude : arrivee_itineraire.geometry.location.lb,
 		                            longitude : arrivee_itineraire.geometry.location.mb,
 		                            nom : arrivee_itineraire.address_components[0].long_name+', '+arrivee_itineraire.address_components[1].long_name,
-		                            categorie : 'arrivee'
+		                            categorie : 'arrivee',
+		                            type : 'borne'
 		                          }
 		            }else{
 		                var infos_lieu = null;
@@ -207,6 +215,7 @@ function placer_points(directionService_reponse){
 		                    if(data.code=='200'){
 		                        infos_lieu = data.infos;
 		                        infos_lieu['categorie'] = infos_lieu['id_categorie']; // Temporairement
+		                        infos_lieu['type'] = 'lieu';
 		                    }
 		                  }
 		                });
@@ -217,6 +226,34 @@ function placer_points(directionService_reponse){
 		            depart = arrivee;
 		         }
 		         carte.tracerItineraires(trajets,0);
+
+		        console.log(trajets);
+		        var form_itineraire = '<form id="form_current_itineraire">';
+				form_itineraire+='	<ul>';
+
+				for(key in trajets){
+					var current_trajet = trajets[key];
+					if(current_trajet.arrivee.type=='lieu'){	// Les bornes ne sont pas des lieux de visites (d'où la conservation des lieux uniquement)
+						form_itineraire+='<li>';
+						form_itineraire+='	<p class="nom_lieu">'+current_trajet.arrivee.nom+'</p>';
+						form_itineraire+='</li>';
+					}
+				}
+
+				form_itineraire+='	</ul>';
+				form_itineraire+='	<input type="submit" value="Démarrer l\'itinéraire">';
+				form_itineraire+='</form>';
+
+				$('#form_lieux').replaceWith(form_itineraire);
+
+				/* On démarrer le guidage et l'itineraire */
+				$('#demarrer_itineraire').submit(function(evt){
+					evt.preventDefault();
+					alert('Let\'s go !');
+					return false;
+				});
+
+
 		    });
 
 	        $('#map').css('opacity','1');
