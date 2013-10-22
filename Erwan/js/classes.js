@@ -103,7 +103,7 @@ Carte.prototype = {
 	        	console.log('OVER_QUERY_LIMIT');
 	        	setTimeout(
 	        		function(){
-	        			var directionsRenderer = current_object.traceItineraire(latLngDepart,latLngArrivee,pointsDePassage,callback);
+	        			var directionsRenderer = current_object.traceItineraire(latLngDepart,latLngArrivee,pointsDePassage,callback,type_itineraire);
 	        			return directionsRenderer;
 	        		},
 	        		1000
