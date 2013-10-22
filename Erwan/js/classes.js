@@ -19,6 +19,9 @@ var Carte = function() {
 		couleurItineraire : '#f6de65',
 		suppressionMarkers : true
 	};
+	this.preferencesInfoWindow = {
+		style : {}
+	};
 };
 
 Carte.prototype = {
@@ -30,10 +33,16 @@ Carte.prototype = {
 	    });
 	},
 
-	setStyle : function(style_in){
+	setStyleMap : function(style_in){
 		var styleCarte = new google.maps.StyledMapType(style_in);
 		this.carte.mapTypes.set('map_style', styleCarte);
 	    this.carte.setMapTypeId('map_style');
+	},
+
+	setStyleInfoWindows : function(style_in){
+		if(typeof(style_in)=='object'){
+			this.preferencesInfoWindow.style = style_in;
+		}
 	},
 
 	setCenter : function(position_in){
@@ -55,8 +64,12 @@ Carte.prototype = {
 	        var latLng_arrivee = new google.maps.LatLng(trajets_in[key_in].arrivee.latitude,trajets_in[key_in].arrivee.longitude);
 	        this.traceItineraire(latLng_depart,latLng_arrivee,null,null,'itineraires_lieux');
 
-	        this.ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie,'itineraires_lieux');
-	        this.ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie,'itineraires_lieux');
+	        this.ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie,'itineraires_lieux',{
+	        	content: '<p class="nom_lieu">'+trajets_in[key_in].depart.nom+'</p>'
+	        });
+	        this.ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie,'itineraires_lieux',{
+	        	content: '<p class="nom_lieu">'+trajets_in[key_in].arrivee.nom+'</p>'
+	        });
 
 	        key_in++;
 	        this.tracerItineraires(trajets_in,key_in);
@@ -113,13 +126,11 @@ Carte.prototype = {
 	},
 
 	supprimerItineraire : function(itineraire_in){
-		console.log('efface_itineraire');
-		console.log(itineraire_in);
 		itineraire_in.setMap(null);
 		this.itineraires = deleteValueFromArray(this.itineraires,itineraire_in);
 	},
 
-	ajouterMarker : function(latLng_in,nom_in,categorie_in,type_marker){
+	ajouterMarker : function(latLng_in,nom_in,categorie_in,type_marker,infos_infoWindow){
 		var image = 'http://maps.google.com/mapfiles/marker.png';
 		if(categorie_in!=null && categorie_in!='defaut'){
 			image = 'images/maps_icons/icon_'+categorie_in+'.png';
@@ -134,7 +145,13 @@ Carte.prototype = {
 	    if(typeof(type_marker)=='undefined'){
 	    	type_marker = null;
 	    }
-	    this.markers.push({marker : marker, type : type_marker});
+
+	    var infowindow = null;
+	    if(typeof(infos_infoWindow)=='object'){
+	    	infowindow = this.ajouterInfoWindow(marker,infos_infoWindow);
+		}
+
+	    this.markers.push({marker : marker, type : type_marker, infowindow : infowindow});
 	    return marker;
 	},
 
@@ -143,14 +160,35 @@ Carte.prototype = {
 	},
 
 	supprimerMarker : function(marker_in){
-		console.log('efface_marker');
-		console.log(marker_in);
 		marker_in.setMap(null);
 		this.markers = deleteValueFromArray(this.markers,marker_in);
 	},
 
+	ajouterInfoWindow : function(marker_in,infos_infoWindow_in){
+
+		var styleInfoWindow = this.preferencesInfoWindow.style;
+
+		var infowindow = new InfoBox({
+			content: infos_infoWindow_in.content,
+			disableAutoPan: false,
+			maxWidth: 0,
+			//pixelOffset: new google.maps.Size(-140, 0),
+			zIndex: null,
+			boxStyle: styleInfoWindow,
+			//closeBoxMargin: "12px 4px 2px 2px",
+			closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
+			infoBoxClearance: new google.maps.Size(1, 1)
+	    });
+
+		var map_local = this.carte;
+	    google.maps.event.addListener(marker_in, 'click', function() {
+			infowindow.open(map_local,marker_in);
+		});
+
+		return infowindow;
+	},
+
 	nettoyer : function(type,callback){
-		console.log('nettoyer : '+type);
 		for(key_m in this.markers){
 			var current = this.markers[key_m];
 			if((typeof(type)!='undefined' && typeof(current.type)!='undefined' && current.type==type) || typeof(type)=='undefined' || type=='all'){

@@ -47,13 +47,20 @@ var stylesCarte = [
   }
 ];
 
+var stylesInfoWindow = {
+	background : '#FFF',
+	width : '200px',
+	padding : '5px'
+}
+
 $(function(){
 
 	 if(navigator.geolocation) {
 
 	 	carte = new Carte();
 		carte.initialisation(document.getElementById('map'));
-		carte.setStyle(stylesCarte);
+		carte.setStyleMap(stylesCarte);
+		carte.setStyleInfoWindows(stylesInfoWindow);
 		//carte.setMoyenTransport(google.maps.DirectionsTravelMode.WALKING);
 	    navigator.geolocation.getCurrentPosition(function(position) {
 	      carte.setCenter(position);
