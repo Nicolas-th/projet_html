@@ -227,6 +227,7 @@ function placer_points(directionService_reponse){
 		         }
 		         carte.tracerItineraires(trajets,0);
 
+		        console.log(trajets);
 		        var form_itineraire = '<form id="form_current_itineraire">';
 				form_itineraire+='	<ul>';
 
@@ -246,44 +247,9 @@ function placer_points(directionService_reponse){
 				$('#form_lieux').replaceWith(form_itineraire);
 
 				/* On démarrer le guidage et l'itineraire */
-				$('#form_current_itineraire').submit(function(evt){
+				$('#demarrer_itineraire').submit(function(evt){
 					evt.preventDefault();
-
-					carte.nettoyer('all',function(){
-
-						if(suiviPosition!=null){
-							navigator.geolocation.clearWatch(suiviPosition);
-						}
-						suiviPosition = navigator.geolocation.watchPosition(function(position) {
-							carte.nettoyer('all',function(){
-								var current_itineraire = trajets[0];
-								console.log(current_itineraire);
-								var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-								console.log(distance_arrivee+'km');
-								if(distance_arrivee<=0.1){
-									trajets = deleteValueFromArray(trajets,trajets[0]);
-									current_itineraire = trajets[0];	// On met à jour l'itinéraire courant
-								}
-
-								var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-								var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-								carte.traceItineraire(latLng_depart,latLng_arrivee,null,null,'current_itineraire');
-
-								carte.ajouterMarker(latLng_depart,'Votre position',null,'current_itineraire');
-						        carte.ajouterMarker(latLng_arrivee,current_itineraire.arrivee.nom,current_itineraire.arrivee.categorie,'current_itineraire');
-
-								/*var current_trajet = {
-									depart : {
-										categorie : 'depart',
-									}
-									arrivee : trajets[0].depart
-								}
-								carte.tracerItineraires([trajets[0]],0);*/
-							});	
-						});	
-					});
-
-
+					alert('Let\'s go !');
 					return false;
 				});
 
@@ -319,21 +285,4 @@ function suivi_position(position){
 		var latlngDepart = new google.maps.LatLng(infos_itineraire['lieu_depart'].geometry.location.lb, infos_itineraire['lieu_depart'].geometry.location.mb);
 		itinerairePosition = carte.traceItineraire(latlngPosition,latlngDepart,null,null,'current_position');
 	}
-}
-
-
-/* Source originale : http://goo.gl/bWiu72 */
-function calculerDistancePoints(lat1,lon1,lat2,lon2){
-	var radlat1 = Math.PI * lat1/180;
-	var radlat2 = Math.PI * lat2/180;
-	var radlon1 = Math.PI * lon1/180;
-	var radlon2 = Math.PI * lon2/180;
-	var theta = lon1-lon2;
-	var radtheta = Math.PI * theta/180;
-	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-	dist = Math.acos(dist);
-	dist = dist * 180/Math.PI;
-	dist = dist * 60 * 1.1515;
-	dist = dist * 1.609344;
-	return dist;
 }
