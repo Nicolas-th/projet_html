@@ -1,7 +1,6 @@
 /* Déclaration des variables globales */
 var carte = null;
 var trajets = [];
-var current_itineraire = null;
 var infos_itineraire = []; // A supprimer dans un futur proche car pas très "propre" -> utiliser la classe Carte pour ça
 var suiviPosition = null;
 var markerPosition = null;
@@ -256,40 +255,31 @@ function placer_points(directionService_reponse){
 							navigator.geolocation.clearWatch(suiviPosition);
 						}
 						suiviPosition = navigator.geolocation.watchPosition(function(position) {
-							var charger_itineraire = false;
-							if(current_itineraire==null){
-								current_itineraire = trajets[0];	// On met à jour l'itinéraire courant
-								charger_itineraire = true;
-							}else{
+							carte.nettoyer('all',function(){
+								var current_itineraire = trajets[0];
+								console.log(current_itineraire);
 								var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+								console.log(distance_arrivee+'km');
 								if(distance_arrivee<=0.1){
 									trajets = deleteValueFromArray(trajets,trajets[0]);
 									current_itineraire = trajets[0];	// On met à jour l'itinéraire courant
-									charger_itineraire = true;
 								}
-							}
-							if(charger_itineraire){
-								carte.nettoyer('all',function(){
-									console.log(current_itineraire);
-									var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-									console.log(distance_arrivee+'km');
 
-									var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-									var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-									carte.traceItineraire(latLng_depart,latLng_arrivee,null,null,'current_itineraire');
+								var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+								var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+								carte.traceItineraire(latLng_depart,latLng_arrivee,null,null,'current_itineraire');
 
-									carte.ajouterMarker(latLng_depart,'Votre position',null,'current_itineraire');
-							        carte.ajouterMarker(latLng_arrivee,current_itineraire.arrivee.nom,current_itineraire.arrivee.categorie,'current_itineraire');
+								carte.ajouterMarker(latLng_depart,'Votre position',null,'current_itineraire');
+						        carte.ajouterMarker(latLng_arrivee,current_itineraire.arrivee.nom,current_itineraire.arrivee.categorie,'current_itineraire');
 
-									/*var current_trajet = {
-										depart : {
-											categorie : 'depart',
-										}
-										arrivee : trajets[0].depart
+								/*var current_trajet = {
+									depart : {
+										categorie : 'depart',
 									}
-									carte.tracerItineraires([trajets[0]],0);*/
-								});	
-							}
+									arrivee : trajets[0].depart
+								}
+								carte.tracerItineraires([trajets[0]],0);*/
+							});	
 						});	
 					});
 
