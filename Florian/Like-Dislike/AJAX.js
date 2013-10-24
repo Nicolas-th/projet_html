@@ -6,7 +6,6 @@ function envoyerLike(lieu, user) {
 		function (){
 			$.post('PHP.php',{
 				lieu : lieu,
-				//test : 'coucou', //Passe un argument dans la requete PHP
 				},
 		
 				function(reponse) { 
@@ -37,7 +36,6 @@ function envoyerDislike(lieu, user) {
 function (){
 			$.post('PHP.php',{
 				lieu : lieu,
-				//test : 'coucou', //Passe un argument dans la requete PHP
 				},
 		
 				function(reponse) { 
