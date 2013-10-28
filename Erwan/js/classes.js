@@ -117,8 +117,11 @@ var Carte = function() {
 			    _this.itineraires.push({itineraire : directionsRenderer, type : params.type});
 
 	            if(typeof(params.callback)=='function'){
-            		params.callback(response);
+            		params.callback({
+            			directionsServiceResponse : response
+            		});
             	}
+
 
             	return directionsRenderer;
 	        }else if (status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT){
@@ -181,8 +184,6 @@ var Carte = function() {
 	};
 
 	_this.ajouterInfoWindow = function(params){
-
-		console.log(params);
 
 		var styleInfoWindow = _this.preferencesInfoWindow.style;
 
