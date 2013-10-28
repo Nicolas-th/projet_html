@@ -231,29 +231,28 @@ var Carte = function() {
 
 
 /**** Autocomplétion ****/
-var Autocompletion = function(inputText_in,divResultats_in){
+var Autocompletion = function(params){
 
 	var _this = this;
 
-	_this.inputText = inputText_in;
-	_this.divResultats = divResultats_in;
+	_this.inputText = params.inputText;
+	_this.divResultats = params.divResultats;
 
 
 	_this.rechercher = function(){
 		var lieuRecherche = _this.inputText.val();
 		var service = new google.maps.places.AutocompleteService();
-		var autocomplete = _this;
 	    service.getQueryPredictions({ input: lieuRecherche }, function(reponse, status){
 	      if(status == google.maps.places.PlacesServiceStatus.OK) {
-	        autocomplete.afficherResultats(reponse);
+	        _this.afficherResultats({resultats : reponse});
 	      }
 	    });
 	},
 
-	_this.afficherResultats = function(resultatsRecherche){
+	_this.afficherResultats = function(params){
 		var htmlContent = '';
-		for (var i = 0; i<resultatsRecherche.length; i++) {
-			htmlContent += '<li id="'+resultatsRecherche[i].reference+'">' + resultatsRecherche[i].description + '</li>';
+		for (var i = 0; i<params.resultats.length; i++) {
+			htmlContent += '<li id="'+params.resultats[i].reference+'">' + params.resultats[i].description + '</li>';
 		}
 		_this.divResultats.html(htmlContent);
 
