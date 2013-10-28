@@ -17,68 +17,88 @@ var Carte = function() {
 		style : {}
 	};
 
-	_this.initialisation = function(divCarte){
-	    _this.carte = new google.maps.Map(divCarte, {
+	_this.initialisation = function(params){
+	    _this.carte = new google.maps.Map(params.divCarte, {
 	      mapTypeId: google.maps.MapTypeId.ROADMAP,
 	      zoom: 15
 	    });
-	},
+	};
 
-	_this.setStyleMap = function(style_in){
-		var styleCarte = new google.maps.StyledMapType(style_in);
+	_this.setStyleMap = function(params){
+		var styleCarte = new google.maps.StyledMapType(params.mapStyle);
 		_this.carte.mapTypes.set('map_style', styleCarte);
 	    _this.carte.setMapTypeId('map_style');
-	},
+	};
 
-	_this.setStyleInfoWindows = function(style_in){
-		if(typeof(style_in)=='object'){
-			_this.preferencesInfoWindow.style = style_in;
+	_this.setStyleInfoWindows = function(params){
+		if(typeof(params.infoWindowStyle)=='object'){
+			_this.preferencesInfoWindow.style = params.infoWindowStyle;
 		}
-	},
+	};
 
-	_this.setCenter = function(position_in){
-		var positionCentre = new google.maps.LatLng(position_in.coords.latitude,position_in.coords.longitude);
+	_this.setCenter = function(params){
+		var positionCentre = new google.maps.LatLng(params.position.coords.latitude,params.position.coords.longitude);
 		_this.carte.setCenter(positionCentre);
-	},
+	};
 
-	_this.setMoyenTransport = function(moyenTransport_in){
-		_this.preferencesItineraire.moyenTransport = moyenTransport_in;
-	},
+	_this.setMoyenTransport = function(params){
+		_this.preferencesItineraire.moyenTransport = params.moyenTransport;
+	};
 
-	_this.setOptimisationTrajet = function(optimisation_in){
-		_this.preferencesItineraire.optimisationTrajet = optimisation_in;
-	},
+	_this.setOptimisationTrajet = function(params){
+		_this.preferencesItineraire.optimisationTrajet = params.optimisation;
+	};
 
-	_this.tracerItineraires = function(trajets_in,key_in){
-		if(typeof(trajets_in[key_in])!='undefined'){
-	        var latLng_depart = new google.maps.LatLng(trajets_in[key_in].depart.latitude,trajets_in[key_in].depart.longitude);
-	        var latLng_arrivee = new google.maps.LatLng(trajets_in[key_in].arrivee.latitude,trajets_in[key_in].arrivee.longitude);
-	        _this.traceItineraire(latLng_depart,latLng_arrivee,null,null,'itineraires_lieux');
+	_this.tracerItineraires = function(params){
+		if(typeof(params.trajets[params.key])!='undefined'){
+	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
+	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
-	        _this.ajouterMarker(latLng_depart,trajets_in[key_in].depart.nom,trajets_in[key_in].depart.categorie,'itineraires_lieux',{
-	        	content: '<p class="nom_lieu">'+trajets_in[key_in].depart.nom+'</p>'
+	        _this.traceItineraire({
+	        	latLngDepart : latLng_depart,
+	        	latLngArrivee : latLng_arrivee,
+	        	pointsDePassage : null,
+	        	callback : null,
+	        	type : 'itineraires_lieux'
 	        });
-	        _this.ajouterMarker(latLng_arrivee,trajets_in[key_in].arrivee.nom,trajets_in[key_in].arrivee.categorie,'itineraires_lieux',{
-	        	content: '<p class="nom_lieu">'+trajets_in[key_in].arrivee.nom+'</p>'
+
+	        _this.ajouterMarker({
+	        	latLng : latLng_depart,
+	        	nom : params.trajets[params.key].depart.nom,
+	        	categorie : params.trajets[params.key].depart.categorie,
+	        	type : 'itineraires_lieux',
+	        	infoWindow : {
+	        		content: '<p class="nom_lieu">'+params.trajets[params.key].depart.nom+'</p>'
+	        	}
+	        });
+	        _this.ajouterMarker({
+	        	latLng : latLng_arrivee,
+	        	nom : params.trajets[params.key].arrivee.nom,
+	        	categorie : params.trajets[params.key].arrivee.categorie,
+	        	type : 'itineraires_lieux',
+	        	infoWindow : {
+	        		content: '<p class="nom_lieu">'+params.trajets[params.key].arrivee.nom+'</p>'
+	        	}
 	        });
 
-	        key_in++;
-	        _this.tracerItineraires(trajets_in,key_in);
+	        params.key++;
+	        _this.tracerItineraires({
+	        	trajets : params.trajets,
+	        	key : params.key
+	        });
 	    }
-	},
+	};
 
-	_this.traceItineraire = function(latLngDepart,latLngArrivee,pointsDePassage,callback,type_itineraire){
+	_this.traceItineraire = function(params){
 		var waypoints = [];
-		if(typeof(pointsDePassage)!='undefined' && pointsDePassage!=null)	waypoints = pointsDePassage;
-
+		if(typeof(params.pointsDePassage)!='undefined' && params.pointsDePassage!=null)	waypoints = params.pointsDePassage;
 		var request = {
-	        origin      : latLngDepart,
-	        destination : latLngArrivee,
+	        origin      : params.latLngDepart,
+	        destination : params.latLngArrivee,
 	        waypoints : waypoints,
 	        optimizeWaypoints: _this.preferencesItineraire.optimisationTrajet,
 	        travelMode  : _this.preferencesItineraire.moyenTransport
 	    }
-	    
 	    var directionsService = new google.maps.DirectionsService();
 	    directionsService.route(request, function(response, status){
 	        if(status == google.maps.DirectionsStatus.OK){
@@ -91,13 +111,13 @@ var Carte = function() {
 	            directionsRenderer.setMap(_this.carte);
 	            directionsRenderer.setDirections(response);
 
-	            if(typeof(type_itineraire)=='undefined'){
-			    	type_itineraire = null;
+	            if(typeof(params.type)=='undefined'){
+			    	params.type = null;
 			    }
-			    _this.itineraires.push({itineraire : directionsRenderer, type : type_itineraire});
+			    _this.itineraires.push({itineraire : directionsRenderer, type : params.type});
 
-	            if(typeof(callback)=='function'){
-            		callback(response);
+	            if(typeof(params.callback)=='function'){
+            		params.callback(response);
             	}
 
             	return directionsRenderer;
@@ -105,60 +125,69 @@ var Carte = function() {
 	        	console.log('OVER_QUERY_LIMIT');
 	        	setTimeout(
 	        		function(){
-	        			var directionsRenderer = _this.traceItineraire(latLngDepart,latLngArrivee,pointsDePassage,callback,type_itineraire);
+	        			var directionsRenderer = _this.traceItineraire(params);
 	        			return directionsRenderer;
 	        		},
 	        		1000
 	        	);
 	        }
 	    });
-	},
+	};
 
-	_this.supprimerItineraire = function(itineraire_in){
-		itineraire_in.setMap(null);
-		_this.itineraires = deleteValueFromArray(_this.itineraires,itineraire_in);
-	},
+	_this.supprimerItineraire = function(params){
+		params.itineraire.setMap(null);
+		_this.itineraires = deleteValueFromArray(_this.itineraires,params.itineraire);
+	};
 
-	_this.ajouterMarker = function(latLng_in,nom_in,categorie_in,type_marker,infos_infoWindow){
+	_this.ajouterMarker = function(params){
 		var image = 'http://maps.google.com/mapfiles/marker.png';
-		if(categorie_in!=null && categorie_in!='defaut'){
-			image = 'images/maps_icons/icon_'+categorie_in+'.png';
+		if(params.categorie!=null && params.categorie!='defaut'){
+			image = 'images/maps_icons/icon_'+params.categorie+'.png';
 		}
 	    var marker = new google.maps.Marker({
-	        position: latLng_in,
+	        position: params.latLng,
 	        icon: image,
-	        title: nom_in
+	        title: params.nom
 	    });
 	    marker.setMap(_this.carte);
 
-	    if(typeof(type_marker)=='undefined'){
-	    	type_marker = null;
+	    if(typeof(params.type)=='undefined'){
+	    	params.type = null;
 	    }
 
 	    var infowindow = null;
-	    if(typeof(infos_infoWindow)=='object'){
-	    	infowindow = _this.ajouterInfoWindow(marker,infos_infoWindow);
+	    if(typeof(params.infoWindow)=='object' && params.infoWindow!=null){
+	    	infowindow = _this.ajouterInfoWindow({
+	    		marker : marker,
+	    		infoWindow : params.infoWindow
+	    	});
 		}
 
-	    _this.markers.push({marker : marker, type : type_marker, infowindow : infowindow});
+	    _this.markers.push({
+	    	marker : marker,
+	    	type : params.type,
+	    	infowindow : params.infoWindow
+	    });
 	    return marker;
-	},
+	};
 
-	_this.changePositionMarker = function(marker_in,latLngPosition){
-		marker_in.setPosition(latLngPosition);
-	},
+	_this.changePositionMarker = function(params){
+		params.marker.setPosition(params.position);
+	};
 
-	_this.supprimerMarker = function(marker_in){
-		marker_in.setMap(null);
-		_this.markers = deleteValueFromArray(_this.markers,marker_in);
-	},
+	_this.supprimerMarker = function(params){
+		params.marker.setMap(null);
+		_this.markers = deleteValueFromArray(_this.markers,params.marker);
+	};
 
-	_this.ajouterInfoWindow = function(marker_in,infos_infoWindow_in){
+	_this.ajouterInfoWindow = function(params){
+
+		console.log(params);
 
 		var styleInfoWindow = _this.preferencesInfoWindow.style;
 
 		var infowindow = new InfoBox({
-			content: infos_infoWindow_in.content,
+			content: params.infoWindow.content,
 			disableAutoPan: false,
 			maxWidth: 0,
 			//pixelOffset: new google.maps.Size(-140, 0),
@@ -169,32 +198,35 @@ var Carte = function() {
 			infoBoxClearance: new google.maps.Size(1, 1)
 	    });
 
-	    google.maps.event.addListener(marker_in, 'click', function() {
-			infowindow.open(_this,marker_in);
+	    google.maps.event.addListener(params.marker, 'click', function() {
+			infowindow.open(_this,params.marker);
 		});
 
 		return infowindow;
-	},
+	};
 
-	_this.nettoyer = function(type,callback){
-		for(key_m in _this.markers){
-			var current = _this.markers[key_m];
-			if((typeof(type)!='undefined' && typeof(current.type)!='undefined' && current.type==type) || typeof(type)=='undefined' || type=='all'){
-				carte.supprimerMarker(current.marker);
+	_this.nettoyer = function(params){
+		if(typeof(params.type)!='undefined'){
+			for(key_m in _this.markers){
+				var current = _this.markers[key_m];
+				if((typeof(params.type)!='undefined' && typeof(current.type)!='undefined' && current.type==params.type) || typeof(params.type)=='undefined' || params.type=='all'){
+					carte.supprimerMarker({
+						marker : current.marker
+					});
+				}
+			}
+
+			for(key_i in _this.itineraires){
+				var current = _this.itineraires[key_i];
+				if((typeof(params.type)!='undefined' && typeof(current.type)!='undefined' && current.type==params.type) || typeof(params.type)=='undefined' || params.type=='all'){
+					carte.supprimerItineraire({itineraire : current.itineraire});
+				}
+			}
+			if(typeof(params.callback)=='function'){
+				params.callback();
 			}
 		}
-
-		for(key_i in _this.itineraires){
-			var current = _this.itineraires[key_i];
-			if((typeof(type)!='undefined' && typeof(current.type)!='undefined' && current.type==type) || typeof(type)=='undefined' || type=='all'){
-				carte.supprimerItineraire(current.itineraire);
-			}
-		}
-
-		if(typeof(callback)=='function'){
-			callback();
-		}
-	}
+	};
 };
 
 
