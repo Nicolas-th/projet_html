@@ -6,7 +6,7 @@
 	
 	
 	try{
-		$connexion = new PDO('mysql:host='.$hote.';dbname='.$db, $user, $mdp);
+		$dbh = new PDO('mysql:host='.$hote.';dbname='.$db, $user, $mdp);
 	}
 	catch(Exception $e){
 		die('Erreur : '.$e->getMessage());
@@ -19,20 +19,25 @@
 	$password = md5($_POST['password1']);
 	$date = date('Y-m-d H:i:s');
 	
-	$reqMail = $connexion->prepare("SELECT email FROM users WHERE email ='$mail'");
-	//$reqMail->bindValue('mail',$mail,PDO::PARAM_INT);
+	$reqMail = $dbh->prepare("SELECT email FROM users WHERE email LIKE :mail");
+	$reqMail->bindValue('mail',$mail,PDO::PARAM_STR);
 	$reqMail->execute();
 	
 	if($reqMail->fetch() == 0){
-		$reqPseudo = $connexion->prepare("SELECT nickname FROM users WHERE nickname ='$pseudo'");
-		//$reqMail->bindValue('mail',$mail,PDO::PARAM_INT);
+		$reqPseudo = $dbh->prepare("SELECT nickname FROM users WHERE nickname LIKE :pseudo");
+		$reqPseudo->bindValue('pseudo',$pseudo,PDO::PARAM_STR);
 		$reqPseudo->execute();
 		
 		if($reqPseudo->fetch() == 0){
-			$reqInsertUser = $connexion->prepare("INSERT INTO users VALUES('','','$name','$surname','$pseudo','$mail','$password','$date','','')");
+			$reqInsertUser = $dbh->prepare("INSERT INTO users VALUES('','',:name,:surname,:pseudo,:mail,:password,:date,'','')");
+			$reqInsertUser->bindValue('name',$name,PDO::PARAM_STR);
+			$reqInsertUser->bindValue('surname',$surname,PDO::PARAM_STR);
+			$reqInsertUser->bindValue('pseudo',$pseudo,PDO::PARAM_STR);
+			$reqInsertUser->bindValue('mail',$mail,PDO::PARAM_STR);
+			$reqInsertUser->bindValue('password',$password,PDO::PARAM_STR);
+			$reqInsertUser->bindValue('date',$date,PDO::PARAM_INT);
 			$reqInsertUser->execute();
 			
-			header('Location: index.php');
 		}
 		else {
 			echo "le pseudo déjà utilisé";
@@ -43,15 +48,6 @@
 		echo "email déjà utilisé";
 
 	}
-	
-	
-	/*
-	$sql = new SQL();
-	$sql->prepare('SELECT * FROM LIEUX WHERE id=:id');
-	$sql->bindValue('id',$id,PDO::PARAM_INT);
-
-	$infos_lieu = $sql->execute(true);
-	*/
 ?>
 <h1>Inscrivez-vous</h1>
 
