@@ -279,19 +279,18 @@ function placer_points(params){
 									}
 									suiviPosition = navigator.geolocation.watchPosition(function(position) {
 
-										if(typeof(lastPosition)==undefined || lastPosition==null || (calculerDistancePoints(lastPosition.coords.latitude,lastPosition.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01)){
+										var current_itineraire = trajets[0];
+										var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
 
-											if(typeof(lastPosition)==undefined || lastPosition==null){
-												lastPosition = position;
-											}
+										// Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
+										if(typeof(lastPosition)==undefined || lastPosition==null || (calculerDistancePoints(lastPosition.coords.latitude,lastPosition.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
 
-											alert('maj'+calculerDistancePoints(lastPosition.coords.latitude,lastPosition.coords.longitude,position.coords.latitude,position.coords.longitude));
+
+											lastPosition = position; // On met à jour la position
 
 											carte.nettoyer({ 
 												type : 'all',
 												callback : function(){
-													var current_itineraire = trajets[0];
-													var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
 													//console.log(distance_arrivee+'km');
 													if(distance_arrivee<=0.1){
 														trajets = deleteValueFromArray(trajets,trajets[0]);
