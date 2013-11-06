@@ -133,6 +133,10 @@ var Carte = function() {
 	        		},
 	        		1000
 	        	);
+	        }else if(status == google.maps.DirectionsStatus.ZERO_RESULTS){
+	        	alert('Pas de résultats');	// Possibilité à améliorer
+	        }else{
+	        	alert('Une erreur s\'est produite...');	// Possibilité à améliorer
 	        }
 	    });
 	};
