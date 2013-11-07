@@ -319,13 +319,13 @@ function placer_points(params){
 																			var steps = legs[i].steps;
 																			for(j in steps){
 																				if(typeof(steps[j].instructions)!='undefined'){
-																					htmlInstructions+='<li>'+steps[j].instructions;
+																					htmlInstructions+='<li class="'+steps[j].maneuver+'">'+steps[j].instructions;
 																					if(typeof(steps[j].steps)!='undefined'){
 																						htmlInstructions += '<ul>';
 																						var sousSteps = steps[j].steps;
 																						for(k in sousSteps){
 																							if(typeof(sousSteps[k].instructions)!='undefined'){
-																								htmlInstructions+='<li>'+sousSteps[k].instructions+'</li>';
+																								htmlInstructions+='<li class="'+sousSteps[k].maneuver+'">'+sousSteps[k].instructions+'</li>';
 																							}
 																						}
 																						htmlInstructions += '</ul>';
