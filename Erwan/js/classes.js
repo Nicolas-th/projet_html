@@ -117,7 +117,7 @@ var Carte = function() {
 			    _this.itineraires.push({itineraire : directionsRenderer, type : params.type});
 
 	            if(typeof(params.callback)=='function'){
-            		params.callback({
+            		params.callback.call(this,{
             			directionsServiceResponse : response
             		});
             	}
@@ -228,7 +228,7 @@ var Carte = function() {
 				}
 			}
 			if(typeof(params.callback)=='function'){
-				params.callback();
+				params.callback.call(this);
 			}
 		}
 	};
@@ -255,6 +255,7 @@ var Autocompletion = function(params){
 	},
 
 	_this.afficherResultats = function(params){
+		console.log(params);
 		var htmlContent = '';
 		for (var i = 0; i<params.resultats.length; i++) {
 			htmlContent += '<li id="'+params.resultats[i].reference+'">' + params.resultats[i].description + '</li>';
