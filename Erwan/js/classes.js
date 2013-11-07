@@ -54,14 +54,6 @@ var Carte = function() {
 	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
 	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
-	        _this.traceItineraire({
-	        	latLngDepart : latLng_depart,
-	        	latLngArrivee : latLng_arrivee,
-	        	pointsDePassage : null,
-	        	callback : null,
-	        	type : 'itineraires_lieux'
-	        });
-
 	        _this.ajouterMarker({
 	        	latLng : latLng_depart,
 	        	nom : params.trajets[params.key].depart.nom,
@@ -81,11 +73,22 @@ var Carte = function() {
 	        	}
 	        });
 
-	        params.key++;
-	        _this.tracerItineraires({
-	        	trajets : params.trajets,
-	        	key : params.key
+	        params.key++; // On incrémente pour le prochain itinéraire
+
+	        _this.traceItineraire({
+	        	latLngDepart : latLng_depart,
+	        	latLngArrivee : latLng_arrivee,
+	        	pointsDePassage : null,
+	        	type : 'itineraires_lieux',
+	        	callback : function(){
+			        _this.tracerItineraires(params);
+	        	}
 	        });
+	    }else{
+	    	/* Lorsque le chargement des itinéraires est terminé */
+	    	if(typeof(params.finished)=='function'){
+	    		params.finished.call(this);
+	    	}
 	    }
 	};
 

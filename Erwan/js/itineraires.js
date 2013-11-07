@@ -69,7 +69,7 @@ $(function(){
 		carte.setStyleInfoWindows({
 			infoWindowStyle : stylesInfoWindow
 		});
-		//carte.setMoyenTransport(google.maps.DirectionsTravelMode.WALKING);
+		//carte.setMoyenTransport({moyenTransport : google.maps.DirectionsTravelMode.WALKING});
 	    navigator.geolocation.getCurrentPosition(function(position) {
 	      carte.setCenter({
 	      	position : position
@@ -245,7 +245,10 @@ function placer_points(params){
 				         }
 				         carte.tracerItineraires({
 				         	trajets : trajets,
-				         	key : 0
+				         	key : 0,
+				         	finished : function(){
+				         		alert('Chargement terminé !');
+				         	}
 				         });
 
 				        var form_itineraire = '<form id="form_current_itineraire">';
@@ -305,7 +308,6 @@ function placer_points(params){
 														pointsDePassage : null,
 														type : 'current_itineraire',
 														callback : function(params){
-															console.log(params);
 															if(typeof(params)=='object' && typeof(params.directionsServiceResponse)!='undefined'){
 																if(params.directionsServiceResponse.status=='OK'){
 																	if(params.directionsServiceResponse.routes.length>0){
