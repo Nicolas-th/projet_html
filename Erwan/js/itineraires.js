@@ -69,18 +69,18 @@ $(function(){
 
 	 	carte.map = new Carte();
 		carte.map.initialisation({
-			divCarte : document.getElementById('map')
+			element : document.getElementById('map')
 		});
 		carte.map.setStyleMap({
-			mapStyle : stylesCarte
+			style : stylesCarte
 		});
 		carte.map.setStyleInfoWindows({
-			infoWindowStyle : carte.infoWindow.style
+			style : carte.infoWindow.style
 		});
 		//carte.map.setMoyenTransport({moyenTransport : google.maps.DirectionsTravelMode.WALKING});
-	    navigator.geolocation.getCurrentPosition(function(position) {
+	    navigator.geolocation.getCurrentPosition(function(currentPosition) {
 	      carte.map.setCenter({
-	      	position : position
+	      	position : new google.maps.LatLng(currentPosition.coords.latitude,currentPosition.coords.longitude)
 	      });
 	    });
 
@@ -119,11 +119,12 @@ $(function(){
 					    carte.points.arrivee = lieu_arrivee;
 					    if (status == google.maps.places.PlacesServiceStatus.OK) {
 					      carte.map.traceItineraire({
-					      	latLngDepart : carte.points.depart.geometry.location,
-				        	latLngArrivee : carte.points.arrivee.geometry.location,
-				        	pointsDePassage : null,
-				        	callback : placer_points,
-				        	type : 'itineraires_lieux'
+					      	points : {
+					      		depart : carte.points.depart.geometry.location,
+					      		arrivee : carte.points.arrivee.geometry.location
+					      	},
+					      	type : 'itineraires_lieux',
+				        	callback : placer_points
 				          });  		     
 
 					    }
@@ -302,9 +303,10 @@ function placer_points(params){
 													var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 													var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
 													carte.map.traceItineraire({
-														latLngDepart: latLng_depart,
-														latLngArrivee : latLng_arrivee,
-														pointsDePassage : null,
+														points : {
+															depart : latLng_depart,
+															arrivee : latLng_arrivee
+														},
 														type : 'current_itineraire',
 														callback : function(params){
 															if(typeof(params)=='object' && typeof(params.directionsServiceResponse)!='undefined'){

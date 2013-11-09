@@ -18,27 +18,43 @@ var Carte = function() {
 	};
 
 	_this.initialisation = function(params){
-	    _this.carte = new google.maps.Map(params.divCarte, {
+		var defauts = {
+			element : '#carte'
+		}
+		params = $.extend(defauts, params);
+
+	    _this.carte = new google.maps.Map(params.element, {
 	      mapTypeId: google.maps.MapTypeId.ROADMAP,
 	      zoom: 15
 	    });
 	};
 
 	_this.setStyleMap = function(params){
-		var styleCarte = new google.maps.StyledMapType(params.mapStyle);
-		_this.carte.mapTypes.set('map_style', styleCarte);
+		var defauts = {
+			style : {}
+		}
+		params = $.extend(defauts, params);
+
+		_this.carte.mapTypes.set('map_style', new google.maps.StyledMapType(params.style));
 	    _this.carte.setMapTypeId('map_style');
 	};
 
 	_this.setStyleInfoWindows = function(params){
-		if(typeof(params.infoWindowStyle)=='object'){
-			_this.preferencesInfoWindow.style = params.infoWindowStyle;
+		var defauts = {
+			style : {}
 		}
+		params = $.extend(defauts, params);
+
+		_this.preferencesInfoWindow.style = params.style;
 	};
 
 	_this.setCenter = function(params){
-		var positionCentre = new google.maps.LatLng(params.position.coords.latitude,params.position.coords.longitude);
-		_this.carte.setCenter(positionCentre);
+		var defauts = {
+			position : new google.maps.LatLng(48.851861,2.420284) // Hetic
+		}
+		params = $.extend(defauts, params);
+
+		_this.carte.setCenter(params.position);
 	};
 
 	_this.setMoyenTransport = function(params){
@@ -46,11 +62,22 @@ var Carte = function() {
 	};
 
 	_this.setOptimisationTrajet = function(params){
+		var defauts = {
+			optimisation : true
+		}
+		params = $.extend(defauts, params);
+
 		_this.preferencesItineraire.optimisationTrajet = params.optimisation;
 	};
 
 	_this.tracerItineraires = function(params){
-		console.log(params);
+		var defauts = {
+			key : 0,
+			trajets : [],
+			finished : function(){}
+		}
+		params = $.extend(defauts, params);
+
 		if(typeof(params.trajets[params.key])!='undefined'){
 	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
 	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
@@ -77,9 +104,10 @@ var Carte = function() {
 	        params.key++; // On incrémente pour le prochain itinéraire
 
 	        _this.traceItineraire({
-	        	latLngDepart : latLng_depart,
-	        	latLngArrivee : latLng_arrivee,
-	        	pointsDePassage : null,
+	        	points : {
+	        		depart : latLng_depart,
+	        		arrivee : latLng_arrivee
+	        	},
 	        	type : 'itineraires_lieux',
 	        	callback : function(){
 			        _this.tracerItineraires(params);
@@ -87,19 +115,24 @@ var Carte = function() {
 	        });
 	    }else{
 	    	/* Lorsque le chargement des itinéraires est terminé */
-	    	if(typeof(params.finished)=='function'){
-	    		params.finished.call(this);
-	    	}
+	    	params.finished.call(this);
 	    }
 	};
 
 	_this.traceItineraire = function(params){
-		var waypoints = [];
-		if(typeof(params.pointsDePassage)!='undefined' && params.pointsDePassage!=null)	waypoints = params.pointsDePassage;
+		var defauts = {
+			waypoints : [],
+			points : {
+				depart : null,
+				arrivee : null,
+			}
+		}
+		params = $.extend(defauts, params);
+
 		var request = {
-	        origin      : params.latLngDepart,
-	        destination : params.latLngArrivee,
-	        waypoints : waypoints,
+	        origin      : params.points.depart,
+	        destination : params.points.arrivee,
+	        waypoints : params.waypoints,
 	        optimizeWaypoints: _this.preferencesItineraire.optimisationTrajet,
 	        travelMode  : _this.preferencesItineraire.moyenTransport
 	    }
