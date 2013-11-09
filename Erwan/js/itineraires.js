@@ -87,16 +87,16 @@ $(function(){
 
 	    $('#lieux_depart').keypress(function(){
       		var autocomplete = new Autocompletion({ 
-      			inputText : $('#lieux_depart'),
-      			divResultats : $('#resultats_lieux_depart')
+      			inputText : '#lieux_depart',
+      			divResultats : '#resultats_lieux_depart'
       		});
       		autocomplete.rechercher();
       	});
 
       	$('#lieux_arrive').keypress(function(){
       		var autocomplete =  new Autocompletion({ 
-      			inputText : $('#lieux_arrive'),
-      			divResultats : $('#resultats_lieux_arrive')
+      			inputText : '#lieux_arrive',
+      			divResultats : '#resultats_lieux_arrive'
       		});
       		autocomplete.rechercher();
       	});
@@ -193,7 +193,7 @@ function placer_points(params){
 
 				carte.map.nettoyer({
 					type : 'all',
-					callback : function(){
+					finished : function(){
 
 				         carte.itineraires = []; // On supprime les itinéraires en mémoire
 				         for(var i=0; i<=lieux_choisis.length;i++){
@@ -275,7 +275,7 @@ function placer_points(params){
 
 							carte.map.nettoyer({ 
 								type :'all',
-								callback : function(){
+								finished : function(){
 
 									if(carte.suivi.position!=null){
 										navigator.geolocation.clearWatch(carte.suivi.position);
@@ -293,7 +293,7 @@ function placer_points(params){
 
 											carte.map.nettoyer({ 
 												type : 'all',
-												callback : function(){
+												finished : function(){
 													//console.log(distance_arrivee+'km');
 													if(distance_arrivee<=0.1){
 														carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
@@ -344,19 +344,16 @@ function placer_points(params){
 													});
 
 													carte.map.ajouterMarker({
-														latLng : latLng_depart,
+														position : latLng_depart,
 											        	nom : 'Votre position',
-											        	categorie : null,
-											        	type : 'current_itineraire',
-											        	infoWindow : null
+											        	type : 'current_itineraire'
 											        });
 											        
 											        carte.map.ajouterMarker({
-														latLng : latLng_arrivee,
+														position : latLng_arrivee,
 											        	nom : current_itineraire.arrivee.nom,
 											        	categorie : current_itineraire.arrivee.categorie,
-											        	type : 'current_itineraire',
-											        	infoWindow : null
+											        	type : 'current_itineraire'
 											        });
 												}
 											});	

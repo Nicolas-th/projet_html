@@ -83,7 +83,7 @@ var Carte = function() {
 	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
 	        _this.ajouterMarker({
-	        	latLng : latLng_depart,
+	        	position : latLng_depart,
 	        	nom : params.trajets[params.key].depart.nom,
 	        	categorie : params.trajets[params.key].depart.categorie,
 	        	type : 'itineraires_lieux',
@@ -92,7 +92,7 @@ var Carte = function() {
 	        	}
 	        });
 	        _this.ajouterMarker({
-	        	latLng : latLng_arrivee,
+	        	position : latLng_arrivee,
 	        	nom : params.trajets[params.key].arrivee.nom,
 	        	categorie : params.trajets[params.key].arrivee.categorie,
 	        	type : 'itineraires_lieux',
@@ -179,25 +179,32 @@ var Carte = function() {
 	};
 
 	_this.supprimerItineraire = function(params){
+		var defauts = {
+			itineraire : null
+		}
+		params = $.extend(defauts, params);
+
 		params.itineraire.setMap(null);
 		_this.itineraires = deleteValueFromArray(_this.itineraires,params.itineraire);
 	};
 
 	_this.ajouterMarker = function(params){
+		var defauts = {
+			categorie : 'defaut',
+			nom : '',
+		}
+		params = $.extend(defauts, params);
+
 		var image = 'http://maps.google.com/mapfiles/marker.png';
-		if(params.categorie!=null && params.categorie!='defaut'){
+		if(params.categorie!='defaut'){
 			image = 'images/maps_icons/icon_'+params.categorie+'.png';
 		}
 	    var marker = new google.maps.Marker({
-	        position: params.latLng,
+	        position: params.position,
 	        icon: image,
 	        title: params.nom
 	    });
 	    marker.setMap(_this.carte);
-
-	    if(typeof(params.type)=='undefined'){
-	    	params.type = null;
-	    }
 
 	    var infowindow = null;
 	    if(typeof(params.infoWindow)=='object'){
@@ -210,21 +217,38 @@ var Carte = function() {
 	    _this.markers.push({
 	    	marker : marker,
 	    	type : params.type,
-	    	infowindow : params.infoWindow
+	    	infowindow : infowindow
 	    });
 	    return marker;
 	};
 
 	_this.changePositionMarker = function(params){
+		var defauts = {
+			position : null
+		}
+		params = $.extend(defauts, params);
+
 		params.marker.setPosition(params.position);
 	};
 
 	_this.supprimerMarker = function(params){
+		var defauts = {
+			marker : null
+		}
+		params = $.extend(defauts, params);
+
 		params.marker.setMap(null);
 		_this.markers = deleteValueFromArray(_this.markers,params.marker);
 	};
 
 	_this.ajouterInfoWindow = function(params){
+		var defauts = {
+			marker : null,
+			infoWindow : {
+				content : ''
+			}
+		}
+		params = $.extend(defauts, params);
 
 		var infowindow = new InfoBox({
 			content: params.infoWindow.content,
@@ -246,26 +270,28 @@ var Carte = function() {
 	};
 
 	_this.nettoyer = function(params){
-		if(typeof(params.type)!='undefined'){
-			for(key_m in _this.markers){
-				var current = _this.markers[key_m];
-				if((typeof(params.type)!='undefined' && typeof(current.type)!='undefined' && current.type==params.type) || typeof(params.type)=='undefined' || params.type=='all'){
-					_this.supprimerMarker({
-						marker : current.marker
-					});
-				}
-			}
+		var defauts = {
+			type : null,
+			finished : function(){}
+		}
+		params = $.extend(defauts, params);
 
-			for(key_i in _this.itineraires){
-				var current = _this.itineraires[key_i];
-				if((typeof(params.type)!='undefined' && typeof(current.type)!='undefined' && current.type==params.type) || typeof(params.type)=='undefined' || params.type=='all'){
-					_this.supprimerItineraire({itineraire : current.itineraire});
-				}
-			}
-			if(typeof(params.callback)=='function'){
-				params.callback.call(this);
+		for(key_m in _this.markers){
+			var current = _this.markers[key_m];
+			if((typeof(current.type)!='undefined' && current.type==params.type) || params.type==null || params.type=='all'){
+				_this.supprimerMarker({
+					marker : current.marker
+				});
 			}
 		}
+
+		for(key_i in _this.itineraires){
+			var current = _this.itineraires[key_i];
+			if((typeof(current.type)!='undefined' && current.type==params.type) || params.type==null || params.type=='all'){
+				_this.supprimerItineraire({itineraire : current.itineraire});
+			}
+		}
+		params.finished.call(this);
 	};
 };
 
@@ -274,9 +300,14 @@ var Carte = function() {
 var Autocompletion = function(params){
 
 	var _this = this;
+	var defauts = {
+		inputText : '#autocomplete',
+		divResultats : '#resultats_autocompletion'
+	}
+	params = $.extend(defauts, params);
 
-	_this.inputText = params.inputText;
-	_this.divResultats = params.divResultats;
+	_this.inputText = $(params.inputText);
+	_this.divResultats = $(params.divResultats);
 
 
 	_this.rechercher = function(){
@@ -290,21 +321,23 @@ var Autocompletion = function(params){
 	},
 
 	_this.afficherResultats = function(params){
-		console.log(params);
+		var defauts = {
+			resultats : []
+		}
+		params = $.extend(defauts, params);
+
 		var htmlContent = '';
 		for (var i = 0; i<params.resultats.length; i++) {
 			htmlContent += '<li id="'+params.resultats[i].reference+'">' + params.resultats[i].description + '</li>';
 		}
 		_this.divResultats.html(htmlContent);
 
-		var local_inputText = _this.inputText;
-		var local_divResultats = _this.divResultats;
 		_this.divResultats.find('li').click(function(){
-          local_inputText.val($(this).html());
-          local_inputText.siblings('input[type="hidden"]').val($(this).attr('id'));
-          local_divResultats.html(htmlContent);
-          local_inputText.siblings('+input[type="hidden"]').val($(this).attr('id'));
-          local_divResultats.empty();
+          _this.inputText.val($(this).html());
+          _this.inputText.siblings('input[type="hidden"]').val($(this).attr('id'));
+          _this.divResultats.html(htmlContent);
+          _this.inputText.siblings('+input[type="hidden"]').val($(this).attr('id'));
+          _this.divResultats.empty();
       	});
 	}
 
