@@ -109,7 +109,7 @@ var Carte = function() {
 	        		arrivee : latLng_arrivee
 	        	},
 	        	type : 'itineraires_lieux',
-	        	callback : function(){
+	        	finished : function(){
 			        _this.tracerItineraires(params);
 	        	}
 	        });
@@ -125,7 +125,8 @@ var Carte = function() {
 			points : {
 				depart : null,
 				arrivee : null,
-			}
+			},
+			finished : function(){}
 		}
 		params = $.extend(defauts, params);
 
@@ -153,11 +154,9 @@ var Carte = function() {
 			    }
 			    _this.itineraires.push({itineraire : directionsRenderer, type : params.type});
 
-	            if(typeof(params.callback)=='function'){
-            		params.callback.call(this,{
-            			directionsServiceResponse : response
-            		});
-            	}
+            	params.finished.call(this,{
+            		directionsServiceResponse : response
+            	});
 
 
             	return directionsRenderer;
