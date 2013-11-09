@@ -108,7 +108,7 @@ carte.placerPoints = function(params){
 
 
 		      /* Validation du choix des lieux */
-		      $('#choix_lieux form').submit(function(evt){
+		      $('#choix_lieux form').on('submit',function(evt){
 		        evt.preventDefault();
 
 		        var lieux_choisis = [];
@@ -173,125 +173,127 @@ carte.placerPoints = function(params){
 				         	trajets : carte.itineraires,
 				         	key : 0,
 				         	finished : function(){
+
 				         		params.itinerairesTraces.call(this);
-				         	}
-				         });
 
-				        var form_itineraire = '<form id="form_current_itineraire">';
-						form_itineraire+='	<ul>';
+				         		/* On crée le formulaire permettant de lancer la navigation et on crée le système de navigation */
 
-						for(key in carte.itineraires){
-							var current_trajet = carte.itineraires[key];
-							if(current_trajet.arrivee.type=='lieu'){	// Les bornes ne sont pas des lieux de visites (d'où la conservation des lieux uniquement)
-								form_itineraire+='<li>';
-								form_itineraire+='	<p class="nom_lieu">'+current_trajet.arrivee.nom+'</p>';
-								form_itineraire+='</li>';
-							}
-						}
+						        var form_itineraire = '<form id="form_current_itineraire">';
+								form_itineraire+='	<ul>';
 
-						form_itineraire+='	</ul>';
-						form_itineraire+='	<input type="submit" value="Démarrer l\'itinéraire">';
-						form_itineraire+='</form>';
-
-						$('#form_lieux').replaceWith(form_itineraire);
-
-						/* On démarrer le guidage et l'itineraire */
-						$('#form_current_itineraire').submit(function(evt){
-							evt.preventDefault();
-
-							carte.map.nettoyer({ 
-								type :'all',
-								finished : function(){
-
-									if(carte.suivi.position!=null){
-										navigator.geolocation.clearWatch(carte.suivi.position);
+								for(key in carte.itineraires){
+									var current_trajet = carte.itineraires[key];
+									if(current_trajet.arrivee.type=='lieu'){	// Les bornes ne sont pas des lieux de visites (d'où la conservation des lieux uniquement)
+										form_itineraire+='<li>';
+										form_itineraire+='	<p class="nom_lieu">'+current_trajet.arrivee.nom+'</p>';
+										form_itineraire+='</li>';
 									}
-									carte.suivi.position = navigator.geolocation.watchPosition(function(position) {
+								}
 
-										var current_itineraire = carte.itineraires[0];
-										var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+								form_itineraire+='	</ul>';
+								form_itineraire+='	<input type="submit" value="Démarrer l\'itinéraire">';
+								form_itineraire+='</form>';
 
-										// Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
-										if(typeof(carte.points.position)==undefined || carte.points.position==null || (calculerDistancePoints(carte.points.position.coords.latitude,carte.points.position.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
+								$('#form_lieux').replaceWith(form_itineraire);
+
+								/* On démarrer le guidage et l'itineraire */
+								$('#form_current_itineraire').on('submit',function(evt){
+									evt.preventDefault();
+
+									carte.map.nettoyer({ 
+										type :'all',
+										finished : function(){
+
+											if(carte.suivi.position!=null){
+												navigator.geolocation.clearWatch(carte.suivi.position);
+											}
+											carte.suivi.position = navigator.geolocation.watchPosition(function(position) {
+
+												var current_itineraire = carte.itineraires[0];
+												var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+
+												// Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
+												if(typeof(carte.points.position)==undefined || carte.points.position==null || (calculerDistancePoints(carte.points.position.coords.latitude,carte.points.position.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
 
 
-											carte.points.position = position; // On met à jour la position
+													carte.points.position = position; // On met à jour la position
 
-											carte.map.nettoyer({ 
-												type : 'all',
-												finished : function(){
-													//console.log(distance_arrivee+'km');
-													if(distance_arrivee<=0.1){
-														carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
-														current_itineraire = carte.itineraires[0];	// On met à jour l'itinéraire courant
-													}
+													carte.map.nettoyer({ 
+														type : 'all',
+														finished : function(){
+															//console.log(distance_arrivee+'km');
+															if(distance_arrivee<=0.1){
+																carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
+																current_itineraire = carte.itineraires[0];	// On met à jour l'itinéraire courant
+															}
 
-													var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-													var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-													carte.map.traceItineraire({
-														points : {
-															depart : latLng_depart,
-															arrivee : latLng_arrivee
-														},
-														type : 'current_itineraire',
-														finished : function(params){
-															if(typeof(params)=='object' && typeof(params.directionsServiceResponse)!='undefined'){
-																if(params.directionsServiceResponse.status=='OK'){
-																	if(params.directionsServiceResponse.routes.length>0){
-																		var legs = params.directionsServiceResponse.routes[0].legs;
-																		
-																		var htmlInstructions = '<ul>';
+															var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+															var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+															carte.map.traceItineraire({
+																points : {
+																	depart : latLng_depart,
+																	arrivee : latLng_arrivee
+																},
+																type : 'current_itineraire',
+																finished : function(params){
+																	if(typeof(params)=='object' && typeof(params.directionsServiceResponse)!='undefined'){
+																		if(params.directionsServiceResponse.status=='OK'){
+																			if(params.directionsServiceResponse.routes.length>0){
+																				var legs = params.directionsServiceResponse.routes[0].legs;
+																				
+																				var htmlInstructions = '<ul>';
 
-																		for(i in legs){
-																			var steps = legs[i].steps;
-																			for(j in steps){
-																				if(typeof(steps[j].instructions)!='undefined'){
-																					htmlInstructions+='<li class="'+steps[j].maneuver+'">'+steps[j].instructions;
-																					if(typeof(steps[j].steps)!='undefined'){
-																						htmlInstructions += '<ul>';
-																						var sousSteps = steps[j].steps;
-																						for(k in sousSteps){
-																							if(typeof(sousSteps[k].instructions)!='undefined'){
-																								htmlInstructions+='<li class="'+sousSteps[k].maneuver+'">'+sousSteps[k].instructions+'</li>';
+																				for(i in legs){
+																					var steps = legs[i].steps;
+																					for(j in steps){
+																						if(typeof(steps[j].instructions)!='undefined'){
+																							htmlInstructions+='<li class="'+steps[j].maneuver+'">'+steps[j].instructions;
+																							if(typeof(steps[j].steps)!='undefined'){
+																								htmlInstructions += '<ul>';
+																								var sousSteps = steps[j].steps;
+																								for(k in sousSteps){
+																									if(typeof(sousSteps[k].instructions)!='undefined'){
+																										htmlInstructions+='<li class="'+sousSteps[k].maneuver+'">'+sousSteps[k].instructions+'</li>';
+																									}
+																								}
+																								htmlInstructions += '</ul>';
 																							}
+																							htmlInstructions+='</li>';
 																						}
-																						htmlInstructions += '</ul>';
 																					}
-																					htmlInstructions+='</li>';
 																				}
+																				htmlInstructions+='</ul>';
+																				$('#instructions_itineraire').empty().html(htmlInstructions);
 																			}
 																		}
-																		htmlInstructions+='</ul>';
-																		$('#instructions_itineraire').empty().html(htmlInstructions);
 																	}
-																}
-															}
-														}	
-													});
+																}	
+															});
 
-													carte.map.ajouterMarker({
-														position : latLng_depart,
-											        	nom : 'Votre position',
-											        	type : 'current_itineraire'
-											        });
-											        
-											        carte.map.ajouterMarker({
-														position : latLng_arrivee,
-											        	nom : current_itineraire.arrivee.nom,
-											        	categorie : current_itineraire.arrivee.categorie,
-											        	type : 'current_itineraire'
-											        });
+															carte.map.ajouterMarker({
+																position : latLng_depart,
+													        	nom : 'Votre position',
+													        	type : 'current_itineraire'
+													        });
+													        
+													        carte.map.ajouterMarker({
+																position : latLng_arrivee,
+													        	nom : current_itineraire.arrivee.nom,
+													        	categorie : current_itineraire.arrivee.categorie,
+													        	type : 'current_itineraire'
+													        });
+														}
+													});	
 												}
 											});	
 										}
-									});	
-								}
-							});
+									});
 
 
-							return false;
-						});
-
+									return false;
+								});
+							}
+				    	});
 					}
 			    });
 
@@ -345,9 +347,10 @@ $(function(){
       	});
 
       	/* Gestion du formulaire */
-		$('#formulaire_itineraire').submit(function(evt){
+		$('#formulaire_itineraire').on('submit',function(evt){
 			evt.preventDefault();
 
+			$('#choix_lieux, #instructions_itineraire').empty();
 			$('#map').css('opacity','0');
 			carte.map.nettoyer('all');
 
