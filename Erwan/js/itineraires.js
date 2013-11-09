@@ -1,11 +1,25 @@
 /* Déclaration des variables globales */
-var carte = null;
-var trajets = [];
-var infos_itineraire = []; // A supprimer dans un futur proche car pas très "propre" -> utiliser la classe Carte pour ça
-var suiviPosition = null;
-var markerPosition = null;
-var itinerairePosition = null;
-var lastPosition = null;
+
+var carte = {
+	map : null,
+	itineraires : [],
+	points : {
+		depart : null,
+		arrivee : null,
+		position : null
+	},
+	suivi : {
+		position : null
+	},
+	infoWindow : {
+		style : {
+			background : '#FFF',
+			width : '200px',
+			padding : '5px'
+		}
+	}
+};
+
 var stylesCarte = [
   {
     "featureType": "landscape",
@@ -49,29 +63,23 @@ var stylesCarte = [
   }
 ];
 
-var stylesInfoWindow = {
-	background : '#FFF',
-	width : '200px',
-	padding : '5px'
-}
-
 $(function(){
 
 	 if(navigator.geolocation) {
 
-	 	carte = new Carte();
-		carte.initialisation({
+	 	carte.map = new Carte();
+		carte.map.initialisation({
 			divCarte : document.getElementById('map')
 		});
-		carte.setStyleMap({
+		carte.map.setStyleMap({
 			mapStyle : stylesCarte
 		});
-		carte.setStyleInfoWindows({
-			infoWindowStyle : stylesInfoWindow
+		carte.map.setStyleInfoWindows({
+			infoWindowStyle : carte.infoWindow.style
 		});
-		//carte.setMoyenTransport({moyenTransport : google.maps.DirectionsTravelMode.WALKING});
+		//carte.map.setMoyenTransport({moyenTransport : google.maps.DirectionsTravelMode.WALKING});
 	    navigator.geolocation.getCurrentPosition(function(position) {
-	      carte.setCenter({
+	      carte.map.setCenter({
 	      	position : position
 	      });
 	    });
@@ -103,16 +111,16 @@ $(function(){
 				service.getDetails({
 				reference : ref_lieux_depart
 				}, function(lieu_depart, status){
-					infos_itineraire['lieu_depart'] = lieu_depart;
+					carte.points.depart = lieu_depart;
 					if (status == google.maps.places.PlacesServiceStatus.OK) {
 					  service.getDetails({
 					    reference : ref_lieux_arrive
 					  }, function(lieu_arrivee, status){
-					    infos_itineraire['lieu_arrivee'] = lieu_arrivee;
+					    carte.points.arrivee = lieu_arrivee;
 					    if (status == google.maps.places.PlacesServiceStatus.OK) {
-					      carte.traceItineraire({
-					      	latLngDepart : lieu_depart.geometry.location,
-				        	latLngArrivee : lieu_arrivee.geometry.location,
+					      carte.map.traceItineraire({
+					      	latLngDepart : carte.points.depart.geometry.location,
+				        	latLngArrivee : carte.points.arrivee.geometry.location,
 				        	pointsDePassage : null,
 				        	callback : placer_points,
 				        	type : 'itineraires_lieux'
@@ -182,42 +190,33 @@ function placer_points(params){
 		            lieux_choisis.push($(this).val());
 		         });
 
-				carte.nettoyer({
+				carte.map.nettoyer({
 					type : 'all',
 					callback : function(){
 
-						/*if(suiviPosition!=null){
-							navigator.geolocation.clearWatch(suiviPosition);
-						}
-						suiviPosition = navigator.geolocation.watchPosition(function(position) {
-							suivi_position(position);
-						});*/
-
-				         trajets = [];
+				         carte.itineraires = []; // On supprime les itinéraires en mémoire
 				         for(var i=0; i<=lieux_choisis.length;i++){
-				            
+   
 
 				            /* Ici créer les différents trajets */
 				            if(i==0){
-				                var depart_itineraire = infos_itineraire['lieu_depart'];
 				                depart = {
-				                            adresse : depart_itineraire.address_components[0].long_name,
-				                            ville : depart_itineraire.address_components[1].long_name,
-				                            latitude : depart_itineraire.geometry.location.lat(),
-				                            longitude : depart_itineraire.geometry.location.lng(),
-				                            nom : depart_itineraire.address_components[0].long_name+', '+depart_itineraire.address_components[1].long_name,
+				                            adresse : carte.points.depart.address_components[0].long_name,
+				                            ville : carte.points.depart.address_components[1].long_name,
+				                            latitude : carte.points.depart.geometry.location.lat(),
+				                            longitude : carte.points.depart.geometry.location.lng(),
+				                            nom : carte.points.depart.address_components[0].long_name+', '+carte.points.depart.address_components[1].long_name,
 				                            categorie : 'depart',
 				                            type : 'borne'
 				                          }
 				            }
-				            if(i>=lieux_choisis.length){
-				                var arrivee_itineraire = infos_itineraire['lieu_arrivee'];
+				            if(i>=lieux_choisis.length){;
 				                arrivee = {
-				                            adresse : arrivee_itineraire.address_components[0].long_name,
-				                            ville : arrivee_itineraire.address_components[1].long_name,
-				                            latitude : arrivee_itineraire.geometry.location.lat(),
-				                            longitude : arrivee_itineraire.geometry.location.lng(),
-				                            nom : arrivee_itineraire.address_components[0].long_name+', '+arrivee_itineraire.address_components[1].long_name,
+				                            adresse : carte.points.arrivee.address_components[0].long_name,
+				                            ville : carte.points.arrivee.address_components[1].long_name,
+				                            latitude : carte.points.arrivee.geometry.location.lat(),
+				                            longitude : carte.points.arrivee.geometry.location.lng(),
+				                            nom : carte.points.arrivee.address_components[0].long_name+', '+carte.points.arrivee.address_components[1].long_name,
 				                            categorie : 'arrivee',
 				                            type : 'borne'
 				                          }
@@ -240,11 +239,11 @@ function placer_points(params){
 				                arrivee = infos_lieu;
 				            }
 
-				            trajets.push({depart : depart, arrivee : arrivee});
+				            carte.itineraires.push({depart : depart, arrivee : arrivee});
 				            depart = arrivee;
 				         }
-				         carte.tracerItineraires({
-				         	trajets : trajets,
+				         carte.map.tracerItineraires({
+				         	trajets : carte.itineraires,
 				         	key : 0,
 				         	finished : function(){
 				         		alert('Chargement terminé !');
@@ -254,8 +253,8 @@ function placer_points(params){
 				        var form_itineraire = '<form id="form_current_itineraire">';
 						form_itineraire+='	<ul>';
 
-						for(key in trajets){
-							var current_trajet = trajets[key];
+						for(key in carte.itineraires){
+							var current_trajet = carte.itineraires[key];
 							if(current_trajet.arrivee.type=='lieu'){	// Les bornes ne sont pas des lieux de visites (d'où la conservation des lieux uniquement)
 								form_itineraire+='<li>';
 								form_itineraire+='	<p class="nom_lieu">'+current_trajet.arrivee.nom+'</p>';
@@ -273,36 +272,36 @@ function placer_points(params){
 						$('#form_current_itineraire').submit(function(evt){
 							evt.preventDefault();
 
-							carte.nettoyer({ 
+							carte.map.nettoyer({ 
 								type :'all',
 								callback : function(){
 
-									if(suiviPosition!=null){
-										navigator.geolocation.clearWatch(suiviPosition);
+									if(carte.suivi.position!=null){
+										navigator.geolocation.clearWatch(carte.suivi.position);
 									}
-									suiviPosition = navigator.geolocation.watchPosition(function(position) {
+									carte.suivi.position = navigator.geolocation.watchPosition(function(position) {
 
-										var current_itineraire = trajets[0];
+										var current_itineraire = carte.itineraires[0];
 										var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
 
 										// Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
-										if(typeof(lastPosition)==undefined || lastPosition==null || (calculerDistancePoints(lastPosition.coords.latitude,lastPosition.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
+										if(typeof(carte.points.position)==undefined || carte.points.position==null || (calculerDistancePoints(carte.points.position.coords.latitude,carte.points.position.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
 
 
-											lastPosition = position; // On met à jour la position
+											carte.points.position = position; // On met à jour la position
 
-											carte.nettoyer({ 
+											carte.map.nettoyer({ 
 												type : 'all',
 												callback : function(){
 													//console.log(distance_arrivee+'km');
 													if(distance_arrivee<=0.1){
-														trajets = deleteValueFromArray(trajets,trajets[0]);
-														current_itineraire = trajets[0];	// On met à jour l'itinéraire courant
+														carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
+														current_itineraire = carte.itineraires[0];	// On met à jour l'itinéraire courant
 													}
 
 													var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 													var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-													carte.traceItineraire({
+													carte.map.traceItineraire({
 														latLngDepart: latLng_depart,
 														latLngArrivee : latLng_arrivee,
 														pointsDePassage : null,
@@ -342,7 +341,7 @@ function placer_points(params){
 														}	
 													});
 
-													carte.ajouterMarker({
+													carte.map.ajouterMarker({
 														latLng : latLng_depart,
 											        	nom : 'Votre position',
 											        	categorie : null,
@@ -350,21 +349,13 @@ function placer_points(params){
 											        	infoWindow : null
 											        });
 											        
-											        carte.ajouterMarker({
+											        carte.map.ajouterMarker({
 														latLng : latLng_arrivee,
 											        	nom : current_itineraire.arrivee.nom,
 											        	categorie : current_itineraire.arrivee.categorie,
 											        	type : 'current_itineraire',
 											        	infoWindow : null
 											        });
-
-													/*var current_trajet = {
-														depart : {
-															categorie : 'depart',
-														}
-														arrivee : trajets[0].depart
-													}
-													carte.tracerItineraires([trajets[0]],0);*/
 												}
 											});	
 										}
@@ -391,32 +382,6 @@ function placer_points(params){
 		});
 	}
 }
-
-function suivi_position(position){
-	if(carte!=null && typeof(infos_itineraire['lieu_depart'])!='undefined'){
-		carte.setCenter({
-			position : position
-		});
-
-		carte.nettoyer({
-			type : 'current_position'
-		});
-
-		var latlngPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-		markerPosition = carte.ajouterMarker(latlngPosition,'Vous êtes ici !',null,'current_position');
-
-		var latlngDepart = new google.maps.LatLng(infos_itineraire['lieu_depart'].geometry.location.lat(), infos_itineraire['lieu_depart'].geometry.location.lng());
-		itinerairePosition = carte.traceItineraire({
-			latLngDepart : latlngPosition,
-			latLngArrivee : latlngDepart,
-			pointsDePassage : null,
-			type : 'current_position',
-			callback : null
-		});
-	}
-}
-
 
 /* Source originale : http://goo.gl/bWiu72 */
 /* Retourne la distance en Km */

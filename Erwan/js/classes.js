@@ -50,6 +50,7 @@ var Carte = function() {
 	};
 
 	_this.tracerItineraires = function(params){
+		console.log(params);
 		if(typeof(params.trajets[params.key])!='undefined'){
 	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
 	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
@@ -166,7 +167,7 @@ var Carte = function() {
 	    }
 
 	    var infowindow = null;
-	    if(typeof(params.infoWindow)=='object' && params.infoWindow!=null){
+	    if(typeof(params.infoWindow)=='object'){
 	    	infowindow = _this.ajouterInfoWindow({
 	    		marker : marker,
 	    		infoWindow : params.infoWindow
@@ -192,22 +193,20 @@ var Carte = function() {
 
 	_this.ajouterInfoWindow = function(params){
 
-		var styleInfoWindow = _this.preferencesInfoWindow.style;
-
 		var infowindow = new InfoBox({
 			content: params.infoWindow.content,
 			disableAutoPan: false,
 			maxWidth: 0,
 			//pixelOffset: new google.maps.Size(-140, 0),
 			zIndex: null,
-			boxStyle: styleInfoWindow,
+			boxStyle: _this.preferencesInfoWindow.style,
 			//closeBoxMargin: "12px 4px 2px 2px",
 			closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
 			infoBoxClearance: new google.maps.Size(1, 1)
 	    });
 
 	    google.maps.event.addListener(params.marker, 'click', function() {
-			infowindow.open(_this,params.marker);
+			infowindow.open(_this.carte,params.marker);
 		});
 
 		return infowindow;
@@ -218,7 +217,7 @@ var Carte = function() {
 			for(key_m in _this.markers){
 				var current = _this.markers[key_m];
 				if((typeof(params.type)!='undefined' && typeof(current.type)!='undefined' && current.type==params.type) || typeof(params.type)=='undefined' || params.type=='all'){
-					carte.supprimerMarker({
+					_this.supprimerMarker({
 						marker : current.marker
 					});
 				}
@@ -227,7 +226,7 @@ var Carte = function() {
 			for(key_i in _this.itineraires){
 				var current = _this.itineraires[key_i];
 				if((typeof(params.type)!='undefined' && typeof(current.type)!='undefined' && current.type==params.type) || typeof(params.type)=='undefined' || params.type=='all'){
-					carte.supprimerItineraire({itineraire : current.itineraire});
+					_this.supprimerItineraire({itineraire : current.itineraire});
 				}
 			}
 			if(typeof(params.callback)=='function'){
