@@ -117,14 +117,45 @@
 	<title>Test uploads</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <style type="text/css">
+	    .conteneur_progress_bar{
+			border: 1px solid #0099CC;
+			padding: 1px; 
+			position:relative;
+			width:400px;
+			border-radius: 3px;
+			margin: 10px;
+			display:none;
+			text-align:left;
+		}
+		.progress_bar{
+			height:20px;
+			border-radius: 3px;
+			background-color: #003333;
+			width:1%;
+		}
+		.progress_value{
+			top:3px;
+			left:50%;
+			position:absolute;
+			display:inline-block;
+			color: #000000;
+		}
+    </style>
 </head>
 <body>
 
-	<p>Photo</p>
-	<form enctype="multipart/form-data" action="upload_photos_videos.php" method="post">
-		<input type="file" name="imageFile" capture="camera" accept="image/*" id="cameraInput">
-		<input type="submit" value="Upload">
-	</form>
+	<div id="form_photo">
+		<p>Photo</p>
+		<form enctype="multipart/form-data" action="upload_photos_videos.php" method="post">
+			<input type="file" name="imageFile" capture="camera" accept="image/*" id="cameraInput">
+			<input type="submit" value="Upload">
+		</form>
+		<div class="conteneur_progress_bar">
+			<div class="progress_bar"></div>
+			<div class="progress_value">0%</div >
+		</div>
+	</div>
 
 
 	<p>Vidéo</p>
@@ -132,5 +163,9 @@
 	  <input type="file" name="media" accept="video/*" capture />
 	  <input type="submit" value="Upload">
 	</form>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="js/jquery.form.js"></script>
+	<script type="text/javascript" src="js/upload_photos_videos.js"></script>
 </body>
 </html>
