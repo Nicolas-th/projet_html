@@ -1,18 +1,65 @@
 <?php
-	session_start();
-	if (isset($_FILES["media"]) && $_FILES["media"]["error"] == 0){
-		$uploaddir = '/var/www/illio.fr/web/projet_html/tests_erwan/uploads/';
-		$uploadfile = $uploaddir . basename($_FILES['media']['name']);
 
-		if (move_uploaded_file($_FILES['media']['tmp_name'], $uploadfile)) {
-			$_SESSION['upload_flickr'] = $uploadfile;
-			$_SESSION['upload_twitter'] = $uploadfile;
-			//$_SESSION['upload_twitter'] = 'http://www.find-id-out.fr/tests_erwan/uploads/'.basename($_FILES['media']['name']);
-		} else {
-		    echo('Une erreur s\'est produite. Veuillez recommencer.');
-		   	//print_r($_FILES);
-		}
+	session_start();
+
+	require_once('includes/config.inc.php');
+	require_once('includes/functions.inc.php');
+
+	if (isset($_FILES['imageFile']) && $_FILES["imageFile"]["error"] == 0){
+
+		$destinationDirectory   = '/var/www/illio.fr/web/projet_html/tests_erwan/uploads/';
+		$imageMaxSize       	= 500;
+		$quality           		= 90;
+
+		$imageName      = str_replace(' ','-',strtolower($_FILES['imageFile']['name']));
+	    $imageSize      = $_FILES['imageFile']['size'];
+	    $tempImage      = $_FILES['imageFile']['tmp_name'];
+	    $imageType      = $_FILES['imageFile']['type'];
+
+	    switch(strtolower($imageType)){
+	        case 'image/png':
+	            $createdImage =  imagecreatefrompng($_FILES['imageFile']['tmp_name']);
+	            $createdImage = imagetranstowhite($createdImage);
+	            break;
+	        case 'image/gif':
+	            $createdImage =  imagecreatefromgif($_FILES['imageFile']['tmp_name']);
+	            break;
+	        case 'image/jpeg':
+	        	$createdImage =  imagecreatefromjpeg($_FILES['imageFile']['tmp_name']);
+	            break;
+	        case 'image/pjpeg':
+	            $createdImage = imagecreatefromjpeg($_FILES['imageFile']['tmp_name']);
+	            break;
+	        default:
+	            $erreur = 'Format de fichier non supporté !';
+	    }
+
+	    if(!isset($erreur)){
+
+	    	list($currentWidth,$currentHeight) = getimagesize($tempImage);
+
+	    	$newImageName = 'temp.jpeg';
+		    $destNewImage = $destinationDirectory.$newImageName;
+
+		    if(resizeImage($currentWidth,$currentHeight,$imageMaxSize,$destNewImage,$createdImage,$quality,'image/jpeg')){
+				echo('OK');
+		    }else{
+		        $erreur = 'Resize Error';
+		    }
+
+	    }
+
+	    if(!isset($erreur)){
+	    	$_SESSION['upload_flickr'] = $destNewImage;
+			$_SESSION['upload_twitter'] = $destNewImage;
+	    }else{
+	    	echo($erreur);
+	    }
 	}
+
+
+	/* Réseaux sociaux */
+
 	if(isset($_SESSION['upload_flickr'])){
 		require_once('lib/flickr/phpFlickr.php');
 		$flickr = new phpFlickr(FLICKR_APP_KEY, FLICKR_APP_KEY_SECRET);
@@ -32,21 +79,23 @@
 			//exit();
 		}
 	}
+
 	if(isset($_SESSION['upload_twitter'])){
 
 		require_once('lib/tmhOAuth/tmhOAuth.php');
 
 		$connection = new tmhOAuth(array(
-			'consumer_key' => TWITTER_ACCESS_TOKEN,
-			'consumer_secret' => TWITTER_ACCESS_TOKEN_SECRET,
-			'user_token' => TWITTER_CONSUMER_KEY,
-			'user_secret' => TWITTER_CONSUMER_KEY_SECRET
+			'consumer_key' => TWITTER_CONSUMER_KEY,
+			'consumer_secret' => TWITTER_CONSUMER_KEY_SECRET,
+			'user_token' => TWITTER_ACCESS_TOKEN,
+			'user_secret' => TWITTER_ACCESS_TOKEN_SECRET
 		));
+
 
 		$response_code = $connection->request( 'POST','https://api.twitter.com/1.1/statuses/update_with_media.json',
 	       array(
 	            'media[]'  => "@{$_SESSION['upload_twitter']};type=image/jpeg;filename={$_SESSION['upload_twitter']}",
-	            'status'   => 'test image',
+	            'status'   => 'test3 image',
 	       ),
 	        true,
 	        true
@@ -72,8 +121,8 @@
 <body>
 
 	<p>Photo</p>
-	<form enctype="multipart/form-data" action="upload_photos_videos_new.php" method="post">
-		<input type="file" name="media" capture="camera" accept="image/*" id="cameraInput">
+	<form enctype="multipart/form-data" action="upload_photos_videos.php" method="post">
+		<input type="file" name="imageFile" capture="camera" accept="image/*" id="cameraInput">
 		<input type="submit" value="Upload">
 	</form>
 
