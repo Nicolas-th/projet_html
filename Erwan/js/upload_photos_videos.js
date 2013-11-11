@@ -8,6 +8,7 @@ $(document).ready(function() {
 
     $(myform).ajaxForm({
         beforeSend: function() {
+            $('.response').remove();
             submitbutton.attr('disabled', '');
             statustxt.empty();
             progressbox.slideDown(); 
@@ -24,9 +25,14 @@ $(document).ready(function() {
                 }
             },
         complete: function(response) {
-            myform.resetForm();
-            submitbutton.removeAttr('disabled');
-            progressbox.slideUp();
+            if(response.status=='200'){
+                progressbox.after('<p class="response">'+response.responseText+'</p>');
+                myform.resetForm();
+                submitbutton.removeAttr('disabled');
+                progressbox.slideUp();
+            }else{
+                progressbox.after('<p class="response">'+response.responseText+'</p>');
+            }
         }
     });
 });

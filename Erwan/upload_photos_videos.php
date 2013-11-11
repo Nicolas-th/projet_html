@@ -8,6 +8,7 @@
 	if (isset($_FILES['imageFile']) && $_FILES["imageFile"]["error"] == 0){
 
 		$destinationDirectory   = '/var/www/illio.fr/web/projet_html/tests_erwan/uploads/';
+		$destinationURL   		= 'http://www.find-it-out.fr/tests_erwan/uploads/';
 		$imageMaxSize       	= 500;
 		$quality           		= 90;
 
@@ -42,7 +43,7 @@
 		    $destNewImage = $destinationDirectory.$newImageName;
 
 		    if(resizeImage($currentWidth,$currentHeight,$imageMaxSize,$destNewImage,$createdImage,$quality,'image/jpeg')){
-				echo('OK');
+				//echo('OK');
 		    }else{
 		        $erreur = 'Resize Error';
 		    }
@@ -52,6 +53,7 @@
 	    if(!isset($erreur)){
 	    	$_SESSION['upload_flickr'] = $destNewImage;
 			$_SESSION['upload_twitter'] = $destNewImage;
+			$_SESSION['upload_facebook'] = $destinationURL.$newImageName;
 	    }else{
 	    	echo($erreur);
 	    }
@@ -109,6 +111,67 @@
 
 		unset($_SESSION['upload_twitter']);
 	}
+
+	if(isset($_SESSION['upload_facebook'])){
+		require_once('lib/facebook/facebook.php');
+		try{
+			$facebook = new Facebook(array(
+				'appId'  => FACEBOOK_APP_KEY,
+				'secret' => FACEBOOK_APP_KEY_SECRET,
+				'cookie' => true,
+			));
+
+			$attachment = array(
+				'access_token' => FACEBOOK_ACCESS_TOKEN,
+				'message' => 'User123 a posté une nouvelle photo !',
+				'name' => 'Nom du lieu',
+				'caption' => 'Découvrez la photo de User123.',
+				'link' => 'http://www.find-it-out.fr',
+				'description' => 'Description du lieu...',
+				'picture' => $_SESSION['upload_facebook'],
+				'actions' => array(
+					array('name' => 'Découvrir le lieu', 'link' => 'http://www.find-it-out.fr')
+				)
+			);
+
+			$result = $facebook->api('/'.FACEBOOK_PAGE_ID.'/feed/', 'post', $attachment);
+
+			echo('<br/>Statut Facebook bien envoyé : <a href="https://www.facebook.com/FindItOutApp" target="_blank">Voir</a>');
+
+			unset($_SESSION['upload_facebook']);
+
+			/*$user = $facebook->getUser();
+			if($user){
+			  try{
+			    $accounts = $facebook->api('/me/accounts');
+			    echo '<pre>';
+			    var_dump($accounts);
+			  }
+			  catch (FacebookApiException $e){
+			    var_dump($e);
+			    $user = null;
+			  }
+			}
+
+			if($user){
+			  $logoutUrl = $facebook->getLogoutUrl();
+			  echo '<a href="'.$logoutUrl.'">Log Out</a>';
+			}
+			else{
+			  $login_params = array(
+			    'scope' => 'manage_pages,publish_stream,offline_access' 
+			  );
+			  $loginUrl = $facebook->getLoginUrl($login_params);
+			  echo '<a href="'.$loginUrl.'">Login</a>';
+			}*/
+
+		}
+		catch(FacebookApiException $e){
+			print_r($e);
+		}
+	}
+
+	if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')){
 
 ?>
 
@@ -169,3 +232,7 @@
 	<script type="text/javascript" src="js/upload_photos_videos.js"></script>
 </body>
 </html>
+
+<?php
+	}
+?>
