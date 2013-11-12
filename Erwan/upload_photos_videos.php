@@ -171,6 +171,47 @@
 		}
 	}
 
+	if (isset($_FILES['videoFile']) && $_FILES["videoFile"]["error"] == 0){
+
+		unset($erreur);
+
+		$destinationDirectory   = '/var/www/illio.fr/web/projet_html/tests_erwan/uploads/';
+		$destinationURL   		= 'http://www.find-it-out.fr/tests_erwan/uploads/';
+
+		$typesValides = ['video/webm','video/mp4','video/ogg'];
+
+		$videoName      = str_replace(' ','-',strtolower($_FILES['videoFile']['name']));
+	    $videoSize      = filesize($_FILES['videoFile']['tmp_name']);
+	    $tempVideo      = $_FILES['videoFile']['tmp_name'];
+	    $videoType      = $_FILES['videoFile']['type'];
+
+	    $videoName = preg_replace('/([^.a-z0-9]+)/i', '-', $videoName);
+
+	    if(intval($videoSize)<10485760){ // 10Mo
+
+		    if(in_array($videoType, $typesValides)){
+
+		    	if(move_uploaded_file($_FILES['videoFile']['tmp_name'], $destinationDirectory.$videoName)){
+		    		echo('Votre vidéo a bien été ajoutée.');
+		    		echo('<br/><video controls src="'.$destinationURL.$videoName.'"></video>');
+		    	}else{
+		    		$erreur = 'Erreur lors de l\'upload de votre vidéo.';
+		    	}
+
+		    }else{
+		    	$erreur = 'Le format de vidéo n\'est pas accepté. Votre vidéo doit être encodée aux formats .webm .mp4 ou .ogg';
+		    }
+
+		}else{
+			$tailleMo = round($videoSize/1024/1024,1);
+			$erreur = 'La taille de la vidéo ne doit pas dépasser 10Mo. Le fichier que vous avez envoyé fait '.$tailleMo.'Mo.';
+		}
+
+	    if(isset($erreur)){
+	    	echo($erreur);
+	    }
+	}
+
 	if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')){
 
 ?>
@@ -211,7 +252,7 @@
 	<div id="form_photo">
 		<p>Photo</p>
 		<form enctype="multipart/form-data" action="upload_photos_videos.php" method="post">
-			<input type="file" name="imageFile" capture="camera" accept="image/*" id="cameraInput">
+			<input type="file" name="imageFile" accept="image/*" id="cameraInput">
 			<input type="submit" value="Upload">
 		</form>
 		<div class="conteneur_progress_bar">
@@ -220,12 +261,17 @@
 		</div>
 	</div>
 
-
-	<p>Vidéo</p>
-	<form enctype="multipart/form-data" action="upload_photos_videos.php" method="post">
-	  <input type="file" name="media" accept="video/*" capture />
-	  <input type="submit" value="Upload">
-	</form>
+	<div id="form_video">
+		<p>Vidéo</p>
+		<form enctype="multipart/form-data" action="upload_photos_videos.php" method="post">
+		  <input type="file" name="videoFile" accept="video/*" />
+		  <input type="submit" value="Upload">
+		</form>
+		<div class="conteneur_progress_bar">
+			<div class="progress_bar"></div>
+			<div class="progress_value">0%</div >
+		</div>
+	</div>
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="js/jquery.form.js"></script>

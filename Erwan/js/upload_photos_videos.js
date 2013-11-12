@@ -1,12 +1,21 @@
 $(document).ready(function() {
-    var progressbox     = $('#form_photo .conteneur_progress_bar');
-    var progressbar     = $('#form_photo .progress_bar');
-    var statustxt       = $('#form_photo .progress_value');
-    var submitbutton    = $('#form_photo input[type="submit"]');
-    var myform      = $('#form_photo form');
+
+    uploadFile('#form_photo');
+    uploadFile('#form_video');
+
+});
+
+
+function uploadFile(conteneurFormSelector){
+
+    var form            = $(conteneurFormSelector).children('form').first();
+    var progressbox     = $(conteneurFormSelector).children('.conteneur_progress_bar').first();
+    var progressbar     = progressbox.children('.progress_bar').first();
+    var statustxt       = progressbox.children('.progress_value').first();
+    var submitbutton    = $(conteneurFormSelector).children('input[type="submit"]').first();
     var completed       = '0%';
 
-    $(myform).ajaxForm({
+    $(form).ajaxForm({
         beforeSend: function() {
             $('.response').remove();
             submitbutton.attr('disabled', '');
@@ -19,15 +28,14 @@ $(document).ready(function() {
         uploadProgress: function(event, position, total, percentComplete) {
             progressbar.width(percentComplete + '%')
             statustxt.html(percentComplete + '%')
-            if(percentComplete>50)
-                {
+            if(percentComplete>50){
                     statustxt.css('color','#fff');
-                }
-            },
+            }
+        },
         complete: function(response) {
             if(response.status=='200'){
                 progressbox.after('<p class="response">'+response.responseText+'</p>');
-                myform.resetForm();
+                form.resetForm();
                 submitbutton.removeAttr('disabled');
                 progressbox.slideUp();
             }else{
@@ -35,4 +43,4 @@ $(document).ready(function() {
             }
         }
     });
-});
+}
