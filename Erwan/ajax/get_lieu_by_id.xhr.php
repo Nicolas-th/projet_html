@@ -11,7 +11,7 @@
 		$id = intval($_POST['id_lieu']);
 
 		$sql = new SQL();
-		$sql->prepare('SELECT * FROM LIEUX WHERE id=:id');
+		$sql->prepare('SELECT * FROM places WHERE id=:id');
 		$sql->bindValue('id',$id,PDO::PARAM_INT);
 
 		$infos_lieu = $sql->execute(true);

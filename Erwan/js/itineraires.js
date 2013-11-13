@@ -95,7 +95,7 @@ carte.placerPoints = function(params){
 
 		        form_lieux+='<li>';
 		        form_lieux+=  '<input type="checkbox" name="lieux_itineraire" id="'+lieu.id+'" value="'+lieu.id+'">';
-		        form_lieux+=  '<label for="'+lieu.id+'">'+lieu.nom+'</label>';
+		        form_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
 		        form_lieux+='</li>';
 
 		      }
@@ -158,7 +158,9 @@ carte.placerPoints = function(params){
 				                  success: function(data, textStatus, jqXHR){
 				                    if(data.code=='200'){
 				                        infos_lieu = data.infos;
-				                        infos_lieu['categorie'] = infos_lieu['id_categorie']; // Temporairement
+				                        infos_lieu['categorie'] = infos_lieu['categories_id'];
+				                        infos_lieu['adresse'] = infos_lieu['adress'];
+				                        infos_lieu['ville'] = infos_lieu['city'];
 				                        infos_lieu['type'] = 'lieu';
 				                    }
 				                  }
@@ -185,7 +187,7 @@ carte.placerPoints = function(params){
 									var current_trajet = carte.itineraires[key];
 									if(current_trajet.arrivee.type=='lieu'){	// Les bornes ne sont pas des lieux de visites (d'où la conservation des lieux uniquement)
 										form_itineraire+='<li>';
-										form_itineraire+='	<p class="nom_lieu">'+current_trajet.arrivee.nom+'</p>';
+										form_itineraire+='	<p class="nom_lieu">'+current_trajet.arrivee.name+'</p>';
 										form_itineraire+='</li>';
 									}
 								}
@@ -278,7 +280,7 @@ carte.placerPoints = function(params){
 													        
 													        carte.map.ajouterMarker({
 																position : latLng_arrivee,
-													        	nom : current_itineraire.arrivee.nom,
+													        	nom : current_itineraire.arrivee.name,
 													        	categorie : current_itineraire.arrivee.categorie,
 													        	type : 'current_itineraire'
 													        });
