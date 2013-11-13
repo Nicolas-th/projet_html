@@ -4,6 +4,7 @@
 
 	require_once('includes/config.inc.php');
 	require_once('includes/functions.inc.php');
+	require_once('classes/sql.class.php');
 
 	if (isset($_FILES['imageFile']) && $_FILES["imageFile"]["error"] == 0){
 
@@ -41,6 +42,7 @@
 
 	    	$newImageName = 'temp.jpeg';
 		    $destNewImage = $destinationDirectory.$newImageName;
+		    $urlNewImage = $destinationURL.$newImageName;
 
 		    if(resizeImage($currentWidth,$currentHeight,$imageMaxSize,$destNewImage,$createdImage,$quality,'image/jpeg')){
 				//echo('OK');
@@ -51,125 +53,63 @@
 	    }
 
 	    if(!isset($erreur)){
-	    	$_SESSION['upload_flickr'] = $destNewImage;
-			$_SESSION['upload_twitter'] = $destNewImage;
-			$_SESSION['upload_facebook'] = $destinationURL.$newImageName;
+	    	$sql = new SQL();
+
+	    	/* Flickr */
+
+	    	$flickr = array(
+	    		'type' => 'uploadPhoto',
+	    		'attachment' => json_encode(array('path_image' => $destNewImage, 'title' => 'test', 'description' => 'Test', 'keywords' => 'test1, test2'))
+	    	);
+
+	    	$sql->prepare('INSERT INTO api_flickr (type,attachment) VALUES (:type,:attachment)');
+			$sql->bindValue('type',$flickr['type'],PDO::PARAM_STR);
+			$sql->bindValue('attachment',$flickr['attachment'],PDO::PARAM_STR);
+			$sql->execute();
+
+
+			/* Twitter */
+
+			$twitter = array(
+	    		'type' => 'https://api.twitter.com/1.1/statuses/update_with_media.json',
+	    		'attachment' => json_encode(array(
+	    			'media[]'  => '@{'.$destNewImage.'};type=image/jpeg;filename={'.$destNewImage.'}',
+	            	'status'   => '#dev',
+	    		))
+	    	);
+
+			$sql->prepare('INSERT INTO api_twitter (type,attachment) VALUES (:type,:attachment)');
+			$sql->bindValue('type',$twitter['type'],PDO::PARAM_STR);
+			$sql->bindValue('attachment',$twitter['attachment'],PDO::PARAM_STR);
+			$sql->execute();
+
+			/* Facebook */
+
+			$facebook = array(
+	    		'type' => '/'.FACEBOOK_PAGE_ID.'/feed/',
+	    		'attachment' => json_encode(array(
+	    			'access_token' => FACEBOOK_ACCESS_TOKEN,
+					'message' => 'User123 a posté une nouvelle photo !',
+					'name' => 'Nom du lieu',
+					'caption' => 'Découvrez la photo de User123.',
+					'link' => 'http://www.find-it-out.fr',
+					'description' => 'Description du lieu...',
+					'picture' => $urlNewImage,
+					'actions' => array(
+						array('name' => 'Découvrir le lieu', 'link' => 'http://www.find-it-out.fr')
+					)
+	    		))
+	    	);
+
+			$sql->prepare('INSERT INTO api_facebook (type,attachment) VALUES (:type,:attachment)');
+			$sql->bindValue('type',$facebook['type'],PDO::PARAM_STR);
+			$sql->bindValue('attachment',$facebook['attachment'],PDO::PARAM_STR);
+			$sql->execute();
 	    }else{
 	    	echo($erreur);
 	    }
 	}
 
-
-	/* Réseaux sociaux */
-
-	if(isset($_SESSION['upload_flickr'])){
-		require_once('lib/flickr/phpFlickr.php');
-		$flickr = new phpFlickr(FLICKR_APP_KEY, FLICKR_APP_KEY_SECRET);
-		$flickr->setToken(FLICKR_USER_TOKEN);
-
-		if(empty($_GET['frob'])) {
-			$flickr->auth('write');
-
-			$result = $flickr->sync_upload($_SESSION['upload_flickr'], 'test', 'Test', 'test1, test2');
-			unset($_SESSION['upload_flickr']);
-			//var_dump($result);
-			echo('Votre photo a bien été sauvegardé ! <a href="http://www.flickr.com/photos/108169855@N05/" target="_blank">Flickr</a>');
-		}
-		else {
-			//$flickr->auth_getToken($_GET['frob']);
-			//header('Location: upload_photos_videos.php');
-			//exit();
-		}
-	}
-
-	if(isset($_SESSION['upload_twitter'])){
-
-		require_once('lib/tmhOAuth/tmhOAuth.php');
-
-		$connection = new tmhOAuth(array(
-			'consumer_key' => TWITTER_CONSUMER_KEY,
-			'consumer_secret' => TWITTER_CONSUMER_KEY_SECRET,
-			'user_token' => TWITTER_ACCESS_TOKEN,
-			'user_secret' => TWITTER_ACCESS_TOKEN_SECRET
-		));
-
-
-		$response_code = $connection->request( 'POST','https://api.twitter.com/1.1/statuses/update_with_media.json',
-	       array(
-	            'media[]'  => "@{$_SESSION['upload_twitter']};type=image/jpeg;filename={$_SESSION['upload_twitter']}",
-	            'status'   => 'test3 image',
-	       ),
-	        true,
-	        true
-	    );
-		 
-		if ($response_code == 200) {
-			echo('<br/>Tweet bien envoyé : <a href="https://twitter.com/Find_It_Out" target="_blank">Voir</a>');
-		} else {
-			echo('Erreur :'.$response_code.'');
-		}
-
-		unset($_SESSION['upload_twitter']);
-	}
-
-	if(isset($_SESSION['upload_facebook'])){
-		require_once('lib/facebook/facebook.php');
-		try{
-			$facebook = new Facebook(array(
-				'appId'  => FACEBOOK_APP_KEY,
-				'secret' => FACEBOOK_APP_KEY_SECRET,
-				'cookie' => true,
-			));
-
-			$attachment = array(
-				'access_token' => FACEBOOK_ACCESS_TOKEN,
-				'message' => 'User123 a posté une nouvelle photo !',
-				'name' => 'Nom du lieu',
-				'caption' => 'Découvrez la photo de User123.',
-				'link' => 'http://www.find-it-out.fr',
-				'description' => 'Description du lieu...',
-				'picture' => $_SESSION['upload_facebook'],
-				'actions' => array(
-					array('name' => 'Découvrir le lieu', 'link' => 'http://www.find-it-out.fr')
-				)
-			);
-
-			$result = $facebook->api('/'.FACEBOOK_PAGE_ID.'/feed/', 'post', $attachment);
-
-			echo('<br/>Statut Facebook bien envoyé : <a href="https://www.facebook.com/FindItOutApp" target="_blank">Voir</a>');
-
-			unset($_SESSION['upload_facebook']);
-
-			/*$user = $facebook->getUser();
-			if($user){
-			  try{
-			    $accounts = $facebook->api('/me/accounts');
-			    echo '<pre>';
-			    var_dump($accounts);
-			  }
-			  catch (FacebookApiException $e){
-			    var_dump($e);
-			    $user = null;
-			  }
-			}
-
-			if($user){
-			  $logoutUrl = $facebook->getLogoutUrl();
-			  echo '<a href="'.$logoutUrl.'">Log Out</a>';
-			}
-			else{
-			  $login_params = array(
-			    'scope' => 'manage_pages,publish_stream,offline_access' 
-			  );
-			  $loginUrl = $facebook->getLoginUrl($login_params);
-			  echo '<a href="'.$loginUrl.'">Login</a>';
-			}*/
-
-		}
-		catch(FacebookApiException $e){
-			print_r($e);
-		}
-	}
 
 	if (isset($_FILES['videoFile']) && $_FILES["videoFile"]["error"] == 0){
 
