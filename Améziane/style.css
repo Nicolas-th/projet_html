@@ -127,6 +127,7 @@ h1#intro{
 	font-size: 16px;
 	color:#ffffff;
 	padding-right: 20px;
+	text-align:center;
 }
 
 #inscription{
@@ -275,7 +276,7 @@ h1#last{
 
 #texte-laptop h2{
 	margin-top:90px;
-	margin-bottom: 48px;
+	margin-bottom: 38px;
 }
 
 #texte-mobile{
