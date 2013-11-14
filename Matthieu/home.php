@@ -41,7 +41,7 @@ include('edit-profile.php');
 	if($user) { ?>
 		<img src="<?= $profile['avatar']?>" class="avatar" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } else { ?>
-		<img src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
+		<img src="<?= $src_avatar.$profile['avatar']?>" class="avatar" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } ?>
 	<p><?= $profile['name'].' '.$profile['surname']?></p>
 	<h3>Lieux ajoutés <?php if($count_profile_places!=0) { echo ("(".$count_profile_places.")"); }; ?></h3>
@@ -92,7 +92,7 @@ include('edit-profile.php');
 	if($user) { ?>
 		<img class="avatar" src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } else { ?>
-		<img src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
+		<img class="avatar" src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } ?>
 	<p><?= $profile['name'].' '.$profile['surname']?></p>
 	

@@ -67,7 +67,7 @@ function uploadFile(conteneurFormSelector){
 	                form.resetForm();
 	                submitbutton.removeAttr('disabled');
 	                progressbox.slideUp();
-	                //$( ".avatar" ).src = $( ".avatar" ).src + '#';
+	                $(".avatar").attr('src',$(".avatar").attr('src')+'#');
 	               
 	            }else{
 	                progressbox.after('<p class="response">'+response.responseText+'</p>');
