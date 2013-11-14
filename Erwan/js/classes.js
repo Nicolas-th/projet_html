@@ -183,6 +183,11 @@ var Carte = function() {
 	        });
 	    }else{
 	    	/* Lorsque le chargement des itinéraires est terminé */
+	    	var bounds = new google.maps.LatLngBounds();
+    		for(key in _this.markers){
+    			bounds.extend(_this.markers[key].marker.position);
+    		}
+    		_this.carte.fitBounds(bounds);
 	    	params.finished.call(this);
 	    }
 	};
