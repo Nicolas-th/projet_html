@@ -61,6 +61,14 @@ var carte = {
 	}
 };
 
+carte.lieuxChoisis = function(){
+	var lieux_choisis = [];
+     $('#choix_lieux .ajouter_lieu.actif').each(function() {
+        lieux_choisis.push($(this).parent('li').attr('id'));
+     });
+     return lieux_choisis;
+}
+
 carte.placerPoints = function(params){
 	var defauts = {
 		directionsServiceResponse : null,
@@ -81,37 +89,29 @@ carte.placerPoints = function(params){
 		  dataType: 'json',
 		  success: function(data, textStatus, jqXHR){
 		    if(data.code=='200'){
-		      //console.log(data.lieux);
 
-				var form_lieux = '<form id="form_lieux">';
-				form_lieux += '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
-				form_lieux += '	<ul class="liste_lieux">';
+				var liste_lieux = '<div id="liste_lieux">';
+				liste_lieux += '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
+				liste_lieux += '	<ul class="liste_lieux">';
 
 				for(key in data.lieux) {
 				lieu = data.lieux[key];
-				//console.log(lieu);
 
-				form_lieux+='<li id="'+lieu.id+'">';
-				//form_lieux+=  '<input type="checkbox" name="lieux_itineraire" id="'+lieu.id+'" value="'+lieu.id+'">';
-				form_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
-				form_lieux+=  '<a href="#" class="ajouter_lieu">+</a>';
-				form_lieux+=  '<a href="#" class="voir_lieu">Voir</a>';
-				form_lieux+='</li>';
+				liste_lieux+='<li id="'+lieu.id+'">';
+				liste_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
+				liste_lieux+=  '<a href="#" class="ajouter_lieu">+</a>';
+				liste_lieux+=  '<a href="#" class="voir_lieu">Voir</a>';
+				liste_lieux+='</li>';
 
 				}
 
-				form_lieux+='	</ul>';
-				//form_lieux+='<input type="submit" value="Valider" id="validation_lieux">';
-				form_lieux+='</form>';
+				liste_lieux+='	</ul>';
+				liste_lieux+='</div>';
 
-				$('#choix_lieux').html(form_lieux);
+				$('#choix_lieux').html(liste_lieux);
 
-
-				var form_itineraire = '<form id="form_current_itineraire">';
-				form_itineraire+='	<input type="submit" value="Démarrer l\'itinéraire">';
-				form_itineraire+='</form>';
-
-				$('#form_lieux').append(form_itineraire);
+				$('#liste_lieux').append('<button id="demarrer_itineraire">Démarrer l\'itinéraire</button>');
+				$('#liste_lieux').append('<button id="enregistrer_itineraire">Enregistrer l\'itinéraire</button>');
 
 
 				carte.tracerItineraire(params);
@@ -129,7 +129,7 @@ carte.placerPoints = function(params){
 				});
 
 				/* On démarrer le guidage et l'itineraire */
-				$('#form_current_itineraire').on('submit',function(evt){
+				$('#demarrer_itineraire').on('click',function(evt){
 					evt.preventDefault();
 
 					carte.map.nettoyer({ 
@@ -224,6 +224,36 @@ carte.placerPoints = function(params){
 					return false;
 				});
 
+				$('#enregistrer_itineraire').on('click',function(evt){
+					evt.preventDefault();
+					var lieux_choisis = JSON.stringify(carte.lieuxChoisis());
+					var depart = JSON.stringify({
+						latitude : carte.points.depart.geometry.location.lat(),
+						longitude : carte.points.depart.geometry.location.lng()
+					});
+					var arrivee = JSON.stringify({
+						latitude : carte.points.arrivee.geometry.location.lat(),
+						longitude : carte.points.arrivee.geometry.location.lng()
+					});
+    				$.ajax({
+	                  type: "POST",
+	                  url: 'ajax/save_itineraire.xhr.php',
+	                  data: { 
+	                  	'depart' : depart,
+	                  	'arrivee' : arrivee,
+	                  	'lieux' : lieux_choisis
+	                  },
+	                  async:false, // Important car bloque le script
+	                  success: function(data, textStatus, jqXHR){
+	                  	if(data=='connexion'){
+	                  		alert('Vous devez être connecté.');
+	                  	}else{
+	                    	alert('itinéraire enregistré');
+	                    }
+	                  }
+	                });
+				});
+
 		    }else{
 		      console.log('Erreur '+data.code);
 		    }
@@ -233,11 +263,7 @@ carte.placerPoints = function(params){
 }
 
 carte.tracerItineraire = function(params){
-    var lieux_choisis = [];
-    
-     $('#choix_lieux .ajouter_lieu.actif').each(function() {
-        lieux_choisis.push($(this).parent('li').attr('id'));
-     });
+    var lieux_choisis = carte.lieuxChoisis();
 
 	carte.map.nettoyer({
 		type : 'all',
