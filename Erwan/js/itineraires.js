@@ -239,8 +239,6 @@ carte.tracerItineraire = function(params){
         lieux_choisis.push($(this).parent('li').attr('id'));
      });
 
-     console.log(lieux_choisis);
-
 	carte.map.nettoyer({
 		type : 'all',
 		finished : function(){
@@ -313,7 +311,7 @@ $(function(){
 	 if(navigator.geolocation) {
 
 	 	carte.map = new Carte();
-		carte.map.initialisation({
+		carte.map.init({
 			element : document.getElementById('map')
 		});
 		carte.map.setStyleMap({
@@ -331,7 +329,8 @@ $(function(){
 
 
 	    $('#lieux_depart').keypress(function(){
-      		var autocomplete = new Autocompletion({ 
+      		var autocomplete = new Autocompletion();
+      		autocomplete.init({ 
       			inputText : '#lieux_depart',
       			divResultats : '#resultats_lieux_depart'
       		});
@@ -339,7 +338,8 @@ $(function(){
       	});
 
       	$('#lieux_arrive').keypress(function(){
-      		var autocomplete =  new Autocompletion({ 
+      		var autocomplete =  new Autocompletion();
+      		autocomplete.init({  
       			inputText : '#lieux_arrive',
       			divResultats : '#resultats_lieux_arrive'
       		});
