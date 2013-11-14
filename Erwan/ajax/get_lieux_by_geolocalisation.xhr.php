@@ -5,8 +5,9 @@
 	$retour['lieux'] = array();
 
 	if(isset($_POST['points'])){
-		define('CHEMIN_REQUIRES','../');
-		require_once(CHEMIN_REQUIRES.'includes/header.inc.php');
+		require_once('../includes/config.inc.php');
+		require_once('../classes/sql.class.php');
+		require_once('../includes/functions.inc.php');
 
 
 		$tab_lieux = explode(';',$_POST['points']);
@@ -21,7 +22,7 @@
 				$lng = floatval($infos_lieu[1]);
 
 				$sql = new SQL();
-				$sql->prepare('SELECT *,( 6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:lng)) + sin(radians(:lat)) * sin(radians(latitude)))) AS distance FROM LIEUX HAVING distance < 100 ORDER BY distance LIMIT 0 , 20');
+				$sql->prepare('SELECT *,( 6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:lng)) + sin(radians(:lat)) * sin(radians(latitude)))) AS distance FROM places HAVING distance < 100 ORDER BY distance LIMIT 0 , 20');
 				$sql->bindValue('lat',$lat,PDO::PARAM_STR);
 				$sql->bindValue('lng',$lng,PDO::PARAM_STR);
 

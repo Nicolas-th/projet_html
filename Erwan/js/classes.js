@@ -17,7 +17,14 @@ var Carte = function() {
 		style : {}
 	};
 
-	_this.initialisation = function(params){
+	/*
+	## init() ##
+			Paramètre attendu : objet
+				 {
+					element : String (selector CSS3)
+				 }
+	*/
+	_this.init = function(params){
 		var defauts = {
 			element : '#carte'
 		}
@@ -29,6 +36,13 @@ var Carte = function() {
 	    });
 	};
 
+	/*
+	## setStyleMap() ##
+			Paramètre attendu : objet
+				 {
+					style : Array (type StyledMapType)
+				 }
+	*/
 	_this.setStyleMap = function(params){
 		var defauts = {
 			style : {}
@@ -39,6 +53,13 @@ var Carte = function() {
 	    _this.carte.setMapTypeId('map_style');
 	};
 
+	/*
+	## setStyleInfoWindows() ##
+			Paramètre attendu : objet
+				 {
+					style : String
+				 }
+	*/
 	_this.setStyleInfoWindows = function(params){
 		var defauts = {
 			style : {}
@@ -48,6 +69,13 @@ var Carte = function() {
 		_this.preferencesInfoWindow.style = params.style;
 	};
 
+	/*
+	## setCenter() ##
+			Paramètre attendu : objet
+				 {
+					position : objet google.maps.LatLng
+				 }
+	*/
 	_this.setCenter = function(params){
 		var defauts = {
 			position : new google.maps.LatLng(48.851861,2.420284) // Hetic
@@ -57,10 +85,29 @@ var Carte = function() {
 		_this.carte.setCenter(params.position);
 	};
 
+	/*
+	## setMoyenTransport() ##
+			Paramètre attendu : objet
+				 {
+					moyenTransport : objet google.maps.DirectionsTravelMode
+				 }
+	*/
 	_this.setMoyenTransport = function(params){
+		var defauts = {
+			position : google.maps.DirectionsTravelMode.TRANSIT
+		}
+		params = $.extend(defauts, params);
+
 		_this.preferencesItineraire.moyenTransport = params.moyenTransport;
 	};
 
+	/*
+	## setOptimisationTrajet() ##
+			Paramètre attendu : objet
+				 {
+					optimisation : boolean
+				 }
+	*/
 	_this.setOptimisationTrajet = function(params){
 		var defauts = {
 			optimisation : true
@@ -70,6 +117,27 @@ var Carte = function() {
 		_this.preferencesItineraire.optimisationTrajet = params.optimisation;
 	};
 
+	/*
+	## tracerItineraires() ##
+			Paramètre attendu : objet
+				 {
+					trajets : [
+						depart : {
+							latitude : String,
+							longitude : String,
+							nom : String,
+							categorie : int
+						},
+						arrivee : {
+							latitude : String,
+							longitude : String,
+							nom : String,
+							categorie : int
+						}
+					],
+					key : int
+				 }
+	*/
 	_this.tracerItineraires = function(params){
 		var defauts = {
 			key : 0,
@@ -115,17 +183,34 @@ var Carte = function() {
 	        });
 	    }else{
 	    	/* Lorsque le chargement des itinéraires est terminé */
+	    	var bounds = new google.maps.LatLngBounds();
+    		for(key in _this.markers){
+    			bounds.extend(_this.markers[key].marker.position);
+    		}
+    		_this.carte.fitBounds(bounds);
 	    	params.finished.call(this);
 	    }
 	};
 
+	/*
+	## traceItineraire() ##
+			Paramètre attendu : objet
+				 {
+					points : {
+						depart : objet google.maps.LatLng
+						arrivee : objet google.maps.LatLng
+					},
+					type : String (optionnel : permet de nettoyer des groupes d'itinéraires et de points)
+					finished : function({directionsServiceResponse : objet (retour de directionsService.route)})
+				 }
+	*/
 	_this.traceItineraire = function(params){
 		var defauts = {
-			waypoints : [],
 			points : {
 				depart : null,
 				arrivee : null,
 			},
+			type : null,
 			finished : function(){}
 		}
 		params = $.extend(defauts, params);
@@ -133,8 +218,6 @@ var Carte = function() {
 		var request = {
 	        origin      : params.points.depart,
 	        destination : params.points.arrivee,
-	        waypoints : params.waypoints,
-	        optimizeWaypoints: _this.preferencesItineraire.optimisationTrajet,
 	        travelMode  : _this.preferencesItineraire.moyenTransport
 	    }
 	    var directionsService = new google.maps.DirectionsService();
@@ -149,9 +232,6 @@ var Carte = function() {
 	            directionsRenderer.setMap(_this.carte);
 	            directionsRenderer.setDirections(response);
 
-	            if(typeof(params.type)=='undefined'){
-			    	params.type = null;
-			    }
 			    _this.itineraires.push({itineraire : directionsRenderer, type : params.type});
 
             	params.finished.call(this,{
@@ -177,6 +257,13 @@ var Carte = function() {
 	    });
 	};
 
+	/*
+	## supprimerItineraire() ##
+			Paramètre attendu : objet
+				 {
+					itineraire : objet directionsRenderer
+				 }
+	*/
 	_this.supprimerItineraire = function(params){
 		var defauts = {
 			itineraire : null
@@ -187,10 +274,24 @@ var Carte = function() {
 		_this.itineraires = deleteValueFromArray(_this.itineraires,params.itineraire);
 	};
 
+	/*
+	## ajouterMarker() ##
+			Paramètre attendu : objet
+				 {
+				 	position : objet google.maps.LatLng
+					categorie : int,
+					nom : String,
+					infoWindow : (optionnel) {
+						content : String (content HTML)
+					}
+				 }
+	*/
 	_this.ajouterMarker = function(params){
 		var defauts = {
+			position : null,
 			categorie : 'defaut',
 			nom : '',
+			infowindow : null
 		}
 		params = $.extend(defauts, params);
 
@@ -205,8 +306,7 @@ var Carte = function() {
 	    });
 	    marker.setMap(_this.carte);
 
-	    var infowindow = null;
-	    if(typeof(params.infoWindow)=='object'){
+	    if(params.infoWindow!=null){
 	    	infowindow = _this.ajouterInfoWindow({
 	    		marker : marker,
 	    		infoWindow : params.infoWindow
@@ -216,11 +316,19 @@ var Carte = function() {
 	    _this.markers.push({
 	    	marker : marker,
 	    	type : params.type,
-	    	infowindow : infowindow
+	    	infowindow : params.infowindow
 	    });
 	    return marker;
 	};
 
+	/*
+	## changePositionMarker() ##
+			Paramètre attendu : objet
+				 {
+				 	marker : objet google.maps.Marker
+				 	position : objet google.maps.LatLng
+				 }
+	*/
 	_this.changePositionMarker = function(params){
 		var defauts = {
 			position : null
@@ -230,6 +338,13 @@ var Carte = function() {
 		params.marker.setPosition(params.position);
 	};
 
+	/*
+	## supprimerMarker() ##
+			Paramètre attendu : objet
+				 {
+				 	marker : objet google.maps.Marker
+				 }
+	*/
 	_this.supprimerMarker = function(params){
 		var defauts = {
 			marker : null
@@ -240,9 +355,18 @@ var Carte = function() {
 		_this.markers = deleteValueFromArray(_this.markers,params.marker);
 	};
 
+	/*
+	## ajouterInfoWindow() ##
+			Paramètre attendu : objet
+				 {
+				 	marker : objet google.maps.Marker
+				 	infoWindow : {
+				 		content : String (content HTML)
+				 	}
+				 }
+	*/
 	_this.ajouterInfoWindow = function(params){
 		var defauts = {
-			marker : null,
 			infoWindow : {
 				content : ''
 			}
@@ -268,6 +392,14 @@ var Carte = function() {
 		return infowindow;
 	};
 
+	/*
+	## nettoyer() ##
+			Paramètre attendu : objet
+				 {
+				 	type : (facultatif) String
+				 	finished : (facultatif) function
+				 }
+	*/
 	_this.nettoyer = function(params){
 		var defauts = {
 			type : null,
@@ -296,19 +428,33 @@ var Carte = function() {
 
 
 /**** Autocomplétion ****/
-var Autocompletion = function(params){
+var Autocompletion = function(){
 
 	var _this = this;
 	var defauts = {
 		inputText : '#autocomplete',
 		divResultats : '#resultats_autocompletion'
 	}
-	params = $.extend(defauts, params);
 
-	_this.inputText = $(params.inputText);
-	_this.divResultats = $(params.divResultats);
+	/*
+	## init() ##
+	Paramètre attendu : objet
+		 {
+		 	inputText : String (selector)
+		 	divResultats : String (selector)
+		 }
+	*/	
+	_this.init = function(params){
+		params = $.extend(defauts, params);
 
+		_this.inputText = $(params.inputText);
+		_this.divResultats = $(params.divResultats);
+	}
 
+	/*
+	## rechercher() ##
+			Paramètre attendu : aucun
+	*/
 	_this.rechercher = function(){
 		var lieuRecherche = _this.inputText.val();
 		var service = new google.maps.places.AutocompleteService();
@@ -319,6 +465,13 @@ var Autocompletion = function(params){
 	    });
 	},
 
+	/*
+	## afficherResultats() ##
+			Paramètre attendu : objet
+				 {
+				 	resultats : Array (résultatgoogle.maps.places.AutocompleteService)
+				 }
+	*/	
 	_this.afficherResultats = function(params){
 		var defauts = {
 			resultats : []
