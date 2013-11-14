@@ -1,13 +1,14 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
 require 'config/config.php'; 
-$idUser = $_GET['id'];
+//$idUser = $_GET['id'];
 
 /*-----------------------------------------------------------*/	
 /*------ MODIFICATIONS DES INFORMATION DE L'UTILISATEUR -----*/
 /*-----------------------------------------------------------*/	
 
-if (isset($_POST['submit_modify_profile'])) {
+if (isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email'])) {
+	$idUser = $_GET['id'];
 	$modify_name= $_POST['name'];
 	$modify_surname= $_POST['surname'];
 	$modify_email= $_POST['email'];
@@ -25,36 +26,72 @@ if (isset($_POST['submit_modify_profile'])) {
 /*-------- MODIFICATION DE L'AVATAR DE L'UTILISATEUR --------*/
 /*-----------------------------------------------------------*/	
 
-if( isset($_POST['submit_user_avatar']) ) 
-		{				
-		//DOSSIER OU SERA DEPLACE L'AVATAR
-		$avatar_dir = "media/avatar/" ; 
-		$tmp_file = $_FILES['avatar']['tmp_name'];
-		if( !is_uploaded_file($tmp_file) )
-		{
-			$error_avatar_find_modify = "Le fichier n'a pas été trouvé";
-		}
-		//VERIFICATION DES EXTENTIONS
-		$type_file = $_FILES['avatar']['type'];
-		if( !strstr($type_file, 'jpg') && !strstr($type_file, 'jpeg') && !strstr($type_file, 'bmp') && !strstr($type_file, 'gif') && !strstr($type_file, 'png') && !strstr($type_file, 'JPG') && !strstr($type_file, 'JPEG') && !strstr($type_file, 'BMP')  && !strstr($type_file, 'GIF')  && !strstr($type_file, 'PNG') )
-		{
-			$error_avatar_extentions_modify = "Le fichier n'est pas une image";
-		} else {
-			//COPIE DU FICHIER DANS LE REPERTOIRE 
-			$name_file = $_FILES['avatar']['name'];
-			$new_name_file = "avatar_".$idUser;
-			if( !move_uploaded_file($tmp_file, $avatar_dir . $new_name_file) )
-			{
-				$error_avatar_upload_modify = "Impossible de copier ce fichier";
-			} else {
-				$avatar_modify = "media/avatar/".$new_name_file;
-				$dbh->query("UPDATE users SET avatar='$avatar_modify' WHERE id = '$idUser'");	
-				$success_avatar_upload_modify = "Votre photo de profil a été modifiée";
-			}
-		}
-	}	  	 						
-	
+function getExtension($str) {
+	 $i = strrpos($str,".");
+	 if (!$i) { return ""; } 
+	 $l = strlen($str) - $i;
+	 $ext = substr($str,$i+1,$l);
+	 return $ext;
+}
 
+if (isset($_FILES["avatar"]) != "") {
+	$idUser = $_GET['id'];	
+	//DOSSIER OU SERA DEPLACE L'AVATAR
+	$tmp_file = $_FILES['avatar']['tmp_name'];
+	if( !is_uploaded_file($tmp_file) )
+	{
+		$error_avatar_find_modify = "Le fichier n'a pas été trouvé";
+	}
+
+	$image =$_FILES["avatar"]["name"];
+	$uploadedfile = $_FILES['avatar']['tmp_name'];
+	if ($image) {
+	$filename = stripslashes($_FILES['avatar']['name']);
+	$extension = getExtension($filename);
+	$extension = strtolower($extension);
+	var_dump($image);
+		  if (($extension != "jpg") && ($extension != "jpeg") && ($extension != "png") && ($extension != "gif")) {
+			  echo ' Unknown Image extension ';
+			  $errors=1;
+		  } else {
+			  if($extension=="jpg" || $extension=="jpeg" ){
+				  $uploadedfile = $_FILES['avatar']['tmp_name'];
+				  $src = imagecreatefromjpeg($uploadedfile);
+			  } else if($extension=="png"){
+				  $uploadedfile = $_FILES['avatar']['tmp_name'];
+				  $src = imagecreatefrompng($uploadedfile);
+			  } else {
+				  $src = imagecreatefromgif($uploadedfile);
+			  }
+	
+			 // list($width,$height)=getimagesize($uploadedfile);
+
+			  //$newwidth=270;
+			  //$newheight=($height/$width)*$newwidth;
+			  //$tmp=imagecreatetruecolor($newwidth,$newheight);
+			 
+			  
+			  //imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight,
+			  //$width,$height);
+			  
+			  if (!file_exists("media/avatar")) {
+					mkdir ("media/avatar", 0700);
+			  }	
+
+			  $extension = strrchr($_FILES['avatar']['name'], '.');
+			  $new_name_file = "avatar_".$idUser.$extension;
+			  $directory_file = "media/avatar/avatar_".$idUser.$extension;
+			  imagejpeg($src,$directory_file,100);
+			  
+			  imagedestroy($src);
+			  //imagedestroy($tmp);
+			  
+			  $dbh->query("UPDATE users SET avatar='$new_name_file' WHERE id = '$idUser'");
+			  echo $success_avatar_upload_modify = "Votre photo de profil a été modifiée";
+			  
+		  }
+	   }
+	}
 
 /*-----------------------------------------------------------*/	
 /*----- MODIFICATION DU MOT DE PASSE DE L'UTILISATEUR -------*/

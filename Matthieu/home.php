@@ -33,12 +33,13 @@ include('edit-profile.php');
 	<a href="logout.php">Logout</a>
 	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="assets/js/edit-profile.js"></script>
+	<script src="assets/js/jquery.form.js"></script>
 </header>
 
 <div id="sidebar_profile">
 	<?php 
 	if($user) { ?>
-		<img src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
+		<img src="<?= $profile['avatar']?>" class="avatar" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } else { ?>
 		<img src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } ?>
@@ -89,7 +90,7 @@ include('edit-profile.php');
 <div id="sidebar_edit-profile">
 	<?php 
 	if($user) { ?>
-		<img src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
+		<img class="avatar" src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } else { ?>
 		<img src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>">
 	<?php } ?>
@@ -98,10 +99,16 @@ include('edit-profile.php');
 	
 	<h3>Informations du compte</h3>
 	<?php if(!$user) { ?>
-	<form method="post" action="edit-profile.php?id=<?=$profile['id'] ?>" >
-			<label for="name">Photo de profil : </label><input type="file" name="avatar" id="avatar" value=""><br>
-			<input name="submit_modify_profile" type="submit" value="Enregister"/>	
-	</form>
+	<div id="changeAvatar">
+		<form method="post" action="edit-profile.php?id=<?=$profile['id'] ?>" enctype='multipart/form-data'>
+				<label for="name">Photo de profil : </label><input type="file" name="avatar" id="avatar" value=""><br>
+				<input name="submit_user_avatar" type="submit" value="Enregister"/>	
+		</form>
+		<div class="conteneur_progress_bar">
+				<div class="progress_bar"></div>
+				<div class="progress_value">0%</div >
+		</div>
+	</div>
 	<form method="post" action="edit-profile.php?id=<?=$profile['id'] ?>" id="editProfile">
 	        <label for="surname">Nom : </label><input type="text" value="<?= $profile['surname'] ?>" name="surname" id="surname" /><br>
 	        <label for="name">Prénom : </label><input type="text" value="<?= $profile['name'] ?>" name="name" id="name" /><br>
