@@ -199,11 +199,19 @@ carte.placerPoints = function(params){
 													arrivee : latLng_arrivee
 												},
 												type : 'current_itineraire',
-												finished : function(params){
-													if(typeof(params)=='object' && typeof(params.directionsServiceResponse)!='undefined'){
-														if(params.directionsServiceResponse.status=='OK'){
-															if(params.directionsServiceResponse.routes.length>0){
-																var legs = params.directionsServiceResponse.routes[0].legs;
+												finished : function(returns){
+													if(typeof(returns)=='object' && typeof(returns.directionsServiceResponse)!='undefined'){
+														if(returns.directionsServiceResponse.status=='OK'){
+															// On centre sur la position de l'utilisateur
+															carte.map.setZoom({
+																zoom : 15
+															});
+															carte.map.setCenter({
+																position: latLng_depart
+															});
+
+															if(returns.directionsServiceResponse.routes.length>0){
+																var legs = returns.directionsServiceResponse.routes[0].legs;
 																
 																var htmlInstructions = '<ul>';
 
@@ -227,7 +235,15 @@ carte.placerPoints = function(params){
 																	}
 																}
 																htmlInstructions+='</ul>';
-																$('#instructions_itineraire').empty().html(htmlInstructions);
+																$('#guidage_itineraire').empty();
+
+																var duree = secondesToDuree(returns.directionsServiceResponse.routes[0].legs[0].duration.value);
+											        			if($('.duree_itineraires').length>0){
+											        				$('.duree_itineraires').remove();
+											        			}
+																$('#guidage_itineraire').append('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree);
+
+											        			$('#guidage_itineraire').append('<div class="instructions_itineraire"></div>').append(htmlInstructions);
 															}
 														}
 													}
@@ -298,6 +314,8 @@ carte.placerPoints = function(params){
 carte.tracerItineraire = function(params){
     var lieux_choisis = carte.lieuxChoisis();
 
+    $('#guidage_itineraire').empty();
+
 	carte.map.nettoyer({
 		type : 'all',
 		finished : function(){
@@ -355,10 +373,8 @@ carte.tracerItineraire = function(params){
 	         carte.map.tracerItineraires({
 	         	trajets : carte.itineraires,
 	         	key : 0,
-	         	finished : function(){
-
-	         		params.itinerairesTraces.call(this);
-
+	         	finished : function(returns){
+	         		params.itinerairesTraces.call(this,returns);
 	         	}
 	    	});
 		}
@@ -409,7 +425,7 @@ $(function(){
 		$('#formulaire_itineraire').on('submit',function(evt){
 			evt.preventDefault();
 
-			$('#choix_lieux, #instructions_itineraire').empty();
+			$('#choix_lieux, #guidage_itineraire').empty();
 			$('#map').css('opacity','0');
 			carte.map.nettoyer('all');
 
@@ -434,7 +450,12 @@ $(function(){
 					      	},
 					      	type : 'itineraires_lieux',
 				        	finished : function(params){
-				        		params.itinerairesTraces = function(){
+				        		params.itinerairesTraces = function(returns){
+				        			var duree = secondesToDuree(returns.duree);
+				        			if($('.duree_itineraires').length==0){
+										$('.choix_transport').after('<p class="duree_itineraires"></p>');
+				        			}
+				        			$('.duree_itineraires').html('Durée estimée : '+duree);
 				        			alert('Chargement terminé !');
 				         			$('#map').css('opacity','1');
 				        		};
@@ -475,4 +496,11 @@ function calculerDistancePoints(lat1,lon1,lat2,lon2){
 	dist = dist * 60 * 1.1515;
 	dist = dist * 1.609344;
 	return Math.abs(dist);
+}
+
+function secondesToDuree(time){
+	var sec_num = parseInt(time, 10);
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    return hours+'h'+minutes+'min';
 }

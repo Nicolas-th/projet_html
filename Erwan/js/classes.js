@@ -87,6 +87,22 @@ var Carte = function() {
 	};
 
 	/*
+	## setZoom() ##
+			Paramètre attendu : objet
+				 {
+					zoom : int
+				 }
+	*/
+	_this.setZoom = function(params){
+		var defauts = {
+			zoom : 5
+		}
+		params = $.extend(defauts, params);
+
+		_this.carte.setZoom(params.zoom);
+	};
+
+	/*
 	## setMoyenTransport() ##
 			Paramètre attendu : objet
 				 {
@@ -128,6 +144,7 @@ var Carte = function() {
 		var defauts = {
 			key : 0,
 			trajets : [],
+			duree : 0,
 			finished : function(){}
 		}
 		params = $.extend(defauts, params);
@@ -163,7 +180,11 @@ var Carte = function() {
 	        		arrivee : latLng_arrivee
 	        	},
 	        	type : 'itineraires_lieux',
-	        	finished : function(){
+	        	finished : function(returns){
+	        		if(returns.directionsServiceResponse.status==google.maps.DirectionsStatus.OK){
+	         			var duree_itineraire = returns.directionsServiceResponse.routes[0].legs[0].duration.value;
+	         			params.duree += duree_itineraire;
+	         		}
 			        _this.tracerItineraires(params);
 	        	}
 	        });
@@ -174,7 +195,9 @@ var Carte = function() {
     			bounds.extend(_this.markers[key].marker.position);
     		}
     		_this.carte.fitBounds(bounds);
-	    	params.finished.call(this);
+	    	params.finished.call(this,{
+	    		duree : params.duree
+	    	});
 	    }
 	};
 
@@ -197,6 +220,7 @@ var Carte = function() {
 				arrivee : null,
 			},
 			type : null,
+			preserveViewport : true,
 			finished : function(){}
 		}
 		params = $.extend(defauts, params);
@@ -213,12 +237,16 @@ var Carte = function() {
 	              suppressMarkers: _this.preferencesItineraire.suppressionMarkers,
 	              polylineOptions : {
 	                strokeColor : _this.preferencesItineraire.couleurItineraire
-	              }
+	              },
+	              preserveViewport: params.preserveViewport
 	            });
 	            directionsRenderer.setMap(_this.carte);
 	            directionsRenderer.setDirections(response);
 
-			    _this.itineraires.push({itineraire : directionsRenderer, type : params.type});
+			    _this.itineraires.push({
+			    	itineraire : directionsRenderer,
+			    	type : params.type
+			    });
 
             	params.finished.call(this,{
             		directionsServiceResponse : response
