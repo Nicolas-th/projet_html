@@ -9,7 +9,6 @@ var Carte = function() {
 	_this.markers = [];
 	_this.preferencesItineraire = {
 		moyenTransport : google.maps.DirectionsTravelMode.TRANSIT,
-		optimisationTrajet : true,
 		couleurItineraire : '#f6de65',
 		suppressionMarkers : true
 	};
@@ -26,13 +25,15 @@ var Carte = function() {
 	*/
 	_this.init = function(params){
 		var defauts = {
-			element : '#carte'
+			element : '#carte',
+			streetViewControl : false
 		}
 		params = $.extend(defauts, params);
 
 	    _this.carte = new google.maps.Map(params.element, {
 	      mapTypeId: google.maps.MapTypeId.ROADMAP,
-	      zoom: 15
+	      zoom: 15,
+	      streetViewControl : params.streetViewControl
 	    });
 	};
 
@@ -94,28 +95,13 @@ var Carte = function() {
 	*/
 	_this.setMoyenTransport = function(params){
 		var defauts = {
-			position : google.maps.DirectionsTravelMode.TRANSIT
+			moyenTransport : google.maps.DirectionsTravelMode.TRANSIT
 		}
 		params = $.extend(defauts, params);
 
 		_this.preferencesItineraire.moyenTransport = params.moyenTransport;
 	};
 
-	/*
-	## setOptimisationTrajet() ##
-			Paramètre attendu : objet
-				 {
-					optimisation : boolean
-				 }
-	*/
-	_this.setOptimisationTrajet = function(params){
-		var defauts = {
-			optimisation : true
-		}
-		params = $.extend(defauts, params);
-
-		_this.preferencesItineraire.optimisationTrajet = params.optimisation;
-	};
 
 	/*
 	## tracerItineraires() ##
