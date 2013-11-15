@@ -337,11 +337,6 @@ li img{
 }
 
 @media screen and (max-width: 767px){
-	
-	#introduction{
-	    background-image: url("images/cover.jpg");
-	    background-size: 100% auto;
-	}
 
 	#connexion-facebook{
 		margin-right: 0;
