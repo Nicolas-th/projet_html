@@ -382,7 +382,8 @@ var Carte = function() {
 	_this.ajouterInfoWindow = function(params){
 		var defauts = {
 			infoWindow : {
-				content : ''
+				content : '',
+				click : function(){}
 			}
 		}
 		params = $.extend(defauts, params);
@@ -391,7 +392,7 @@ var Carte = function() {
 			content: params.infoWindow.content,
 			disableAutoPan: false,
 			maxWidth: 0,
-			//pixelOffset: new google.maps.Size(-140, 0),
+			pixelOffset: new google.maps.Size(0, -100),
 			zIndex: null,
 			boxStyle: _this.preferencesInfoWindow.style,
 			//closeBoxMargin: "12px 4px 2px 2px",
@@ -401,6 +402,8 @@ var Carte = function() {
 
 	    google.maps.event.addListener(params.marker, 'click', function() {
 			infowindow.open(_this.carte,params.marker);
+			params.infoWindow.open = infowindow;
+			params.infoWindow.click.call(this,params);
 		});
 
 		return infowindow;

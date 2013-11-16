@@ -57,7 +57,8 @@ var carte = {
 			background : '#FFF',
 			width : '200px',
 			padding : '5px'
-		}
+		},
+		open : null
 	}
 };
 
@@ -439,12 +440,32 @@ $(function(){
 						for(key in data.lieux) {
 							var current = data.lieux[key];
 							var latLng = new google.maps.LatLng(current.latitude,current.longitude);
+							var infoWindowContent = $('<div></div>').append($('<p></p>').text(current.name)).html();
 							carte.map.ajouterMarker({
 								position : latLng,
 								categorie : current.categories_id,
 								nom : current.name,
 								infoWindow : {
-									content : '<p>'+current.name+'</p><a href="#">Plus de détails</a>'
+									content : infoWindowContent,
+									position : latLng,
+									click : function(params){
+										if(carte.infoWindow.open!=null){
+											carte.infoWindow.open.close();
+										}
+										carte.infoWindow.open = params.infoWindow.open;	// On enregistre l'infowindow ouverte pour pouvoir la fermer plsu tard
+										carte.map.nettoyer({
+											type : 'itineraire_initial',
+											finished : function(){
+												carte.map.traceItineraire({
+													type : 'itineraire_initial',
+													points : {
+														depart : initialPosition,
+														arrivee : params.infoWindow.position
+													}
+												})
+											}
+										});
+									}
 								}
 							});
 						}
