@@ -500,9 +500,9 @@ var Autocompletion = function(){
 
 		_this.divResultats.find('li').on('click',function(){
           _this.inputText.val($(this).html());
-          _this.inputText.siblings('input[type="hidden"]').val($(this).attr('id'));
+          _this.inputText.siblings('input[type="hidden"].ref_lieu').first().val($(this).attr('id'));
           _this.divResultats.html(htmlContent);
-          _this.inputText.siblings('+input[type="hidden"]').val($(this).attr('id'));
+          //_this.inputText.siblings('input[type="hidden"].ref_lieu').val($(this).attr('id'));
           _this.divResultats.empty();
       	});
 	}

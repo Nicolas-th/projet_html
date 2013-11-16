@@ -402,8 +402,18 @@ $(function(){
 	      });
 	    });
 
+	    $('#position').on('click',function(evt){
+	    	evt.preventDefault();
+	    	navigator.geolocation.getCurrentPosition(function(currentPosition) {
+	    		$('input[name="latitude_position"]').val(currentPosition.coords.latitude);
+	    		$('input[name="longitude_position"]').val(currentPosition.coords.longitude);
+	    		$('#lieux_depart').val('Ma position');
+	    		$('#ref_lieux_depart').val('position');
+	    	});
+	    });
 
 	    $('#lieux_depart').keypress(function(){
+	    	$('input[name="latitude_position"]','input[name="longitude_position"]').val('');
       		var autocomplete = new Autocompletion();
       		autocomplete.init({ 
       			inputText : '#lieux_depart',
@@ -433,11 +443,10 @@ $(function(){
 			var ref_lieux_arrive = $('#ref_lieux_arrive').val();
 			if(ref_lieux_depart!='' && ref_lieux_arrive!=''){
 				var service = new google.maps.places.PlacesService(document.getElementById('test'));
-				service.getDetails({
-				reference : ref_lieux_depart
-				}, function(lieu_depart, status){
+
+				var getPositionArrivee = function(lieu_depart, status){
 					carte.points.depart = lieu_depart;
-					if (status == google.maps.places.PlacesServiceStatus.OK) {
+					if (status == google.maps.places.PlacesServiceStatus.OK || status=='OK') {
 					  service.getDetails({
 					    reference : ref_lieux_arrive
 					  }, function(lieu_arrivee, status){
@@ -463,10 +472,35 @@ $(function(){
 				        	}
 				          });  		     
 
+					    }else{
+					    	alert('Lieu d\'arrivée inconnu.');
 					    }
 					  });
+					}else{
+						alert('Lieu de départ inconnu.');
 					}
-				});	
+				};	
+
+				if($('#ref_lieux_depart').val()!='position'){
+					service.getDetails({
+						reference : ref_lieux_depart
+					}, getPositionArrivee);
+				}else{
+					var positionDepart = {
+						address_components : [
+							{
+								long_name : 'Votre position'
+							},
+							{
+								long_name : ''
+							}
+						],
+						geometry : {
+							location : new google.maps.LatLng($('input[name="latitude_position"]').val(),$('input[name="longitude_position"]').val())
+						}
+					}
+					getPositionArrivee.call(this,positionDepart,'OK');
+				}
 			}else{
 				alert('Vous devez choisir un lieu de départ et de destination');
 			}

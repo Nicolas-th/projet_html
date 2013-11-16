@@ -59,12 +59,15 @@
   <p>Indiquez votre trajet :</p>
   <form id="formulaire_itineraire">
     <label for="lieux_depart">Lieu de départ</label>
-    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" value="Avenue Victor Hugo, Saint-Mandé, France"/>
-    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" value="CjQsAAAAqM0NBgyOq8MdaFbPDnhdvyfZetmGqAGkIY_qimlsvIwkGsGjxcCHvALCy-R59643EhCpgxxRF2vtG2y81J2moInLGhRbpeR_YvfD65P0cfC9IlDinJjcUA"/>
+    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off"/>
+    <input type="hidden" name="latitude_position" />
+    <input type="hidden" name="longitude_position" />
+    <button id="position">Ma position</button>
+    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
     <ul id="resultats_lieux_depart"></ul>
     <label for="lieux_depart">Lieu d'arrivée</label>
     <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" value="Rue Poncelet, Paris, France"/>
-    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" value="CiQfAAAAq2pJOdKeFm4ERTruchUOqrz6jQFpUttZu2g07Vmd9y4SEMxQg4REaUv6WCWGNue1jjAaFLVZBaaQcmPU9iv4arY227u9zdDz"/>
+    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu" value="CiQfAAAAq2pJOdKeFm4ERTruchUOqrz6jQFpUttZu2g07Vmd9y4SEMxQg4REaUv6WCWGNue1jjAaFLVZBaaQcmPU9iv4arY227u9zdDz"/>
     <ul id="resultats_lieux_arrive"></ul>
     <input type="submit" value="Rechercher"/>
   </form>
