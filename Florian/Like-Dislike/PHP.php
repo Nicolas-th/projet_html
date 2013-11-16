@@ -16,6 +16,7 @@
 		$nbLike = $reqLike->fetch();
 		$nbDislike = $reqDislike->fetch();
 		echo $nbLike[0];
+		echo '-';
 		echo $nbDislike[0];
 	}
 	

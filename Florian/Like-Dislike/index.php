@@ -7,9 +7,6 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script src="Chart.js"></script>
 		<script src="AJAX.js"></script>
-		<?php
-			include_once('PHP.php');
-		?>
 		<meta name="description" content="">
 		
 		<meta name="viewport" content="width=device-width,initial-scale=1">
@@ -34,8 +31,9 @@
 					//test : 'coucou', //Passe un argument dans la requete PHP
 				},
 				function(reponse) { 
-					var nblike = parseInt(reponse[0]);
-					var nbdislike = parseInt(reponse[1]);
+					var string = reponse.split('-');
+					var nblike = parseInt(string[0]);
+					var nbdislike = parseInt(string[1]);
 					/*var nbpourcentlike((nblike*100)/(nblike+nbdislike));
 					var nbpourcentdislike((nbdislike*100)/(nblike+nbdislike));
 					*/

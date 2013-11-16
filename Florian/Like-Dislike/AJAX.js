@@ -9,8 +9,9 @@ function envoyerLike(lieu, user) {
 				},
 		
 				function(reponse) { 
-					var nblike = parseInt(reponse[0]);
-					var nbdislike = parseInt(reponse[1]);
+					var string = reponse.split('-');
+					var nblike = parseInt(string[0]);
+					var nbdislike = parseInt(string[1]);
 					
 					var doughnutData = [
 						{
@@ -38,9 +39,10 @@ function (){
 				lieu : lieu,
 				},
 		
-				function(reponse) { 
-					var nblike = parseInt(reponse[0]);
-					var nbdislike = parseInt(reponse[1]);
+				function(reponse) {
+					var string = reponse.split('-'); 
+					var nblike = parseInt(string[0]);
+					var nbdislike = parseInt(string[1]);
 					
 					var doughnutData = [
 						{
