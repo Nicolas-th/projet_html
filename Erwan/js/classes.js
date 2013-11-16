@@ -8,7 +8,7 @@ var Carte = function() {
 	_this.itineraires = [];
 	_this.markers = [];
 	_this.preferencesItineraire = {
-		moyenTransport : google.maps.DirectionsTravelMode.TRANSIT,
+		moyenTransport : google.maps.DirectionsTravelMode.WALKING,
 		couleurItineraire : '#f6de65',
 		suppressionMarkers : true
 	};

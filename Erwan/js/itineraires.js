@@ -110,14 +110,14 @@ carte.placerPoints = function(params){
 
 				$('#choix_lieux').html(liste_lieux);
 
-				var choix_transport = '<div class="choix_transport">';
+				/*var choix_transport = '<div class="choix_transport">';
 				choix_transport += '	<a href="#" id="marche">A pieds</a>';
 				choix_transport += '	<a href="#" id="velo">En vélo</a>';
 				choix_transport += '	<a href="#" id="metro" class="actif">En métro</a>';
 				choix_transport += '	<a href="#" id="voiture">En voiture</a>';
 				choix_transport += '</div>';
 
-				$('#liste_lieux').append(choix_transport);
+				$('#liste_lieux').append(choix_transport);*/
 				$('#liste_lieux').append('<button id="demarrer_itineraire">Démarrer l\'itinéraire</button>');
 				$('#liste_lieux').append('<button id="enregistrer_itineraire">Enregistrer l\'itinéraire</button>');
 			}else if(data.code=='404'){
@@ -134,7 +134,7 @@ carte.placerPoints = function(params){
 			carte.tracerItineraire(params);
 
 			/* Choix du mode de transport */
-			$('.choix_transport a').on('click',function(){
+			$('.choix_transport a').off('click').on('click',function(){
 				if(!$(this).hasClass('actif')){
 					switch($(this).attr('id')){
 						case 'marche':
@@ -435,6 +435,32 @@ $(function(){
       		});
       		autocomplete.rechercher();
       	});
+
+      	/* Choix du mode de transport */
+		$('.choix_transport a').on('click',function(){
+			if(!$(this).hasClass('actif')){
+				switch($(this).attr('id')){
+					case 'marche':
+						var transport = google.maps.DirectionsTravelMode.WALKING;
+						break;
+					case 'velo':
+						var transport = google.maps.DirectionsTravelMode.BICYCLING;
+						break;
+					case 'voiture':
+						var transport = google.maps.DirectionsTravelMode.DRIVING;
+						break;
+					default :
+						var transport = google.maps.DirectionsTravelMode.TRANSIT;
+				}
+				carte.map.setMoyenTransport({
+					moyenTransport : transport
+				});
+
+				$('.choix_transport a').removeClass('actif');
+				$(this).addClass('actif');
+				//carte.tracerItineraire(params);
+			}
+		});
 
       	/* Gestion du formulaire */
 		$('#formulaire_itineraire').on('submit',function(evt){
