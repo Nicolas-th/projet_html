@@ -467,7 +467,6 @@ $(function(){
 			evt.preventDefault();
 
 			$('#choix_lieux, #guidage_itineraire').empty();
-			$('#map').css('opacity','0');
 			carte.map.nettoyer('all');
 
 			var ref_lieux_depart = $('#ref_lieux_depart').val();
@@ -497,7 +496,6 @@ $(function(){
 				        			}
 				        			$('.duree_itineraires').html('Durée estimée : '+duree);
 				        			alert('Chargement terminé !');
-				         			$('#map').css('opacity','1');
 				        		};
 				        		carte.placerPoints(params);
 				        	}
