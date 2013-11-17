@@ -1,6 +1,10 @@
 <?php
 	
 	session_start();
+
+	$retour = array();
+	$retour['code'] = 0;
+	$retour['infos'] = array();
 	
 	if(isset($_SESSION['id']) && isset($_POST['lieux']) && isset($_POST['depart']) && isset($_POST['arrivee'])){
 		require_once('../includes/config.inc.php');
@@ -22,10 +26,21 @@
 		$sql->bindValue('user_id',$user_id,PDO::PARAM_INT);
 
 		$sql->execute();
+
+		$last_id = $sql->lastInsertId();
+
+		if($last_id!=false){
+			$retour['infos']['id'] = intval($last_id);
+			$retour['code'] = 200;
+		}else{
+			$retour['code'] = 500;
+		}
 		
 	}else if(!isset($_SESSION['id'])){
-		echo('connexion');
+		$retour['code'] = 403;
 	}
+
+	echo(json_encode($retour));
 
 
 ?>
