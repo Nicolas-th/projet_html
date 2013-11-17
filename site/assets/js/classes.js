@@ -15,6 +15,9 @@ var Carte = function() {
 	_this.preferencesInfoWindow = {
 		style : {}
 	};
+	_this.infoWindow = {
+		open : null
+	};
 
 	/*
 	## init() ##
@@ -156,24 +159,30 @@ var Carte = function() {
 	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
 	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
-	        _this.ajouterMarker({
-	        	position : latLng_depart,
-	        	nom : params.trajets[params.key].depart.nom,
-	        	categorie : params.trajets[params.key].depart.categorie,
-	        	type : 'itineraires_lieux',
-	        	infoWindow : {
-	        		content: '<p class="nom_lieu">'+params.trajets[params.key].depart.nom+'</p>'
-	        	}
-	        });
-	        _this.ajouterMarker({
-	        	position : latLng_arrivee,
-	        	nom : params.trajets[params.key].arrivee.nom,
-	        	categorie : params.trajets[params.key].arrivee.categorie,
-	        	type : 'itineraires_lieux',
-	        	infoWindow : {
-	        		content: '<p class="nom_lieu">'+params.trajets[params.key].arrivee.nom+'</p>'
-	        	}
-	        });
+			for(var i=0;i<2;i++){
+				if(i==0){
+					var latLng = latLng_depart;
+					var infos = params.trajets[params.key].depart;
+				}else{
+					var latLng = latLng_arrivee;
+					var infos = params.trajets[params.key].arrivee;
+				}
+		        _this.ajouterMarker({
+		        	position : latLng,
+		        	nom : infos.nom,
+		        	categorie : infos.categorie,
+		        	type : 'itineraires_lieux',
+		        	infoWindow : {
+		        		content: '<p class="nom_lieu">'+infos.nom+'</p>',
+		        		click : function(params){
+		                    if(_this.infoWindow.open!=null){
+			                      _this.infoWindow.open.close();
+			                }
+			                _this.infoWindow.open = params.infoWindow.open; // On enregistre l'infowindow ouverte pour pouvoir la fermer plsu tard
+	                  	}
+		        	}
+		        });
+			}
 
 	        params.key++; // On incrémente pour le prochain itinéraire
 
@@ -515,7 +524,6 @@ var Autocompletion = function(){
           _this.inputText.val($(this).html());
           _this.inputText.nextAll('input[type="hidden"].ref_lieu').val($(this).attr('id'));
           _this.divResultats.html(htmlContent);
-          //_this.inputText.siblings('input[type="hidden"].ref_lieu').val($(this).attr('id'));
           _this.divResultats.empty();
       	});
 	}

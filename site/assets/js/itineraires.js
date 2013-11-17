@@ -15,8 +15,7 @@ var carte = {
 			width : '200px',
 			padding : '5px',
 			color: '#000'
-		},
-		open : null
+		}
 	},
 	markers : {
 		iconsRepertory : 'assets/img/maps_icons/',
@@ -29,7 +28,7 @@ var carte = {
 carte.lieuxChoisis = function(){
 	var lieux_choisis = [];
      $('#resultat_lieux .ajouter_lieu.actif').each(function() {
-        lieux_choisis.push($(this).parent('li').attr('id'));
+        lieux_choisis.push($(this).parents('li').first().attr('id'));
      });
      return lieux_choisis;
 }
@@ -156,7 +155,7 @@ carte.lancerRechercheLieux = function(params){
 
 					carte.tracerItineraire(params);
 
-				return false;
+					return false;
 				});
 
 				/* On démarrer le guidage et l'itineraire */
@@ -183,7 +182,6 @@ carte.lancerRechercheLieux = function(params){
 									carte.map.nettoyer({ 
 										type : 'all',
 										finished : function(){
-											//console.log(distance_arrivee+'km');
 											if(distance_arrivee<=0.1){
 												carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
 												current_itineraire = carte.itineraires[0];	// On met à jour l'itinéraire courant
