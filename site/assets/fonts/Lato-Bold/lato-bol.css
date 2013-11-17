@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'LatoBold';
+    src: url('lato-bol.eot');
+    src: url('lato-bol.eot') format('embedded-opentype'),
+         url('lato-bol.woff') format('woff'),
+         url('lato-bol.ttf') format('truetype'),
+         url('lato-bol.svg#LatoBold') format('svg');
+}
