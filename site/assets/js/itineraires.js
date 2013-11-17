@@ -17,6 +17,12 @@ var carte = {
 			color: '#000'
 		},
 		open : null
+	},
+	markers : {
+		iconsRepertory : 'assets/img/maps_icons/',
+		iconsFilePrefix : 'icon_',
+		iconsExtension : '.svg',
+		iconDefault : 'icon_depart'
 	}
 };
 
@@ -75,8 +81,10 @@ carte.lancerRechercheLieux = function(params){
 					for(key in data.lieux) {
 						lieu = data.lieux[key];
 
+						var image = carte.markers.iconsRepertory+carte.markers.iconsFilePrefix+carte.markers.categorie+carte.markers.iconsExtension;
+
 						liste_lieux+='<li id="'+lieu.id+'">';
-						liste_lieux+=  '<img src="assets/img/yellow_marker.svg" width="20" height="20">';
+						liste_lieux+=  '<img src="'+image+'" width="20" height="20">';
 						liste_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
 						liste_lieux+=  '<div class="icons">';
 						liste_lieux+=  '	<a href="#" class="ajouter_lieu">+</a>';
