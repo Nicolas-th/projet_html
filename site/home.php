@@ -194,40 +194,76 @@ require_once('includes/edit-profile.inc.php');
   </div> <!-- fin barre latérale gauche -->
   
   
-  <div id="popup_right">
+    <div id="popup_right">
 	  <div id="bouton_right"></div>
 	  
 	  <p><img src="assets/img/avatar.png"/></p>
 	  
 	  <h3>Manon Baudemont</h3>
+  
+	  <hr>
 	  
 	  <p>2 lieux ajoutés</p>
 	  
 	   <ul>
-	  	
 	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	
+		 	<img src="assets/img/yellow_marker.svg" width="30" height="30"/>
+		 	<label id="place">Nom du lieu</label>	
 	  	</li>
 	  	
 	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	
+		 	<img src="assets/img/yellow_marker.svg" width="30" height="30"/>
+		 	<label class="place">Nom du lieu</label>
 	  	</li>
-	  	
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	
-	  	</li>
-	  	
+	  	<form method="post" action="#">
+	  	<input type="submit" value="modifier">	 
+	  	</form> 	
 	  </ul> 
 	  
+	  <hr>
+	  
+	  <p>2 itinéraires ajoutés</p>
+	  
+	  <ul>
+	  	<li class="itinerary">
+		  	<div></div>
+			<p>Lieu de départ</p> 
+			<p>Lieu d'arrivée</p> 	
+	  	</li>
+	  	
+	  	<li class="itinerary">
+	  		
+		  	<div></div>
+			<p>Lieu de départ</p> 
+			<p>Lieu d'arrivée</p> 	
+	  	</li>
+	  	<form method="post" action="#">
+	  	<input type="submit" value="modifier">
+	  	</form>	  
+	  </ul>
 	  
 	  
-  </div>
+	 <hr>
+	 
+	 <p>Photos prises par <span>Manon</span></p>
+	 
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 
+	 <a href="#" id="other_pictures"></a>
+	 
+	 <input type="file">
+
+
+
+
+	 
+	  
+	  
+	  
+  </div> <!-- Fin div profil -->
   
   
 
