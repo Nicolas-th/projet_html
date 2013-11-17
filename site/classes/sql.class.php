@@ -4,17 +4,19 @@ class SQL{
 	private $pdo;
 	private $requete;
 	
-	public function __construct(){
-		$this->connexionBDD();
+	public function __construct($pdo=null){
+		if($pdo!=null){
+			$this->pdo = $pdo;
+		}
 	}
 	
 	public function __destruct(){
 		$this->deconnexionBDD();
 	}
 	
-	private function connexionBDD(){
+	private function connexionBDD($host,$database,$user,$password){
 		try{
-			$this->pdo=new PDO("mysql:host=".MYSQL_HOST.";dbname=".MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD);
+			$this->pdo=new PDO("mysql:host=".$host.";dbname=".$database, $user, $password);
 			$this->pdo->query("SET NAMES utf8");
 			$this->pdo->query("SET CHARACTER SET 'utf8'");
 			$this->pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
