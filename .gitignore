@@ -33,10 +33,7 @@ Icon
 .Trashes
 
 # Fichiers sensibles
-/config
-config.inc.php
-config.php
-1b- lieux aux alentours - lieu sélectionné.jpg
+**/config
 
 # Fichiers médias
-/media
+**/media
