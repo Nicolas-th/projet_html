@@ -87,6 +87,7 @@ carte.rechercherLieux = function(params){
 	  data: { 'points': str_points },
 	  dataType: 'json',
 	  success: function(data, textStatus, jqXHR){
+	  	console.log(data);
 	  	params.success.call(this,data, textStatus, jqXHR);
 	  },
 	  error :  function(data, textStatus, jqXHR){
@@ -316,6 +317,7 @@ carte.lancerRechercheLieux = function(params){
 					$.ajax({
 	                  type: "POST",
 	                  url: 'ajax/save_itineraire.xhr.php',
+	                  dataType: 'json',
 	                  data: { 
 	                  	'depart' : depart,
 	                  	'arrivee' : arrivee,
@@ -323,10 +325,10 @@ carte.lancerRechercheLieux = function(params){
 	                  },
 	                  async:false, // Important car bloque le script
 	                  success: function(data, textStatus, jqXHR){
-	                  	if(data=='connexion'){
-	                  		alert('Vous devez être connecté.');
-	                  	}else{
+	                  	if(data.code==200){
 	                    	alert('itinéraire enregistré');
+	                  	}else if(data.code==403){
+	                  		alert('Vous devez être connecté.');
 	                    }
 	                  }
 	                });
