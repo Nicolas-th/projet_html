@@ -2,6 +2,7 @@
 <html>
   <head>
   	<meta charset="UTF-8">
+  	
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     
     <link rel="stylesheet" type="text/css" href="css/home.css">
@@ -16,9 +17,9 @@
   <body>
   
   <header>
-	  <div class="icon"></div>
-	  <div class="icon"></div>
-	  <div class="icon"></div>
+	  <div class="icon" id="menu"></div>
+	  <div class="icon" id="profile"></div>
+	  <div class="icon" id="settings"></div>
   </header>
   
   <div id="bouton2"></div>
@@ -28,7 +29,7 @@
 	  
 	  <p>Indiquez votre trajet :</p>
 	  
-	<form id="formulaire_itineraire">
+	<form id="formulaire_itineraire" method="post" action="#">
 	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ"/>
 	    <input type="hidden" name="latitude_position" />
 	    <input type="hidden" name="longitude_position" />
@@ -57,8 +58,8 @@
 	  <ul>
 	  	<li>
 		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	<div id="icons">
+		 	<label class="place">Nom du lieu</label>
+		 	<div class="icons">
 			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
 			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
 		 	</div>
@@ -68,8 +69,8 @@
 	  <ul>
 	  	<li>
 		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	<div id="icons">
+		 	<label class="place">Nom du lieu</label>
+		 	<div class="icons">
 			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
 			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
 		 	</div>
@@ -79,8 +80,8 @@
 	  <ul>
 	  	<li>
 		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	<div id="icons">
+		 	<label class="place">Nom du lieu</label>
+		 	<div class="icons">
 			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
 			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
 		 	</div>
@@ -92,36 +93,118 @@
   </div> <!-- fin barre latérale gauche -->
   
   
+  <div id="popup_right">
+	  <div id="bouton_right"></div>
+	  
+	  <p><img src="img/avatar.png"/></p>
+	  
+	  <h3>Manon Baudemont</h3>
+  
+	  <hr>
+	  
+	  <p>2 lieux ajoutés</p>
+	  
+	   <ul>
+	  	<li>
+		 	<img src="img/yellow_marker.svg" width="30" height="30"/>
+		 	<label id="place">Nom du lieu</label>	
+	  	</li>
+	  	
+	  	<li>
+		 	<img src="img/yellow_marker.svg" width="30" height="30"/>
+		 	<label class="place">Nom du lieu</label>
+	  	</li>
+	  	<form method="post" action="#">
+	  	<input type="submit" value="modifier">	 
+	  	</form> 	
+	  </ul> 
+	  
+	  <hr>
+	  
+	  <p>2 itinéraires ajoutés</p>
+	  
+	  <ul>
+	  	<li class="itinerary">
+		  	<div></div>
+			<p>Lieu de départ</p> 
+			<p>Lieu d'arrivée</p> 	
+	  	</li>
+	  	
+	  	<li class="itinerary">
+	  		
+		  	<div></div>
+			<p>Lieu de départ</p> 
+			<p>Lieu d'arrivée</p> 	
+	  	</li>
+	  	<form method="post" action="#">
+	  	<input type="submit" value="modifier">
+	  	</form>	  
+	  </ul>
+	  
+	  
+	 <hr>
+	 
+	 <p>Photos prises par <span>Manon</span></p>
+	 
+	 <div class="pictures"><img src="img/picture.png"/></div>
+	 <div class="pictures"><img src="img/picture.png"/></div>
+	 <div class="pictures"><img src="img/picture.png"/></div>
+	 <div class="pictures"><img src="img/picture.png"/></div>
+	 
+	 <a href="#" id="other_pictures"></a>
+	 
+	 <input type="file">
+
+
+
+
+	 
+	  
+	  
+	  
+  </div> <!-- Fin div profil -->
+  
+  
+  
+  
+  
+  
+  
+  
 
   <div id="map-canvas"></div>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   
   <script type="text/javascript">
+  
+  $("#bouton2").css("display","none");
+  
+  $("#profile,#settings").click(function(){
+  	  $("#popup_right").animate({
+	  right:"0"
+	  },400);
+	  
+	  $("#bouton2").css("display","block");	
+	  
+	  $("#popup").animate({
+	  left:"-280px"
+	  },400); 
+	  
+  });
+  
+  $("#bouton_right").click(function(){
+	  $("#popup_right").animate({
+	  right:"-280px"
+	  },400);
+  });
   
   $("#bouton").click(function(){
   	  $("#popup").animate({
   	  left:"-280px"
   	  },400);
-
-	  
-	 /*
- $("#map-canvas").animate({
-		  marginLeft:"-280px",
-		  opacity:"1"
-	  },600);
-	 */
-	 
-	   $("#bouton2").css("display","block");
-	       
+ 
+  $("#bouton2").css("display","block");	   
+      
   });
   
   $("#bouton2").click(function(){
@@ -129,15 +212,13 @@
 	  left:"0px"
 	  },400);
 	  
-	  /*
-$("#map-canvas").animate({
-		  marginLeft:"280px",
-		  opacity:"0.5"
-	  },600);
-*/
-	  
-	  $("#bouton2").css("display","none");
+	  $("#popup_right").animate({
+	  right:"-280px"
+	  },400);
+	 
+  $("#bouton2").css("display","none");
   });
+
  
   </script>
   
