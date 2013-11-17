@@ -309,17 +309,19 @@ var Carte = function() {
 			categorie : 'defaut',
 			nom : '',
 			infowindow : null,
-			iconsRepertory : 'assets/img/maps_icons/',
-			iconsFilePrefix : 'icon_',
-			iconsExtension : '.svg',
-			iconDefault : 'icon_depart'
+			markers : {
+				iconsRepertory : 'assets/img/maps_icons/',
+				iconsFilePrefix : 'icon_',
+				iconsExtension : '.svg',
+				iconDefault : 'icon_depart'
+			}
 			//iconDefault : 'http://maps.google.com/mapfiles/marker.png'
 		}
 		params = $.extend(defauts, params);
 
-		var image = params.iconsRepertory+params.iconDefault+params.iconsExtension;
+		var image = params.markers.iconsRepertory+params.markers.iconDefault+params.markers.iconsExtension;
 		if(params.categorie!='defaut'){
-			image = params.iconsRepertory+params.iconsFilePrefix+params.categorie+params.iconsExtension;
+			image = params.markers.iconsRepertory+params.markers.iconsFilePrefix+params.categorie+params.markers.iconsExtension;
 		}
 	    var marker = new google.maps.Marker({
 	        position: params.position,
