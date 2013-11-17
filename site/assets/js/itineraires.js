@@ -13,7 +13,8 @@ var carte = {
 		style : {
 			background : '#FFF',
 			width : '200px',
-			padding : '5px'
+			padding : '5px',
+			color: '#000'
 		},
 		open : null
 	}
@@ -21,7 +22,7 @@ var carte = {
 
 carte.lieuxChoisis = function(){
 	var lieux_choisis = [];
-     $('#choix_lieux .ajouter_lieu.actif').each(function() {
+     $('#resultat_lieux .ajouter_lieu.actif').each(function() {
         lieux_choisis.push($(this).parent('li').attr('id'));
      });
      return lieux_choisis;
@@ -44,11 +45,9 @@ carte.rechercherLieux = function(params){
 	  data: { 'points': str_points },
 	  dataType: 'json',
 	  success: function(data, textStatus, jqXHR){
-	  	console.log(data);
 	  	params.success.call(this,data, textStatus, jqXHR);
 	  },
 	  error :  function(data, textStatus, jqXHR){
-	  	console.log(data);
 	  	params.error.call(this,data, textStatus, jqXHR);
 	  }
 	});
@@ -69,17 +68,20 @@ carte.lancerRechercheLieux = function(params){
 			success: function(data, textStatus, jqXHR){
 				if(data.code=='200'){
 
-					var liste_lieux = '<div id="liste_lieux">';
-					liste_lieux += '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
-					liste_lieux += '	<ul class="liste_lieux">';
+					var liste_lieux = '<div id="resultat_lieux">';
+					liste_lieux += '	<p>Selectionner les lieux que vous souhaitez visiter :</p>';
+					liste_lieux += '	<ul>';
 
 					for(key in data.lieux) {
 						lieu = data.lieux[key];
 
 						liste_lieux+='<li id="'+lieu.id+'">';
+						liste_lieux+=  '<img src="assets/img/yellow_marker.svg" width="20" height="20">';
 						liste_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
-						liste_lieux+=  '<a href="#" class="ajouter_lieu">+</a>';
-						liste_lieux+=  '<a href="#" class="voir_lieu">Voir</a>';
+						liste_lieux+=  '<div class="icons">';
+						liste_lieux+=  '	<a href="#" class="ajouter_lieu">+</a>';
+						liste_lieux+=  '	<a href="#" class="voir_lieu">Voir</a>';
+						liste_lieux+='	</div>';
 						liste_lieux+='</li>';
 
 					}
@@ -87,7 +89,7 @@ carte.lancerRechercheLieux = function(params){
 					liste_lieux+='	</ul>';
 					liste_lieux+='</div>';
 
-					$('#choix_lieux').html(liste_lieux);
+					$('#formulaire_itineraire').after(liste_lieux);
 
 					/*var choix_transport = '<div class="choix_transport">';
 					choix_transport += '	<a href="#" id="marche">A pieds</a>';
@@ -96,15 +98,15 @@ carte.lancerRechercheLieux = function(params){
 					choix_transport += '	<a href="#" id="voiture">En voiture</a>';
 					choix_transport += '</div>';
 
-					$('#liste_lieux').append(choix_transport);*/
-					$('#liste_lieux').append('<button id="demarrer_itineraire">Démarrer l\'itinéraire</button>');
-					$('#liste_lieux').append('<button id="enregistrer_itineraire">Enregistrer l\'itinéraire</button>');
+					$('#resultat_lieux').append(choix_transport);*/
+					$('#resultat_lieux').append('<button id="demarrer_itineraire">Démarrer l\'itinéraire</button>');
+					$('#resultat_lieux').append('<button id="enregistrer_itineraire">Enregistrer l\'itinéraire</button>');
 				}else if(data.code=='404'){
 					var message = '<div>';
 					message += '<p>Aucun lieu n\'a été trouvé sur votre itinéraire. </p>';
 					message += '<a href="#">Vous en connaissez un ? Partagez-le !</a>';
 					message += '</div>';
-					$('#choix_lieux').html(message);
+					$('#formulaire_itineraire').falter(message);
 				}else{
 					console.log('Erreur '+data.code);
 				}

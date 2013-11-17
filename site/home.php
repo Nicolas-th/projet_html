@@ -152,12 +152,12 @@ require_once('includes/edit-profile.inc.php');
 	<script src="assets/js/home.js"></script>
   </head>
   
-  <body>
+<body>
   
   <header>
-	  <div class="icon"></div>
-	  <div class="icon"></div>
-	  <div class="icon"></div>
+	  <div class="icon" id="menu"></div>
+	  <div class="icon" id="profile"></div>
+	  <div class="icon" id="settings"></div>
   </header>
   
   <div id="bouton2"></div>
@@ -189,76 +189,104 @@ require_once('includes/edit-profile.inc.php');
 		<input type="submit" value="Rechercher"/>
 		
    </form>
-   
-   
-  <div id="resultat_lieux">
-
-	  <ul>
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	<div id="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul> 
-	  
-	  <ul>
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	<div id="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul>  
-	  
-	  <ul>
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label id="place" for="nombre">Nom du lieu</label>
-		 	<div id="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul>   
-	  
-  </div>
+  
 	  
   </div> <!-- fin barre latérale gauche -->
+  
+  
+  <div id="popup_right">
+	  <div id="bouton_right"></div>
+	  
+	  <p><img src="assets/img/avatar.png"/></p>
+	  
+	  <h3>Manon Baudemont</h3>
+	  
+	  <p>2 lieux ajoutés</p>
+	  
+	   <ul>
+	  	
+	  	<li>
+		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
+		 	<label id="place" for="nombre">Nom du lieu</label>
+		 	
+	  	</li>
+	  	
+	  	<li>
+		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
+		 	<label id="place" for="nombre">Nom du lieu</label>
+		 	
+	  	</li>
+	  	
+	  	<li>
+		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
+		 	<label id="place" for="nombre">Nom du lieu</label>
+		 	
+	  	</li>
+	  	
+	  </ul> 
+	  
+	  
+	  
+  </div>
+  
+  
 
-  <div id="map-canvas" style="width: 500px;height: 500px"></div>
+  <div id="map-canvas"></div>
   <div id="hidden"></div>
 
+  
   <script type="text/javascript">
+  
+  $("#bouton2").css("display","none");
+  
+  $("#profile,#settings").click(function(){
+  	  $("#popup_right").animate({
+	  right:"0"
+	  },400);
+	  
+	  $("#bouton2").css("display","block");	
+	  
+	  $("#popup").animate({
+	  left:"-280px"
+	  },400); 
+	  
+  });
+  
+  $("#bouton_right").click(function(){
+	  $("#popup_right").animate({
+	  right:"-280px"
+	  },400);
+  });
+  
   $("#bouton").click(function(){
   	  $("#popup").animate({
   	  left:"-280px"
-  	  },400);  
-	 /*
- $("#map-canvas").animate({
-		  marginLeft:"-280px",
-		  opacity:"1"
-	  },600);
-	 */
-	   $("#bouton2").css("display","block");       
+  	  },400);
+ 
+  $("#bouton2").css("display","block");	   
+      
   });
+  
   $("#bouton2").click(function(){
 	  $("#popup").animate({
 	  left:"0px"
 	  },400);
-	  /*
-$("#map-canvas").animate({
-		  marginLeft:"280px",
-		  opacity:"0.5"
-	  },600);
-*/  
-	  $("#bouton2").css("display","none");
+	  
+	  $("#popup_right").animate({
+	  right:"-280px"
+	  },400);
+	 
+  $("#bouton2").css("display","none");
   });
+  
+  
+  
+  
+ 
   </script>
-  </body> 
+  
+ 
+    
+  </body>
 </html>
 

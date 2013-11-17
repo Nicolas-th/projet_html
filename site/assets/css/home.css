@@ -28,7 +28,7 @@ header .icon{
   display:inline-block;
 }
       
-header div:nth-child(1){
+header div:nth-child(3){
   background:url('../img/personne.svg') no-repeat; 
   background-size:cover;   
 }
@@ -39,7 +39,7 @@ header div:nth-child(2){
   
 }
 
-header div:nth-child(3){
+header div:nth-child(1){
   background:url('../img/menu.svg') no-repeat;
   background-size:cover; 
 }
@@ -151,4 +151,28 @@ margin-right:4px;
 #see_place:active{
 	background:url('../img/see_active.svg');
 	background-size:cover;
+}
+
+
+#popup_right{
+	width:100%;
+    height:100%;
+    background-color:rgba(151,151,151,0.9);
+	z-index:1000;
+	position:absolute;
+	right:0px; /* - 280 pour la masquer */
+	max-width:280px;
+}
+
+#bouton_right{
+	width:30px;
+	height:30px;
+	background-color:blue;
+	cursor:pointer;
+}
+
+/* profil */
+
+#popup_right > :nth-child(2){
+	text-align:center;
 }

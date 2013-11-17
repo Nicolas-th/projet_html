@@ -248,7 +248,8 @@ $(function(){
         $('#formulaire_itineraire').on('submit',function(evt){
           evt.preventDefault();
 
-          $('#choix_lieux, #guidage_itineraire').empty();
+          $('#choix_lieux').remove();
+          $('#guidage_itineraire').empty();
           carte.map.nettoyer('all');
 
           var ref_lieux_depart = $('#ref_lieux_depart').val();
