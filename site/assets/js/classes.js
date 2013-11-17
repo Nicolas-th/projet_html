@@ -173,7 +173,7 @@ var Carte = function() {
 		        	categorie : infos.categorie,
 		        	type : 'itineraires_lieux',
 		        	infoWindow : {
-		        		content: '<p class="nom_lieu">'+infos.nom+'</p>',
+		        		content: '<p class="nom_lieu">'+infos.name+'</p>',
 		        		click : function(params){
 		                    if(_this.infoWindow.open!=null){
 			                      _this.infoWindow.open.close();
