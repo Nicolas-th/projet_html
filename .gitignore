@@ -34,6 +34,9 @@ Icon
 
 # Fichiers sensibles
 **/config
+config.inc.php
+config.php
 
 # Fichiers médias
 **/media
+Erwan/includes/config.inc.php

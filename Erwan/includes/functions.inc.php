@@ -1,4 +1,16 @@
 <?php
+
+	/**
+	 ## Fonctions sur les réseaux sociaux ##
+	**/
+
+
+
+	/**
+	 ## Fonctions sur les images ##
+	**/
+
+
 	// Fonction redimmentionnant une immage en concervant les propotions originales
 	// Source : http://www.saaraan.com/2012/05/ajax-image-upload-with-progressbar-with-jquery-and-php
 	function resizeImage($CurWidth,$CurHeight,$MaxSize,$DestFolder,$SrcImage,$Quality,$ImageType){

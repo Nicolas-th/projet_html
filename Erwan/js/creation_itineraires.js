@@ -240,7 +240,7 @@ $(function(){
 
             form_lieux+='<div>';
             form_lieux+=  '<input type="checkbox" name="lieux_itineraire" id="'+lieu.id+'" value="'+lieu.id+'">';
-            form_lieux+=  '<label for="id="'+lieu.id+'"">'+lieu.nom+'</label>';
+            form_lieux+=  '<label for="id="'+lieu.id+'"">'+lieu.name+'</label>';
             form_lieux+='</div>';
 
           }
@@ -327,7 +327,7 @@ $(function(){
                       success: function(data, textStatus, jqXHR){
                         if(data.code=='200'){
                             infos_lieu = data.infos;
-                            infos_lieu['categorie'] = infos_lieu['id_categorie']; // Temporairement
+                            infos_lieu['categorie'] = infos_lieu['categories_id']; // Temporairement
                         }
                       }
                     });

@@ -1,7 +1,8 @@
 <?php
+
 	require_once('../includes/config.inc.php');
-	require_once('../includes/functions.inc.php');
 	require_once('../classes/sql.class.php');
+	require_once('../includes/functions.inc.php');
 
 	/* Flick */
 	$sql = new SQL();
@@ -44,11 +45,11 @@
 		        true
 		    );
 		    var_dump($response_code);
-			if($response_code == 200) {
+			//if($response_code == 200) {
 				$sql->prepare('DELETE FROM api_twitter WHERE id=:id');
 				$sql->bindValue('id',$p['id'],PDO::PARAM_INT);
 				$sql->execute();
-			}
+			//}
 		}
 	}
 

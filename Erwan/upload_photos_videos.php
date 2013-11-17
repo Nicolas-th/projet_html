@@ -1,10 +1,10 @@
 <?php
 
 	session_start();
-
+	
 	require_once('includes/config.inc.php');
-	require_once('includes/functions.inc.php');
 	require_once('classes/sql.class.php');
+	require_once('includes/functions.inc.php');
 
 	if (isset($_FILES['imageFile']) && $_FILES["imageFile"]["error"] == 0){
 
@@ -70,10 +70,14 @@
 
 			/* Twitter */
 
+			$image = $destNewImage;
+			$name  = basename($image);
+
 			$twitter = array(
 	    		'type' => 'https://api.twitter.com/1.1/statuses/update_with_media.json',
 	    		'attachment' => json_encode(array(
-	    			'media[]'  => '@{'.$destNewImage.'};type=image/jpeg;filename={'.$destNewImage.'}',
+	    			//'media[]'  => '@{'.$destNewImage.'};type=image/jpeg;filename={'.$destNewImage.'}',
+	    			'media[]'  => "@{$image};type=image/jpeg;filename={$name}",
 	            	'status'   => '#dev',
 	    		))
 	    	);
