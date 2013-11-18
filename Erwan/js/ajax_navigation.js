@@ -33,6 +33,12 @@ var Transition = function(){
 		conteneur : '#conteneur',
 		pages : [],
 		animation : {
+			style : {
+				opacity : {
+					min : 0,
+					max : 1
+				}
+			},
 			duration : 1000,
 			easing : 'swing',
 			complete : function(){}
@@ -75,7 +81,7 @@ var Transition = function(){
 			    $(page.element).animate(
 			    	{
 			    		left : 0, 
-			    		opacity : 1
+			    		opacity : _this.params.animation.style.opacity.max
 			    	},
 			    	{
 			   			duration : _this.params.animation.duration,
@@ -92,7 +98,7 @@ var Transition = function(){
 		$(page.element).animate(
 	    	{
 	    		left : document.body.offsetWidth, 
-	    		opacity : 0
+	    		opacity : _this.params.animation.style.opacity.min
 	    	},
 	    	{
 	   			duration : _this.params.animation.duration,
@@ -100,6 +106,7 @@ var Transition = function(){
 	   			complete : _this.params.animation.complete
 	   		}
 	    );
+	    window.history.back();
 	    _this.params.opened = null;
 	};
 }
