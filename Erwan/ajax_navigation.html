@@ -14,28 +14,36 @@
         overflow-x: hidden;
       }
       .conteneur_pages{
-        position: relative;
-        width: 200%;
+        position: absolute;
+        width: 100%;
         height: 100%;
       }
-      .page, .page_suivante{
+      .page{
         position:absolute;
+        top:0;
+        left:100%;
+        width: 100%;
+        height: 100%;
+        background: #FFF;
+        opacity:0;
+      }
+      .principal{
         width: 100%;
         height: 100%;
         background: #000;
       }
-      .page_suivante{
-        background: #FFF;
+      #page_2{
+        background: red;
       }
     </style>
 </head>
 <body>
-  <div class="conteneur_pages">
-    <div class="page">
-      <a href="test.html" class="ajax_nav" style="color:#FFF">Page test</a>
-    </div>
-    <div class="page_suivante">
-    </div>
+  <div class="principal">
+    <a href="test.html" class="open_page_1" style="color:#FFF">Page 1</a>
+    <a href="test.html" class="open_page_2" style="color:#FFF">Page 2</a>
+  </div>
+  <div class="page" id="page_1"></div>
+  <div class="page" id="page_2"></div>
   </div>
 </body>
 </html>
