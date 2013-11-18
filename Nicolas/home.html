@@ -195,13 +195,13 @@
 <form class="hidden" method="post" action="#">
 
 	<p><label for="full_name">Mot de passe actuel</label></p>
-	<input type="password" id="full_name" name="full_name" disabled/> 
+	<input type="password" id="full_name" name="full_name" value="******" disabled/> 
 			
 	<p><label for="full_name">Nouveau mot de passe</label></p>
-	<input type="password" id="full_name" name="full_name" disabled/> 
+	<input type="password" id="full_name" name="full_name" value="******" disabled/> 
 	
 	<p><label for="full_name">Confirmez</label></p>
-	<input type="password" id="full_name" name="full_name" disabled/> 
+	<input type="password" id="full_name" name="full_name" value="******" disabled/> 
 	
 	<input class="hidden" type="submit" value="Enregistrer">
 			
@@ -271,6 +271,7 @@
 $(".edit img").click(function(){
 	  $(".hidden").fadeToggle(300);
 	  $("input").removeAttr('disabled');
+	  $("#popup_right form input[type=text]").css('background-color','grey');
   });
 
 

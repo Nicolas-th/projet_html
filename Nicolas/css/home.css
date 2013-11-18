@@ -249,14 +249,27 @@ margin-right:4px;
 
 /************* profile settings ************/
 
-#popup_right form input[type=text],#popup_right form input[type=email]{
-	border-radius:9px;
+#popup_right form input[type=text],#popup_right form input[type=email],.hidden input[type=password]{
+	border-radius:6px;
 	background:none;
 	border:none;
 	color:white;
 	font-size:14px;
 	padding-left:20px;
 }
+
+#popup_right form input[type=submit]{
+    border-radius:6px;
+    background-color:#4ece9d;
+    border:none;
+    color:white;
+    font-size:14px;
+    font-family:'OpenSansRegular';
+    cursor:pointer;
+    width:100px;
+    height:20px;
+}
+
 
 .edit p{
 	display:inline-block;
