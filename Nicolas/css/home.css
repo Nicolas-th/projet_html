@@ -69,6 +69,7 @@ header div:nth-child(1){
   background-color:rgba(151,151,151,0.9);
   z-index:1000;
   position:absolute;
+  overflow:auto;
   max-width:280px;
 
 }
@@ -84,7 +85,7 @@ header div:nth-child(1){
 }
 
 
-input[type=text]{
+#popup input[type=text]{
   border-radius: 9px;
   background-color:white;
   outline:none;
@@ -98,7 +99,7 @@ input[type=text]{
 
 }
 
-input[type=submit]{
+#popup input[type=submit]{
   border-radius:9px;
   background-color:#4ece9d;
   border:none;
@@ -177,6 +178,7 @@ margin-right:4px;
 #popup_right{
 	width:100%;
     height:100%;
+    overflow:auto;
     background-color:rgba(151,151,151,0.9);
 	z-index:1000;
 	position:absolute;
@@ -191,7 +193,7 @@ margin-right:4px;
 	cursor:pointer;
 }
 
-/* profil */
+/************* profil ************/
 
 #popup_right > :nth-child(2){
 	text-align:center;
@@ -215,16 +217,6 @@ margin-right:4px;
 	margin-bottom: 15px;
 }
 
-/*
-.itinerary :first-child{
-	float:left;
-	display:none;
-	width:30px;
-	height:30px;
-	background: url('../img/trash.svg') no-repeat;
-	background-size:cover;
-}
-*/
 
 .itinerary :nth-child(1){
 	float:left;
@@ -253,4 +245,38 @@ margin-right:4px;
 	height:40px;
 	display:inline-block;
 	background:url('../img/other_pictures.svg') no-repeat;
+}
+
+/************* profile settings ************/
+
+#popup_right form input[type=text],#popup_right form input[type=email]{
+	border-radius:9px;
+	background:none;
+	border:none;
+	color:white;
+	font-size:14px;
+	padding-left:20px;
+}
+
+.edit p{
+	display:inline-block;
+	font-size:15px;
+}
+
+p + img{
+	width:18px;
+	height:18px;
+}
+
+#popup_right label{
+	font-size:14px;
+	padding-left:20px;
+}
+
+.col{
+	float:left;
+}
+
+.hidden{
+	display:none;
 }
