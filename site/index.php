@@ -17,6 +17,9 @@ var_dump($_SESSION['email']);
 	<head>
 		<title>Find It Out !</title>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0">
+		<meta name="description" content="FindItOut vous permet de découvrir des lieux insolites dans toute la France à travers des itinéraires originaux !">
+		<meta name="keywords" content="finditout, lieux insolites, lieux originaux, ville, france, paris, lyon, marseille, toulouse, rennes, bordeaux, caen, nantes">
 		<link rel="stylesheet" type="text/css" href="assets/css/simplegrid.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 		<script src="js/modernizr.custom.js"></script>
