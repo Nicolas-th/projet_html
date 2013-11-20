@@ -96,7 +96,8 @@
   <div id="popup_right">
 	  <div id="bouton_right"></div>
 	  
-	  <p><img src="img/avatar.png"/></p>
+	 <!--
+ <p><img src="img/avatar.png"/></p>
 	  
 	  <h3>Manon Baudemont</h3>
   
@@ -152,11 +153,60 @@
 	 <div class="pictures"><img src="img/picture.png"/></div>
 	 
 	 <a href="#" id="other_pictures"></a>
-	 
-	 <input type="file">
+-->
 
+<!-- Début de la sidebar profile settings -->
+	
+<p><img src="img/avatar.png"/></p>
+	  
+<h3>Manon Baudemont</h3>
 
+<p>Modifier l'avatar</p>
 
+<input type="file">
+
+<hr>
+
+<div class="edit"><p>Informations du compte</p><img src="img/rouage.svg"/></div>
+
+<form method="post" action="#">
+		
+	<p><label for="full_name">Nom</label></p>
+	<input type="text" id="full_name" name="full_name" value="Baudemont" disabled/> 
+	
+	<p><label for="full_name">Prénom</label></p>
+	<input type="text" id="full_name" name="full_name" value="Manon" disabled/> 
+	
+	<p><label for="full_name">Pseudo</label></p>
+	<input type="text" id="full_name" name="full_name" value="JudyMoon" disabled/> 
+	
+	<p><label for="full_name">Adresse mail</label></p>
+	<input type="email" id="full_name" name="full_name" value="manon.test@gmail.com" disabled/> 
+	
+	<input class="hidden" type="submit" value="Enregistrer">
+			
+					
+</form>
+
+<hr>
+
+<div class="edit"><p>Modifier le mot de passe</p><img src="img/rouage.svg"/></div>
+
+<form class="hidden" method="post" action="#">
+
+	<p><label for="full_name">Mot de passe actuel</label></p>
+	<input type="password" id="full_name" name="full_name" value="******" disabled/> 
+			
+	<p><label for="full_name">Nouveau mot de passe</label></p>
+	<input type="password" id="full_name" name="full_name" value="******" disabled/> 
+	
+	<p><label for="full_name">Confirmez</label></p>
+	<input type="password" id="full_name" name="full_name" value="******" disabled/> 
+	
+	<input class="hidden" type="submit" value="Enregistrer">
+			
+					
+</form>
 
 	 
 	  
@@ -165,12 +215,7 @@
   </div> <!-- Fin div profil -->
   
   
-  
-  
-  
-  
-  
-  
+
 
   <div id="map-canvas"></div>
 
@@ -218,6 +263,17 @@
 	 
   $("#bouton2").css("display","none");
   });
+
+
+
+/*****Formulaire hidden de profile settings******/
+
+$(".edit img").click(function(){
+	  $(".hidden").fadeToggle(300);
+	  $("input").removeAttr('disabled');
+	  $("#popup_right form input[type=text]").css('background-color','grey');
+  });
+
 
  
   </script>

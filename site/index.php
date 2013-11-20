@@ -7,9 +7,10 @@ require_once('config/config.php');
 require_once('config/fb_config.php'); 
 
 
-if ($user && $_SESSION['email']):
+if ($user || $_SESSION['email']):
 	header('Location: home.php');
 else: 
+var_dump($_SESSION['email']);
 ?>
 <!doctype html>
 <html>
@@ -29,7 +30,7 @@ else:
 				</div>
 	
 				<div class="col-2-12 center push-right">
-					<a href="#" class="md-trigger bouton-connexion" data-modal="modal-1">Se connecter</a>
+					<a href="#" class="md-trigger bouton-connexion" data-modal="connexion-modal">Se connecter</a>
 				</div>
 			</div>
 	
@@ -44,14 +45,14 @@ else:
 				
 				<div class="grid">
 					<div class="col-1-1">
-						<p id="connexion">Vous avez déjà un compte ?<a href="#" class="md-trigger" data-modal="modal-1"> Se connecter</a></p>
+						<p id="connexion">Vous avez déjà un compte ?<a href="#" class="md-trigger" data-modal="connexion-modal"> Se connecter</a></p>
 					</div>
 				</div>
 	
 				<div class="grid">
 					<div id="inscription" class="col-1-1 center">
 						<div id="connexion-facebook">
-							<a href="<?php echo $loginUrl; ?>">S'inscrire avec <strong>Facebook</strong></a>
+							<a href="<?php echo $loginUrl; ?>">Connexion avec <strong>Facebook</strong></a>
 						</div> 
 						<div id="creer-mon-compte">
 							<a href="signin.php">Créer mon compte</a>
@@ -196,26 +197,25 @@ else:
 				Ce projet a été réalisé dans le cadre du cours HTML/CSS3 par un groupe de H3 P2016.
 			</div>
 			<div id="footer-footer">
-				©HETIC - P2016 - Tous droits résevés
+				©HETIC - P2016 - Tous droits réservés
 			</div>
 		</div>
+				
+		<div id="connexion-modal" class="md-modal md-effect-1">
+		<div class="md-content">
+		  <p>Connexion</p>
+		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
+		 		 	<form autocomplete="off"  method='post' action='login.php'>
+			 		 	<input type="text" name="mail" placeholder="E-mail" id="mail" required/>
+			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
+			 		 	<div id="btn-connexion"> <input type="submit" name="submit_login" value="Se connecter" /></div>	 
+			 		 </form>
+		</div> 
 		
-		<div class="md-modal md-effect-1" id="modal-1">
-			<div class="md-content">
-				<h3>Se connecter à FindItOut</h3>
-				<div>	
-					<form method="post" action="login.php" >
-					  	<label for="mail">Mail : </label><input type="email" name="mail" placeholder="E-mail" id="mail" required/>
-					  	<label for="password">Mail : </label><input type="password" name="password" placeholder="Mot de passe" id="password" required/>
-					  	<input name="submit_login" type="submit" value="Se connecter" />
-			  		</form>	
-					<button class="md-close">Close me!</button>
-				</div>
-			</div>
-		</div>
 
 		<script src="http://code.jquery.com/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<script src="assets/js/config.js"></script> 
 		<script src="assets/js/classie.js"></script>
 		<script src="assets/js/modalEffects.js"></script>
 		<script type="text/javascript" src="assets/js/firstpage.js"></script>

@@ -3,7 +3,8 @@
 	
 	//On récupère la valeur de l'id passé par l'url
 	$id_lieu = $_GET['id'];
-	$id_user = 13;
+	
+	$id_user = 19;
 	
 	//On récupère les informations du lieu demandé
 	$reqPlace = $dbh->prepare("SELECT * FROM places WHERE id LIKE :id_lieu");
@@ -28,38 +29,96 @@
 	<style>
 		canvas{
 		}
+		body {
+			background-color: A8A8A8;
+		}
 	</style>
 </head>
 <body>
-	<canvas id="canvas" height="200" width="200"></canvas>
+	<div name="graph">
+		<canvas id="canvas" height="200" width="200"></canvas>
+	</div>
 	<?php
+		/////Affichage du  nombre de like et de dislike
+		$null = 0;
+		$reqNbLike = $dbh->prepare("SELECT COUNT(*) FROM `like` WHERE id_lieu LIKE :id_lieu");
+			$reqNbLike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+		$reqNbLike->execute();
+		$resultNbLike = $reqNbLike->fetch();
+		
+		if($resultNbLike[0] == 0){
+			$null = $null + 1;
+		}
+		else if($resultNbLike[0] == 1){
+			echo  $resultNbLike[0].' utilisateur aime ce lieu';
+		}
+		else {
+			echo $resultNbLike[0].' utilisateurs aiment ce lieu<br/>';
+		}
+		
+		$reqNbDislike = $dbh->prepare("SELECT COUNT(*) FROM `dislike` WHERE id_lieu LIKE :id_lieu");
+			$reqNbDislike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+		$reqNbDislike->execute();
+		$resultNbDislike = $reqNbDislike->fetch();
+		
+		if($resultNbDislike[0] == 0){
+			$null = $null + 1;
+		}
+		else if($resultNbDislike[0] == 1){
+			echo $resultNbDislike[0].' utilisateur n\'aime pas ce lieu';
+		}
+		else {
+			echo $resultNbDislike[0].' utilisateurs n\'aiment pas ce lieu<br/>';
+		}
+		
+		if($null == 2  ){
+			echo '<div id="result">Ce lieu n\'a pas encore de vote. Soyez le premier à voter</div>';
+		}
+		
+		
+		////FIN de la gestion de l'affichage des like et dislike
+	
+	
 		///////Vérification si l'id_user a déjà voté
 		
-		$reqVote = $dbh->prepare("SELECT COUNT(like.id_user), COUNT(dislike.id_user) FROM `like`, `dislike` WHERE like.id_lieu LIKE :id_lieu AND like.id_user LIKE :id_user AND dislike.id_lieu LIKE :id_lieu AND dislike.id_user LIKE :id_user");
-			$reqVote->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
-			$reqVote->bindValue('id_user',$id_user,PDO::PARAM_INT);
-		$reqVote->execute();
-		$resultLike = $reqVote->fetch();
+		$reqVoteLike = $dbh->prepare("SELECT COUNT(id_user) FROM `like` WHERE id_lieu LIKE :id_lieu AND id_user LIKE :id_user");
+			$reqVoteLike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+			$reqVoteLike->bindValue('id_user',$id_user,PDO::PARAM_INT);
+		$reqVoteLike->execute();
+		$resultLike = $reqVoteLike->fetch();
 		
-		if($resultLike[0] == 0 && $resultLike[1] == 0){
+		$reqVoteDislike = $dbh->prepare("SELECT COUNT(id_user) FROM `dislike` WHERE id_lieu LIKE :id_lieu AND id_user LIKE :id_user");
+			$reqVoteDislike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+			$reqVoteDislike->bindValue('id_user',$id_user,PDO::PARAM_INT);
+		$reqVoteDislike->execute();
+		$resultDislike = $reqVoteDislike->fetch();
+		
+		if($resultLike[0] == 0 && $resultDislike[0] == 0){
 	?>
-	<input type="button" id="buttonLike" value="Like" onclick="envoyerLike(lieu,user)"/>
-	<input type="button" id="buttonDislike" value="Dislike" onclick="envoyerDislike(lieu,user)"/>
+		<div id="buttonValidate">
+			<input type="button" id="buttonLike" value="Like" onclick="envoyerLike(lieu,user)"/>
+			<input type="button" id="buttonDislike" value="Dislike" onclick="envoyerDislike(lieu,user)"/>
+		</div>
 	<?php
 		}
 		else {
-			echo 'vous avez déjà voté';
+			echo '<br>vous avez déjà voté';
 		}
+		
+		////FIN de gestion du système de vote
 	?>
+		
 	
 	<script>
+	
+	////FONCTION AJAX qui gère l'affichage du dougnhnut de vote
 	
 	var lieu = <?php echo $id_lieu; ?>;
 	var user = <?php echo $id_user; ?>;
 	$(function() {
 		$.post('../PHP.php',
 			{
-				lieu : lieu
+				lieu : lieu,
 			},
 			function(reponse) { 
 				var string = reponse.split('-');
@@ -68,11 +127,11 @@
 				var doughnutData = [
 			{
 				value: nblike,
-				color:"blue"
+				color:"white"
 			},
 			{
 				value : nbdislike,
-				color : "red"
+				color : "#FF8E00"
 			}			
 		];
 
@@ -81,11 +140,17 @@
 			
 		);	
 	});
-	
+	////////FIN de la fonction AJAX
 	</script>
 
 	
 <?php	
+	//////FONCTION upload de photo
+	
+	///////FIN de la fonction d'upload
+	
+	
+	//////FONCTION qui gère l'ajout de commentaire
 	echo '<h2>Commentaires</h2>';
 	
 	function displayComments($dbh, $lieu){
@@ -108,12 +173,13 @@
 	}
 	
 	displayComments($dbh, $id_lieu);
+	///FIN de la fonction commentaire
 ?>
 	<div class="leave_comment">
 	<h3>Répondre</h3>
 	<form method="post" action="../Comments/addComments.php" id="formCom">
-		<input type="hidden" name="id_user" value="<?php echo $id_user ?>"/>
-		<input type="hidden" name="id_lieu" value="<?php echo $id_lieu ?>"/>
+		<input type="hidden" name="id_user" value="<?php echo $id_user; ?>"/>
+		<input type="hidden" name="id_lieu" value="<?php echo $id_lieu; ?>"/>
 		<p><textarea id="comments" name="message" placeholder="Commentaire" required></textarea></p>
 		<p class="submit"><button>Envoyer</button></p>
 	</form>

@@ -16,15 +16,17 @@ function envoyerLike(lieu, user) {
 					var doughnutData = [
 						{
 							value: nblike,
-							color:"blue"
+							color:"white"
 						},
 						{
 							value : nbdislike,
-							color : "red"
+							color : "#FF8E00"
 						}			
 					];
 	
 					var myDoughnut = new Chart(document.getElementById("canvas").getContext("2d")).Doughnut(doughnutData);
+					document.getElementById("result").innerHTML = "Votre vote a été soumis";
+					$('#buttonValidate').remove();
 				}
 			);	
 		});
@@ -47,15 +49,17 @@ function (){
 					var doughnutData = [
 						{
 							value: nblike,
-							color:"blue"
+							color:"white"
 						},
 						{
 							value : nbdislike,
-							color : "red"
+							color : "#FF8E00"
 						}			
 					];
 	
 					var myDoughnut = new Chart(document.getElementById("canvas").getContext("2d")).Doughnut(doughnutData);
+					document.getElementById("result").innerHTML = "Votre vote a été soumis";
+					$('#buttonValidate').remove();
 				}
 			);	
 		});
