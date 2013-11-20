@@ -1,6 +1,6 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
-require 'config/config.php'; 
+require_once('config/config.php'); 
 //$idUser = $_GET['id'];
 
 /*-----------------------------------------------------------*/	
@@ -17,7 +17,6 @@ if (isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email']))
 	  	 							surname = '$modify_surname',
 	  	 							email = '$modify_email'
 	  	 						WHERE id = '$idUser'");
-	var_dump($edit_profile);
 	echo ($success_edit_profil = "Vos informations ont bien été enregistrées");	
 }
 
@@ -64,15 +63,14 @@ if (isset($_FILES["avatar"]) != "") {
 				  $src = imagecreatefromgif($uploadedfile);
 			  }
 	
-			 // list($width,$height)=getimagesize($uploadedfile);
+			  list($width,$height)=getimagesize($uploadedfile);
 
-			  //$newwidth=270;
-			  //$newheight=($height/$width)*$newwidth;
-			  //$tmp=imagecreatetruecolor($newwidth,$newheight);
+			  $newwidth=100;
+			  $newheight=($height/$width)*$newwidth;
+			  $tmp=imagecreatetruecolor($newwidth,$newheight);
 			 
 			  
-			  //imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight,
-			  //$width,$height);
+			  imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight,$width,$height);
 			  
 			  if (!file_exists("media/avatar")) {
 					mkdir ("media/avatar", 0700);
@@ -81,7 +79,7 @@ if (isset($_FILES["avatar"]) != "") {
 			  $extension = strrchr($_FILES['avatar']['name'], '.');
 			  $new_name_file = "avatar_".$idUser.$extension;
 			  $directory_file = "media/avatar/avatar_".$idUser.$extension;
-			  imagejpeg($src,$directory_file,100);
+			  imagejpeg($tmp,$directory_file,100);
 			  
 			  imagedestroy($src);
 			  //imagedestroy($tmp);
@@ -96,5 +94,26 @@ if (isset($_FILES["avatar"]) != "") {
 /*-----------------------------------------------------------*/	
 /*----- MODIFICATION DU MOT DE PASSE DE L'UTILISATEUR -------*/
 /*-----------------------------------------------------------*/	
+
+if (isset($_POST['old_password']) && isset($_POST['password']) && isset($_POST['confirm_password'])) {
+	$idUser = $_GET['id'];
+	$profile = $dbh -> query("SELECT * FROM users WHERE id LIKE '$idUser'")->fetch();
+	$modify_old_password= md5($_POST['old_password']);
+	echo $modify_password= md5($_POST['password']);
+	$modify_confirm_password= md5($_POST['confirm_password']);
+	
+	if ($modify_old_password == $profile['password']) {
+		if ($modify_password == $modify_confirm_password) {
+
+				$edit_password = $dbh->query("UPDATE users SET 
+				  	 							password = '$modify_password'
+				  	 						WHERE id = '$idUser'");
+				var_dump($edit_password);
+				echo ($success_edit_profil = "Vos informations ont bien été enregistrées");	
+
+		} else { echo "Les 2 mots de passe ne corresponde pas";   }
+	} else { echo "Le mot de passe actuel n'est pas correct";}
+}
+
 
 ?>

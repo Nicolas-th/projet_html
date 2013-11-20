@@ -1,6 +1,6 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
-require 'config/config.php';
+require_once('config/config.php');
 
 /*-----------------------------------------------------------*/	
 /*------- SÉLÉCTION DES INFORMATIONS DE L'UTILISATEUR -------*/
