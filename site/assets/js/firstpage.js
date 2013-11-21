@@ -27,14 +27,4 @@ $(function(){
     });
   }
 
-  $('.bouton-connexion').click(function(e) {
-      $('#signup').lightbox_me({
-          centered: true, 
-          onLoad: function() { 
-              $('#signup').find('input:first').focus()
-              }
-          });
-      e.preventDefault();
-  });
-
 });
