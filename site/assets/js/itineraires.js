@@ -48,7 +48,7 @@ carte.lieuxChoisis = function(){
 }
 
 carte.rechercherLieux = function(params){
-	params = $.extend({}, _this.defaults.rechercherLieux, params);
+	params = $.extend({}, carte.defaults.rechercherLieux, params);
 	var str_points = "";
 	for (var i = 0; i<params.points.length; i++) {
 	  str_points+=params.points[i].latitude+','+params.points[i].longitude+';'
@@ -68,7 +68,7 @@ carte.rechercherLieux = function(params){
 }
 
 carte.lancerRechercheLieux = function(params){
-	params = $.extend({}, _this.defaults.lancerRechercheLieux, params);
+	params = $.extend({}, carte.defaults.lancerRechercheLieux, params);
 	if(typeof(params)=='object' && params.directionsServiceResponse!=null){
 		var points = params.directionsServiceResponse.routes[0].overview_path;
 
@@ -320,7 +320,7 @@ carte.lancerRechercheLieux = function(params){
 }
 
 carte.tracerItineraire = function(params){
-	params = $.extend({}, _this.defaults.tracerItineraire, params);
+	params = $.extend({}, carte.defaults.tracerItineraire, params);
     var lieux_choisis = carte.lieuxChoisis();
 
     $('#guidage_itineraire').empty();

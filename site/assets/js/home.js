@@ -33,7 +33,8 @@ $(function(){
     element : document.getElementById('map-canvas')
   });
   carte.map.setStyleMap({
-    style : stylesCarte
+    url : 'assets/js/config.json',
+    key : 'mapStyle'
   });
 
   if(navigator.geolocation) {

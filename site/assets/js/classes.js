@@ -24,7 +24,8 @@ var Carte = function() {
 			streetViewControl : false
 		},
 		setStyleMap : {
-			style : {}
+			url : null,
+			key : null
 		},
 		setStyleInfoWindows : {
 			style : {}
@@ -133,13 +134,19 @@ var Carte = function() {
 	## setStyleMap() ##
 			Paramètre attendu : objet
 				 {
-					style : Array (type StyledMapType)
+					url : url (vers un fichier json),
+					key : 
 				 }
 	*/
 	_this.setStyleMap = function(params){
 		params = $.extend({},_this.defaults.setStyleMap, params);
-		_this.carte.mapTypes.set('map_style', new google.maps.StyledMapType(params.style));
-	    _this.carte.setMapTypeId('map_style');
+		if(params.url!=null && params.key!=null){
+			$.getJSON(params.url, function(datas) {
+				var styles = datas[params.key];
+				_this.carte.mapTypes.set('map_style', new google.maps.StyledMapType(styles));
+		    	_this.carte.setMapTypeId('map_style');
+			});
+		}
 	};
 
 	/*
