@@ -1,16 +1,14 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
 session_start();
+if ($_SESSION["email"] == NULL):
 require_once('config/config.php'); 
+
 
 /*----------------------ACCÈS À FACEBOOK---------------------*/
 require_once('config/fb_config.php'); 
 
 
-if ($user || $_SESSION['email']):
-	header('Location: home.php');
-else: 
-var_dump($_SESSION['email']);
 ?>
 <!doctype html>
 <html>
@@ -205,7 +203,7 @@ var_dump($_SESSION['email']);
 		<div class="md-content">
 		  <p>Connexion</p>
 		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
-		 		 	<form autocomplete="off"  method='post' action='login.php'>
+		 		 	<form method='post' action='login.php'>
 			 		 	<input type="text" name="mail" placeholder="E-mail" id="mail" required/>
 			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
 			 		 	<div id="btn-connexion"> <input type="submit" name="submit_login" value="Se connecter" /></div>	 
@@ -244,4 +242,7 @@ var_dump($_SESSION['email']);
 	</body>
 	
 </html>
-<?php endif ?>
+<?php 
+else: 
+	header('Location: home.php');
+endif ?>
