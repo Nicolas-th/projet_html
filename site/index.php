@@ -1,7 +1,6 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
 session_start();
-if ($_SESSION["email"] == NULL):
 require_once('config/config.php'); 
 
 
@@ -9,6 +8,9 @@ require_once('config/config.php');
 require_once('config/fb_config.php'); 
 
 
+if (isset($_SESSION["nickname"]) || $user):
+	header('Location: home.php');
+else: 
 ?>
 <!doctype html>
 <html>
@@ -16,14 +18,43 @@ require_once('config/fb_config.php');
 		<title>Find It Out !</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="initial-scale=1.0">
-		<meta name="description" content="FindItOut vous permet de découvrir des lieux insolites dans toute la France à travers des itinéraires originaux !">
-		<meta name="keywords" content="finditout, lieux insolites, lieux originaux, ville, france, paris, lyon, marseille, toulouse, rennes, bordeaux, caen, nantes">
 		<link rel="stylesheet" type="text/css" href="assets/css/simplegrid.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 		<script src="js/modernizr.custom.js"></script>
 	</head>
 	<body onload="initialize()">
-		<div class="container">	
+		<!-- All modals added here for the demo. You would of course just have one, dynamically created -->
+		<div class="md-modal md-effect-1" id="connexion-modal">
+			<div class="md-content">
+				<p>Connexion</p>
+		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
+		 		 	<form method='post' action='login.php' id="loginForm">
+		 		 		<div id="messageLogin"></div>
+			 		 	<input type="text" name="nickname" placeholder="Pseudo" id="nickname" required/>
+			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
+			 		 	<div id="btn-connexion"> <input type="submit"  name="submit_login" value="Se connecter" /></div>	 
+			 		 </form>
+			</div>
+		</div>
+		
+		<div class="md-modal md-effect-1" id="inscription-modal">
+			<div class="md-content">
+				<p>Inscription</p>
+		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
+		 		 	<form method="post" action="signin.php" id="signinForm">
+		 		 			<div id="messageSignin"></div>
+			 		 		<input type="text" name="nom" placeholder="Nom" id="name" /><br>
+			 		 		<input type="text"name="prenom" placeholder="Prénom" id="surname" /><br>
+			 		 		<input type="text" name="pseudo" placeholder="Pseudo" id="pseudo" required /><br>
+			 		 		<input type="email" name="mail" id="mail" placeholder="email" required /><br>
+			 		 		<input type="password" name="password1" id="pass1" placeholder="Mot de passe" required /><br>
+			 		 		<input type="password" name="password2" id="pass2" placeholder="Retapez votre mot de passe" required /><br>
+			 		 		<div id="btn-connexion"> <input type="submit"  name="submit_signin" value="Valider l'inscription" /></div>
+			 		 </form>
+			</div>
+		</div>
+
+		<div class="container">
 			<!-- header : logo + connexion -->
 			<div class="grid grid-pad">
 				<div class="col-2-12">
@@ -56,7 +87,7 @@ require_once('config/fb_config.php');
 							<a href="<?php echo $loginUrl; ?>">Connexion avec <strong>Facebook</strong></a>
 						</div> 
 						<div id="creer-mon-compte">
-							<a href="signin.php">Créer mon compte</a>
+							<a href="#" class="md-trigger" data-modal="inscription-modal">Créer mon compte</a>
 						</div>
 					</div>
 				</div>
@@ -200,23 +231,18 @@ require_once('config/fb_config.php');
 			<div id="footer-footer">
 				©HETIC - P2016 - Tous droits réservés
 			</div>
-		</div>
-				
-		<div id="connexion-modal" class="md-modal md-effect-1">
-		<div class="md-content">
-		  <p>Connexion</p>
-		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
-		 		 	<form method='post' action='login.php'>
-			 		 	<input type="text" name="mail" placeholder="E-mail" id="mail" required/>
-			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
-			 		 	<div id="btn-connexion"> <input type="submit" name="submit_login" value="Se connecter" /></div>	 
-			 		 </form>
-		</div> 
-		
+		</div><!-- /container -->
+		<div class="md-overlay"></div><!-- the overlay element -->
 
-		<script src="http://code.jquery.com/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+
+
+
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 		<script src="assets/js/config.js"></script> 
+		<script src="assets/js/login.js"></script> 
 		<script src="assets/js/classie.js"></script>
 		<script src="assets/js/modalEffects.js"></script>
 		<script type="text/javascript" src="assets/js/firstpage.js"></script>
@@ -224,7 +250,7 @@ require_once('config/fb_config.php');
 		  window.fbAsyncInit = function() {
 		    // init the FB JS SDK
 		    FB.init({
-		      appId      : '<? echo $app_id ?>',                        // App ID from the app dashboard
+		      appId      : '<? echo $app_id ?>',// App ID from the app dashboard
 		      channelUrl : '', // Channel file for x-domain comms
 		      status     : true,                                 // Check Facebook Login status
 		      xfbml      : true                                  // Look for social plugins on the page
@@ -245,7 +271,4 @@ require_once('config/fb_config.php');
 	</body>
 	
 </html>
-<?php 
-else: 
-	header('Location: home.php');
-endif ?>
+<?php endif ?>
