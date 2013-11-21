@@ -6,9 +6,9 @@
 session_start();
 ini_set('session.gc_maxlifetime', 3600); 
 
-include_once('config/config.php');
+require_once('config/config.php');
 
-if (isset($_POST['submit_signin'])) {
+if (isset($_POST['mail'])) {
     $name = $_POST['nom'];
     $surname = $_POST['prenom'];
     $pseudo = $_POST['pseudo'];
@@ -20,30 +20,20 @@ if (isset($_POST['submit_signin'])) {
     $reqMail->execute();
     
     if($reqMail->fetch() == 0){
-            $reqPseudo = $dbh->prepare("SELECT nickname FROM users WHERE nickname ='$pseudo'");
-            //$reqMail->bindValue('mail',$mail,PDO::PARAM_INT);
-            $reqPseudo->execute();
-            
-            if($reqPseudo->fetch() == 0){
-                    $reqInsertUser = $dbh->prepare("INSERT INTO users VALUES('','','$name','$surname','$pseudo','','$email','$password', NOW(),'','')");
-                    $reqInsertUser->execute();
-                    header('Location: login.php');
-            } else {
-                    echo "le pseudo déjà utilisé";
-            }  
+        $reqPseudo = $dbh->prepare("SELECT nickname FROM users WHERE nickname ='$pseudo'");
+        //$reqMail->bindValue('mail',$mail,PDO::PARAM_INT);
+        $reqPseudo->execute();
+        
+        if($reqPseudo->fetch() == 0){
+                $reqInsertUser = $dbh->prepare("INSERT INTO users VALUES('','default/avatar_default.jpg','$name','$surname','$pseudo','','$email','$password', NOW(),'','')");
+                $reqInsertUser->execute();
+                header('Location: login.php');
+        } else {
+                echo "Le nom d'utilisateur est déjà utilisé.";
+        }  
     } else {
-            echo "email déjà utilisé";
-
+    	echo "L'email est déjà utilisé";
     }
-    
-    
-    /*
-    $sql = new SQL();
-    $sql->prepare('SELECT * FROM LIEUX WHERE id=:id');
-    $sql->bindValue('id',$id,PDO::PARAM_INT);
-
-    $infos_lieu = $sql->execute(true);
-    */
 }
 ?>
 <h1>Inscrivez-vous</h1>

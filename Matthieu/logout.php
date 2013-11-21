@@ -1,8 +1,8 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
-require 'config/config.php'; 
+require_once('config/config.php'); 
 /*----------------------ACCÈS À FACEBOOK---------------------*/
-require 'config/fb_config.php'; 
+require_once('config/fb_config.php'); 
   $facebook->destroySession();
   session_unset();
   session_destroy();

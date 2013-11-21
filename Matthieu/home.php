@@ -1,25 +1,24 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
-include 'config/config.php'; 
 session_start();
+require_once('config/config.php'); 
 
 /*----------------------ACCÈS À FACEBOOK---------------------*/
-include 'config/fb_config.php'; 
+require_once('config/fb_config.php'); 
 
 /*---------------------CONNEXION AU SITE---------------------*/
-if($_SESSION["email"]==NULL && $_SESSION["fb_id"]==NULL ){
-		header('Location: index.php');
+if(isset($_SESSION["nickname"])==NULL && $_SESSION["fb_id"]==NULL ){
+	header('Location: index.php');
 }
 
 /*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
-include('profile.php');
+require_once('includes/profile.inc.php');
 	
 /*----- MODIFICATIONS DES INFORMATION DE L'UTILISATEUR -----*/
-include('edit-profile.php');
+require_once('includes/edit-profile.inc.php');
 
 
-
-?>
+/*
 <!doctype html>
 <html>
 <head>
@@ -49,8 +48,8 @@ include('edit-profile.php');
 		<p>Vous n'avez ajouté aucun lieu</p>
 	<?php } else { 
 				foreach ($select_profile_places as $select_profile_place) {
-				$id_profile_place = $select_profile_place['id'];
-				$profile_place = $dbh -> query("SELECT * FROM places WHERE id LIKE '$id_profile_place'")->fetchAll();
+				$id_profile_place = $select_profile_place['places_id'];
+				$profile_place = $dbh -> query("SELECT * FROM places WHERE id LIKE '$id_profile_place'")->fetch();
 	?>	
 					<p><?= $profile_place['name']?></p>
 		  <?php } ?>
@@ -62,9 +61,9 @@ include('edit-profile.php');
 	<?php } else { 
 				foreach ($select_profile_routes as $select_profile_route) {
 				$id_profile_route = $select_profile_route['id'];
-				$profile_route = $dbh -> query("SELECT * FROM routes WHERE id LIKE '$id_profile_routes'")->fetchAll();
+				$profile_route = $dbh -> query("SELECT * FROM routes WHERE id LIKE '$id_profile_route'")->fetch();
 	?>	
-					<p><?= $profile_route['name']?></p>
+					<p><?= $profile_route['id']?></p>
 		  <?php } ?>
 	<?php } ?>
 	
@@ -133,5 +132,198 @@ include('edit-profile.php');
 
 </script>
 </body>
+</html>       
+
+*/ ?>
+
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    
+    <link rel="stylesheet" type="text/css" href="assets/css/home.css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
+	<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
+	<script src="assets/js/config.js"></script>
+	<script src="assets/js/functions.js"></script>
+	<script src="assets/js/classes.js"></script>
+	<script src="assets/js/itineraires.js"></script>
+	<script src="assets/js/home.js"></script>
+  </head>
+  
+<body>
+  
+  <header>
+	  <div class="icon" id="menu"></div>
+	  <div class="icon" id="profile"></div>
+	  <div class="icon" id="settings"></div>
+  </header>
+  
+  <div id="bouton2"></div>
+  
+  <div id="popup"> <!-- début barre latérale gauche -->
+	  <div id="bouton"></div>
+	  
+	  <p>Indiquez votre trajet :</p>
+	  
+	<form id="formulaire_itineraire">
+	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ"/>
+	    <input type="hidden" name="latitude_position" />
+	    <input type="hidden" name="longitude_position" />
+	    
+	    <button id="position">Ma position</button>
+	    
+	    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
+	    <ul id="resultats_lieux_depart"></ul>
+	    <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
+	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
+    
+	    <ul id="resultats_lieux_arrive"></ul>
+	    <div class="choix_transport">
+		    <a href="#" id="marche" class="actif">A pied</a>
+		    <a href="#" id="velo">En vélo</a>
+		    <a href="#" id="metro">En métro</a>
+		</div>
+		
+		<input type="submit" value="Rechercher"/>
+		
+   </form>
+  
+	  
+  </div> <!-- fin barre latérale gauche -->
+  
+  
+    <div id="popup_right">
+	  <div id="bouton_right"></div>
+	  
+	  <p><img src="assets/img/avatar.png"/></p>
+	  
+	  <h3>Manon Baudemont</h3>
+  
+	  <hr>
+	  
+	  <p>2 lieux ajoutés</p>
+	  
+	   <ul>
+	  	<li>
+		 	<img src="assets/img/yellow_marker.svg" width="30" height="30"/>
+		 	<label id="place">Nom du lieu</label>	
+	  	</li>
+	  	
+	  	<li>
+		 	<img src="assets/img/yellow_marker.svg" width="30" height="30"/>
+		 	<label class="place">Nom du lieu</label>
+	  	</li>
+	  	<form method="post" action="#">
+	  	<input type="submit" value="modifier">	 
+	  	</form> 	
+	  </ul> 
+	  
+	  <hr>
+	  
+	  <p>2 itinéraires ajoutés</p>
+	  
+	  <ul>
+	  	<li class="itinerary">
+		  	<div></div>
+			<p>Lieu de départ</p> 
+			<p>Lieu d'arrivée</p> 	
+	  	</li>
+	  	
+	  	<li class="itinerary">
+	  		
+		  	<div></div>
+			<p>Lieu de départ</p> 
+			<p>Lieu d'arrivée</p> 	
+	  	</li>
+	  	<form method="post" action="#">
+	  	<input type="submit" value="modifier">
+	  	</form>	  
+	  </ul>
+	  
+	  
+	 <hr>
+	 
+	 <p>Photos prises par <span>Manon</span></p>
+	 
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 <div class="pictures"><img src="assets/img/picture.png"/></div>
+	 
+	 <a href="#" id="other_pictures"></a>
+	 
+	 <input type="file">
+
+
+
+
+	 
+	  
+	  
+	  
+  </div> <!-- Fin div profil -->
+  
+  
+
+  <div id="map-canvas"></div>
+  <div id="hidden"></div>
+
+  
+  <script type="text/javascript">
+  
+  $("#bouton2").css("display","none");
+  
+  $("#profile,#settings").click(function(){
+  	  $("#popup_right").animate({
+	  right:"0"
+	  },400);
+	  
+	  $("#bouton2").css("display","block");	
+	  
+	  $("#popup").animate({
+	  left:"-280px"
+	  },400); 
+	  
+  });
+  
+  $("#bouton_right").click(function(){
+	  $("#popup_right").animate({
+	  right:"-280px"
+	  },400);
+  });
+  
+  $("#bouton").click(function(){
+  	  $("#popup").animate({
+  	  left:"-280px"
+  	  },400);
+ 
+  $("#bouton2").css("display","block");	   
+      
+  });
+  
+  $("#bouton2").click(function(){
+	  $("#popup").animate({
+	  left:"0px"
+	  },400);
+	  
+	  $("#popup_right").animate({
+	  right:"-280px"
+	  },400);
+	 
+  $("#bouton2").css("display","none");
+  });
+  
+  
+  
+  
+ 
+  </script>
+  
+ 
+    
+  </body>
 </html>
-       
+

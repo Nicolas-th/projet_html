@@ -1,17 +1,17 @@
 <?php
 // CONNEXION À LA BASE DE DONNÉES
-require 'config.php';
-require 'facebook/facebook.php';
+require_once('config.php');
+require_once('facebook/facebook.php');
 
 $app_id = '572222546160247';
 $app_secret = '65d1e941c88eebe1e2068f42c0a94d35';
 $scope = 'user_status,email,user_birthday,user_likes,read_stream';
-$redirect_uri = 'http://www.illio.fr/projet_html/site/home.php';
+$redirect_uri = 'http://www.find-it-out.fr/site/home.php';
 
 // Init the Facebook SDK
 $facebook = new Facebook(array(
-         'appId'  => $app_id,
-		 'secret' => $app_secret,
+    'appId'  => $app_id,
+		'secret' => $app_secret,
 ));
 
 $params = array(
@@ -19,6 +19,7 @@ $params = array(
 	'redirect_uri' => $redirect_uri ,
 	'display' => 'popup',
 );
+
 
 
 // Get the current user
@@ -79,7 +80,11 @@ if ($user) {
 } else {
   $statusUrl = $facebook->getLoginStatusUrl();
   $loginUrl = $facebook->getLoginUrl($params);
+  //var_dump($loginUrl);
+
 }
+
+
 ?>
 
 	
