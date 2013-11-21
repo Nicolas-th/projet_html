@@ -140,16 +140,16 @@ h1#intro{
 }
 
 #connexion-facebook{
-	width:252px;
+	max-width:252px;
 	height:42px;
 	display: inline-block;
 	background:url(../img/firstpage/bouton-facebook.png) no-repeat;
 	border-radius:10px;
-	padding:9px 10px 9px 50px;
+	padding:11px 10px 10px 50px;
 	margin-right: 30px;
 	text-align:left;
 	font-family: OpenSansRegular;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 #creer-mon-compte{
@@ -166,7 +166,7 @@ h1#intro{
 
 .encadre{
 	text-align: center;
-	padding:0 20px;
+	padding: 0 0 0 20px;
 }
 
 .trait{
@@ -300,7 +300,7 @@ h1#last{
 	border-radius:6px;
 	margin: 88px auto 0;
 	padding:20px 0;
-	max-width:28.6%;
+	max-width:320px;
 	text-align: center;
 	color:#ffffff;
 	font-family: OpenSansRegular;
@@ -347,15 +347,23 @@ li img{
 
 	#connexion-facebook{
 		margin-right: 0;
+		margin-bottom:5px;
+		padding: 2px 10px 2px 50px;;
+	}
+
+	.encadre{
+		padding: 0;
+	}
+
+	h1{
+	    hyphens: auto;
+	    font-size:40px;
 	}
 
 	h1#intro{
-		color: #FFFFFF;
-	    font-family: BariolRegular;
-	    font-size: 55px;
-	    font-weight: normal;
-	    padding-right: 20px;
 	    margin:0;
+	    font-size:40px;
+	    padding-right: 0;
 	}
 
 	#connexion {
@@ -377,114 +385,4 @@ li img{
 }
 
 
-/* Effect 1: Fade in and scale up */
 
-.md-modal {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	width: 50%;
-	max-width: 630px;
-	min-width: 320px;
-	height: auto;
-	z-index: 2000;
-	visibility: hidden;
-	-webkit-backface-visibility: hidden;
-	-moz-backface-visibility: hidden;
-	backface-visibility: hidden;
-	-webkit-transform: translateX(-50%) translateY(-50%);
-	-moz-transform: translateX(-50%) translateY(-50%);
-	-ms-transform: translateX(-50%) translateY(-50%);
-	transform: translateX(-50%) translateY(-50%);
-		font-size:14px;
-	font-family : OpenSansSemibold;
-}
-
-.md-show {
-	visibility: visible;
-}
-
-
-.md-show ~ .md-overlay {
-	opacity: 1;
-	visibility: visible;
-}
-
-/* Content styles */
-.md-content {
-	color: #fff;
-	background: #e74c3c;
-	position: relative;
-	border-radius: 3px;
-	margin: 0 auto;
-}
-
-
-.md-content > div {
-	padding: 15px 40px 30px;
-	margin: 0;
-	font-weight: 300;
-	font-size: 1.15em;
-}
-
-.md-content > div p {
-	margin: 0;
-	padding: 10px 0;
-}
-
-.md-content > div ul {
-	margin: 0;
-	padding: 0 0 30px 20px;
-}
-
-.md-content > div ul li {
-	padding: 5px 0;
-}
-
-.md-content button {
-	display: block;
-	margin: 0 auto;
-	font-size: 0.8em;
-}
-
-/* Individual modal styles with animations/transitions */
-
-/* Effect 1: Fade in and scale up */
-.md-effect-1 .md-content {
-	-webkit-transform: scale(0.7);
-	-moz-transform: scale(0.7);
-	-ms-transform: scale(0.7);
-	transform: scale(0.7);
-	opacity: 0;
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	transition: all 0.3s;
-}
-
-.md-show.md-effect-1 .md-content {
-	-webkit-transform: scale(1);
-	-moz-transform: scale(1);
-	-ms-transform: scale(1);
-	transform: scale(1);
-	opacity: 1;
-}
-
-
-
-
-  input, label{padding:0 .5em;line-height:2em;}
-  input {
-  	font-family: 'Montserrat Alternates', serif;
-  	width:70%;
-  	border:1px solid #ccc;
-  	margin:0 0 15px 0;
-  	box-sizing:border-box;
-  	border-radius:5px;
-  }
-
-  input:valid + label{opacity:0;-webkit-transform: translate(200px, 0px);color:#2DAA29;}
-  label{opacity:.5;font-size:1em;position:absolute;background-color:#fff;color:#999;border-top-left-radius:5px;border-bottom-left-radius:5px;-webkit-transition:all 1s ease .2s;}
-
-  label:nth-of-type(1){margin-left:-10px;}
-  label:nth-of-type(2){margin-left:-18px;}
-  label:nth-of-type(3){margin-left:-80px;}
