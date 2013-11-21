@@ -7,7 +7,7 @@ require_once('config/config.php');
 require_once('config/fb_config.php'); 
 
 /*---------------------CONNEXION AU SITE---------------------*/
-if($_SESSION["email"]==NULL && $_SESSION["fb_id"]==NULL ){
+if(isset($_SESSION["nickname"]) && $_SESSION["fb_id"]==null ){
 	header('Location: index.php');
 }
 
@@ -149,6 +149,7 @@ require_once('includes/edit-profile.inc.php');
 	<script src="assets/js/config.js"></script>
 	<script src="assets/js/functions.js"></script>
 	<script src="assets/js/classes.js"></script>
+	<script src="assets/js/navigation-ajax.js"></script>
 	<script src="assets/js/itineraires.js"></script>
 	<script src="assets/js/home.js"></script>
   </head>
