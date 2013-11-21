@@ -342,13 +342,12 @@ li img{
 	font-family: LatoLight;
 }
 
-@media screen and (max-width: 767px){
+@media screen and (max-width: 495px){
 
 
 	#connexion-facebook{
 		margin-right: 0;
 		margin-bottom:5px;
-		padding: 2px 10px 2px 50px;;
 	}
 
 	.encadre{
@@ -384,5 +383,11 @@ li img{
 
 }
 
+@media screen and (max-width: 290px){
+
+	#connexion-facebook{
+		padding: 2px 10px 2px 50px;
+	}
+}
 
 

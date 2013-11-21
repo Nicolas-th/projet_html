@@ -157,7 +157,7 @@ h2{
 @media screen and (max-width: 540px){
 	
 	#description{
-		margin-top:0;
+		margin-top:10px;
 	}
 
 	.photo-lieu{
