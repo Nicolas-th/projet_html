@@ -22,6 +22,20 @@ var carte = {
 		iconsFilePrefix : 'icon_',
 		iconsExtension : '.svg',
 		iconDefault : 'icon_depart'
+	},
+	defaults : {
+		rechercherLieux : {
+			points : [],
+			success : function(){},
+			error : function(){}
+		},
+		lancerRechercheLieux : {
+			directionsServiceResponse : null,
+			itinerairesTraces : function(){}
+		},
+		tracerItineraires : {
+			itinerairesTraces : function(){}
+		}
 	}
 };
 
@@ -34,15 +48,10 @@ carte.lieuxChoisis = function(){
 }
 
 carte.rechercherLieux = function(params){
-	var defauts = {
-		points : [],
-		success : function(){},
-		error : function(){}
-	}
-	params = $.extend(defauts, params);
+	params = $.extend({}, _this.defaults.rechercherLieux, params);
 	var str_points = "";
 	for (var i = 0; i<params.points.length; i++) {
-	  str_points+=params.points[i].lat()+','+params.points[i].lng()+';'
+	  str_points+=params.points[i].latitude+','+params.points[i].longitude+';'
 	}
 	$.ajax({
 	  type: "POST",
@@ -59,17 +68,20 @@ carte.rechercherLieux = function(params){
 }
 
 carte.lancerRechercheLieux = function(params){
-	var defauts = {
-		directionsServiceResponse : null,
-		itinerairesTraces : function(){}
-	}
-	params = $.extend(defauts, params);
-
+	params = $.extend({}, _this.defaults.lancerRechercheLieux, params);
 	if(typeof(params)=='object' && params.directionsServiceResponse!=null){
 		var points = params.directionsServiceResponse.routes[0].overview_path;
 
+		var tabPoints = [];
+		for(key in points){
+			tabPoints.push({
+				latitude : points[key].lat(), 
+				longitude : points[key].lng()
+			});
+		}
+
 		carte.rechercherLieux({
-			points : points,
+			points : tabPoints,
 			success: function(data, textStatus, jqXHR){
 				if(data.code=='200'){
 
@@ -113,32 +125,19 @@ carte.lancerRechercheLieux = function(params){
 					message += '<p>Aucun lieu n\'a été trouvé sur votre itinéraire. </p>';
 					message += '<a href="#">Vous en connaissez un ? Partagez-le !</a>';
 					message += '</div>';
-					$('#formulaire_itineraire').falter(message);
+					$('#formulaire_itineraire').after(message);
 				}else{
 					console.log('Erreur '+data.code);
 				}
-
 
 				carte.tracerItineraire(params);
 
 				/* Choix du mode de transport */
 				$('.choix_transport a').off('click').on('click',function(){
 					if(!$(this).hasClass('actif')){
-						switch($(this).attr('id')){
-							case 'marche':
-								var transport = google.maps.DirectionsTravelMode.WALKING;
-								break;
-							case 'velo':
-								var transport = google.maps.DirectionsTravelMode.BICYCLING;
-								break;
-							case 'voiture':
-								var transport = google.maps.DirectionsTravelMode.DRIVING;
-								break;
-							default :
-								var transport = google.maps.DirectionsTravelMode.TRANSIT;
-						}
+
 						carte.map.setMoyenTransport({
-							moyenTransport : transport
+							moyenTransport : $(this).attr('id')
 						});
 
 						$('.choix_transport a').removeClass('actif');
@@ -187,8 +186,21 @@ carte.lancerRechercheLieux = function(params){
 												current_itineraire = carte.itineraires[0];	// On met à jour l'itinéraire courant
 											}
 
-											var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-											var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+											// A supprimer à terme
+											//var latLng_depart = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+											//var latLng_arrivee = new google.maps.LatLng(current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+											
+											var points = {
+												depart : {
+													latitude : position.coords.latitude,
+													longitude : position.coords.longitude
+												},
+												arrivee : {
+													latitude : current_itineraire.arrivee.latitude,
+													longitude : current_itineraire.arrivee.longitude
+												}
+											}
+
 											carte.map.traceItineraire({
 												points : {
 													depart : latLng_depart,
@@ -203,7 +215,7 @@ carte.lancerRechercheLieux = function(params){
 																zoom : 15
 															});
 															carte.map.setCenter({
-																position: latLng_depart
+																position: points.depart
 															});
 
 															if(returns.directionsServiceResponse.routes.length>0){
@@ -247,13 +259,13 @@ carte.lancerRechercheLieux = function(params){
 											});
 
 											carte.map.ajouterMarker({
-												position : latLng_depart,
+												position : points.depart,
 									        	nom : 'Votre position',
 									        	type : 'current_itineraire'
 									        });
 									        
 									        carte.map.ajouterMarker({
-												position : latLng_arrivee,
+												position : points.arrivee,
 									        	nom : current_itineraire.arrivee.name,
 									        	categorie : current_itineraire.arrivee.categorie,
 									        	type : 'current_itineraire'
@@ -308,6 +320,7 @@ carte.lancerRechercheLieux = function(params){
 }
 
 carte.tracerItineraire = function(params){
+	params = $.extend({}, _this.defaults.tracerItineraire, params);
     var lieux_choisis = carte.lieuxChoisis();
 
     $('#guidage_itineraire').empty();

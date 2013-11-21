@@ -18,6 +18,96 @@ var Carte = function() {
 	_this.infoWindow = {
 		open : null
 	};
+	_this.defaults = {
+		init : {
+			element : '#carte',
+			streetViewControl : false
+		},
+		setStyleMap : {
+			style : {}
+		},
+		setStyleInfoWindows : {
+			style : {}
+		},
+		setCenter : {
+			position : {
+				latitude : 48.851861,
+				longitude : 2.420284
+			}
+		},
+		setZoom : {
+			zoom : 5
+		},
+		setMoyenTransport : {
+			moyenTransport : 'metro'
+		},
+		tracerItineraires : {
+			key : 0,
+			trajets : [],
+			duree : 0,
+			finished : function(){}
+		},
+		traceItineraire : {
+			points : {
+				depart : null,
+				arrivee : null,
+			},
+			type : null,
+			preserveViewport : true,
+			finished : function(){}
+		},
+		supprimerItineraire : {
+			itineraire : null
+		},
+		ajouterMarker : {
+			position : null,
+			categorie : 'defaut',
+			nom : '',
+			infowindow : null,
+			markers : {
+				iconsRepertory : 'assets/img/maps_icons/',
+				iconsFilePrefix : 'icon_',
+				iconsExtension : '.svg',
+				iconDefault : 'icon_depart'
+			}
+			//iconDefault : 'http://maps.google.com/mapfiles/marker.png'
+		},
+		changePositionMarker : {
+			position : null
+		},
+		supprimerMarker : {
+			marker : null
+		},
+		ajouterInfoWindow : {
+			infoWindow : {
+				content : '',
+				disableAutoPan : false,
+				maxWidth : 0,
+				pixelOffset : {
+					width : 0,
+					height : -100
+				},
+				zIndex : null,
+				style : '',
+				closeBoxMargin : '2px',
+				closeBoxURL : 'http://www.google.com/intl/en_us/mapfiles/close.gif',
+				infoBoxClearance : {
+					width : 1,
+					height : 1
+				},
+				nettoyer : {
+					type : null,
+					finished : function(){}
+				},
+				click : function(){}
+			}
+		},
+		nettoyer : {
+			 type : null,
+             finished : function(){}
+		}
+
+	}
 
 	/*
 	## init() ##
@@ -27,11 +117,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.init = function(params){
-		var defauts = {
-			element : '#carte',
-			streetViewControl : false
-		}
-		params = $.extend(defauts, params);
+		params = $.extend({},_this.defaults.init, params);
 
 	    _this.carte = new google.maps.Map(
 	    	params.element,
@@ -51,29 +137,9 @@ var Carte = function() {
 				 }
 	*/
 	_this.setStyleMap = function(params){
-		var defauts = {
-			style : {}
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.setStyleMap, params);
 		_this.carte.mapTypes.set('map_style', new google.maps.StyledMapType(params.style));
 	    _this.carte.setMapTypeId('map_style');
-	};
-
-	/*
-	## setStyleInfoWindows() ##
-			Paramètre attendu : objet
-				 {
-					style : String
-				 }
-	*/
-	_this.setStyleInfoWindows = function(params){
-		var defauts = {
-			style : {}
-		}
-		params = $.extend(defauts, params);
-
-		_this.preferencesInfoWindow.style = params.style;
 	};
 
 	/*
@@ -84,12 +150,8 @@ var Carte = function() {
 				 }
 	*/
 	_this.setCenter = function(params){
-		var defauts = {
-			position : new google.maps.LatLng(48.851861,2.420284) // Hetic
-		}
-		params = $.extend(defauts, params);
-
-		_this.carte.setCenter(params.position);
+		params = $.extend({},_this.defaults.setCenter, params);
+		_this.carte.setCenter(new google.maps.LatLng(params.position.latitude,params.position.longitude));
 	};
 
 	/*
@@ -100,11 +162,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.setZoom = function(params){
-		var defauts = {
-			zoom : 5
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.setZoom, params);
 		_this.carte.setZoom(params.zoom);
 	};
 
@@ -116,12 +174,21 @@ var Carte = function() {
 				 }
 	*/
 	_this.setMoyenTransport = function(params){
-		var defauts = {
-			moyenTransport : google.maps.DirectionsTravelMode.TRANSIT
+		params = $.extend({},_this.defaults.setMoyenTransport, params);
+		switch(params.moyenTransport){
+			case 'marche':
+				var transport = google.maps.DirectionsTravelMode.WALKING;
+				break;
+			case 'velo':
+				var transport = google.maps.DirectionsTravelMode.BICYCLING;
+				break;
+			case 'voiture':
+				var transport = google.maps.DirectionsTravelMode.DRIVING;
+				break;
+			default :
+				var transport = google.maps.DirectionsTravelMode.TRANSIT;
 		}
-		params = $.extend(defauts, params);
-
-		_this.preferencesItineraire.moyenTransport = params.moyenTransport;
+		_this.preferencesItineraire.moyenTransport = transport;
 	};
 
 
@@ -147,28 +214,32 @@ var Carte = function() {
 				 }
 	*/
 	_this.tracerItineraires = function(params){
-		var defauts = {
-			key : 0,
-			trajets : [],
-			duree : 0,
-			finished : function(){}
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.tracerItineraires, params);
 		if(typeof(params.trajets[params.key])!='undefined'){
 	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
 	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
+	        var positions = {
+	        	depart :{
+					latitude : params.trajets[params.key].depart.latitude,
+					longitude : params.trajets[params.key].depart.longitude
+				},
+				arrivee : {
+					latitude : params.trajets[params.key].arrivee.latitude,
+					longitude : params.trajets[params.key].arrivee.longitude
+				}
+			}
+
 			for(var i=0;i<2;i++){
 				if(i==0){
-					var latLng = latLng_depart;
+					var positionMarker = positions.depart;
 					var infos = params.trajets[params.key].depart;
 				}else{
-					var latLng = latLng_arrivee;
+					var positionMarker = positions.arrivee;
 					var infos = params.trajets[params.key].arrivee;
 				}
 		        _this.ajouterMarker({
-		        	position : latLng,
+		        	position : positionMarker,
 		        	nom : infos.nom,
 		        	categorie : infos.categorie,
 		        	type : 'itineraires_lieux',
@@ -226,17 +297,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.traceItineraire = function(params){
-		var defauts = {
-			points : {
-				depart : null,
-				arrivee : null,
-			},
-			type : null,
-			preserveViewport : true,
-			finished : function(){}
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.traceItineraire, params);
 		var request = {
 	        origin      : params.points.depart,
 	        destination : params.points.arrivee,
@@ -291,11 +352,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.supprimerItineraire = function(params){
-		var defauts = {
-			itineraire : null
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.supprimerItineraire, params);
 		params.itineraire.setMap(null);
 		_this.itineraires = deleteValueFromArray(_this.itineraires,params.itineraire);
 	};
@@ -313,27 +370,13 @@ var Carte = function() {
 				 }
 	*/
 	_this.ajouterMarker = function(params){
-		var defauts = {
-			position : null,
-			categorie : 'defaut',
-			nom : '',
-			infowindow : null,
-			markers : {
-				iconsRepertory : 'assets/img/maps_icons/',
-				iconsFilePrefix : 'icon_',
-				iconsExtension : '.svg',
-				iconDefault : 'icon_depart'
-			}
-			//iconDefault : 'http://maps.google.com/mapfiles/marker.png'
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.ajouterMarker, params);
 		var image = params.markers.iconsRepertory+params.markers.iconDefault+params.markers.iconsExtension;
 		if(params.categorie!='defaut'){
 			image = params.markers.iconsRepertory+params.markers.iconsFilePrefix+params.categorie+params.markers.iconsExtension;
 		}
 	    var marker = new google.maps.Marker({
-	        position: params.position,
+	        position: new google.maps.LatLng(params.position.latitude,params.position.longitude),
 	        icon: image,
 	        title: params.nom
 	    });
@@ -363,11 +406,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.changePositionMarker = function(params){
-		var defauts = {
-			position : null
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.changePositionMarker, params);
 		params.marker.setPosition(params.position);
 	};
 
@@ -379,11 +418,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.supprimerMarker = function(params){
-		var defauts = {
-			marker : null
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.supprimerMarker, params);
 		params.marker.setMap(null);
 		_this.markers = deleteValueFromArray(_this.markers,params.marker);
 	};
@@ -399,24 +434,17 @@ var Carte = function() {
 				 }
 	*/
 	_this.ajouterInfoWindow = function(params){
-		var defauts = {
-			infoWindow : {
-				content : '',
-				click : function(){}
-			}
-		}
-		params = $.extend(defauts, params);
-
+		$.extend(params,_this.defaults.ajouterInfoWindow);
 		var infowindow = new InfoBox({
 			content: params.infoWindow.content,
-			disableAutoPan: false,
-			maxWidth: 0,
-			pixelOffset: new google.maps.Size(0, -100),
-			zIndex: null,
-			boxStyle: _this.preferencesInfoWindow.style,
-			//closeBoxMargin: "12px 4px 2px 2px",
-			closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
-			infoBoxClearance: new google.maps.Size(1, 1)
+			disableAutoPan: params.infoWindow.disableAutoPan,
+			maxWidth: params.infoWindow.maxWidth,
+			pixelOffset: new google.maps.Size(params.infoWindow.pixelOffset.width, params.infoWindow.pixelOffset.height),
+			zIndex: params.infoWindow.zIndex,
+			boxStyle: params.infoWindow.style,
+			closeBoxMargin: params.infoWindow.closeBoxMargin,
+			closeBoxURL: params.infoWindow.closeBoxURL,
+			infoBoxClearance: new google.maps.Size(params.infoWindow.infoBoxClearance.width, params.infoWindow.infoBoxClearance.height)
 	    });
 
 	    google.maps.event.addListener(params.marker, 'click', function() {
@@ -437,12 +465,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.nettoyer = function(params){
-		var defauts = {
-			type : null,
-			finished : function(){}
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.nettoyer, params);
 		for(key_m in _this.markers){
 			var current = _this.markers[key_m];
 			if((typeof(current.type)!='undefined' && current.type==params.type) || params.type==null || params.type=='all'){
@@ -481,10 +504,15 @@ var Autocompletion = function(){
 		 }
 	*/	
 	_this.init = function(params){
-		params = $.extend(defauts, params);
+		params = $.extend({},defauts, params);
 
 		_this.inputText = $(params.inputText);
 		_this.divResultats = $(params.divResultats);
+		_this.defaults = {
+			afficherResultats : {
+				resultats : []
+			}
+		}
 	}
 
 	/*
@@ -509,11 +537,7 @@ var Autocompletion = function(){
 				 }
 	*/	
 	_this.afficherResultats = function(params){
-		var defauts = {
-			resultats : []
-		}
-		params = $.extend(defauts, params);
-
+		params = $.extend({},_this.defaults.afficherResultats, params);
 		var htmlContent = '';
 		for (var i = 0; i<params.resultats.length; i++) {
 			htmlContent += '<li id="'+params.resultats[i].reference+'">' + params.resultats[i].description + '</li>';

@@ -1,13 +1,25 @@
 $(function(){
 
-  $('.bouton-connexion').click(function(e) {
-    $('#signup').lightbox_me({
-        centered: true, 
-        onLoad: function() { 
-            $('#signup').find('input:first').focus()
+  // Initialisation des transition
+  var transition = new Transition();
+  transition.init({
+    conteneur : 'body',
+    pages : [
+      {
+        element : '#page_1',
+        links : {
+          open : '.open_page_1',
+          close : '.ajax_nav'
         }
-    });
-    e.preventDefault();
+      },
+      {
+        element : '#page_2',
+        links : {
+          open : '.open_page_2',
+          close : '.ajax_nav'
+        }
+      }
+    ]
   });
 
   redimentionnerMap();
@@ -23,14 +35,18 @@ $(function(){
   carte.map.setStyleMap({
     style : stylesCarte
   });
-  carte.map.setStyleInfoWindows({
-    style : carte.infoWindow.style
-  });
 
   if(navigator.geolocation) {
 
     navigator.geolocation.getCurrentPosition(
-      function(currentPosition){  // success
+      function(positionGeoc){  // success
+        var initialPosition = {
+            latitude : positionGeoc.coords.latitude,
+            longitude : positionGeoc.coords.longitude
+        };
+        carte.map.setCenter({
+          position : initialPosition
+        });
         carte.map.ajouterMarker({
           position : initialPosition,
           nom : 'Votre position'
@@ -41,15 +57,19 @@ $(function(){
             if(data.code=='200'){
               for(key in data.lieux) {
                 var current = data.lieux[key];
-                var latLng = new google.maps.LatLng(current.latitude,current.longitude);
+                var currentPosition = {
+                  latitude : current.latitude,
+                  longitude : current.longitude
+                };
                 var infoWindowContent = $('<div></div>').append($('<p></p>').text(current.name)).html();
                 carte.map.ajouterMarker({
-                  position : latLng,
+                  position : currentPosition,
                   categorie : current.categories_id,
                   nom : current.name,
                   infoWindow : {
                     content : infoWindowContent,
-                    position : latLng,
+                    style : carte.infoWindow.style,
+                    position : currentPosition,
                     click : function(params){
                       if(carte.map.infoWindow.open!=null){
                         carte.map.infoWindow.open.close();
@@ -77,9 +97,11 @@ $(function(){
       },
       function(){ // error
         $('#position').remove();
-        var initialPosition = new google.maps.LatLng(48.857713,2.347271);
         carte.map.setCenter({
-          position : initialPosition
+          position : {
+            latitude : 48.857713,
+            longitude : 2.347271,
+          }
         });
       }
     );
@@ -96,10 +118,12 @@ $(function(){
 
   }else{
    $('#position').remove();
-    var initialPosition = new google.maps.LatLng(48.857713,2.347271);
     carte.map.setCenter({
-      position : initialPosition
-    });
+        position : {
+          latitude : 48.857713,
+          longitude : 2.347271,
+        }
+      });
   }
   $('#lieux_depart').keypress(function(){
       $('input[name="latitude_position"]','input[name="longitude_position"]').val('');
@@ -158,22 +182,10 @@ $(function(){
 
     /* Choix du mode de transport */
     $('.choix_transport a').on('click',function(){
-      if(!$(this).hasClass('actif')){
-        switch($(this).attr('id')){
-          case 'marche':
-            var transport = google.maps.DirectionsTravelMode.WALKING;
-            break;
-          case 'velo':
-            var transport = google.maps.DirectionsTravelMode.BICYCLING;
-            break;
-          case 'voiture':
-            var transport = google.maps.DirectionsTravelMode.DRIVING;
-            break;
-          default :
-            var transport = google.maps.DirectionsTravelMode.TRANSIT;
-        }
+      if(!$(this).hasClass('actif')){  
+
         carte.map.setMoyenTransport({
-          moyenTransport : transport
+          moyenTransport : $(this).attr('id')
         });
 
         $('.choix_transport a').removeClass('actif');

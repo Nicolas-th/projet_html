@@ -9,9 +9,6 @@
 		require_once('../classes/sql.class.php');
 		require_once('../includes/functions.inc.php');
 
-		$retour['test'] = $_POST['points'];
-
-
 		$tab_lieux = explode(';',$_POST['points']);
 
 		foreach($tab_lieux as $lieu){
