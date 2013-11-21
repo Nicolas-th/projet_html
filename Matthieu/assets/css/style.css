@@ -357,10 +357,13 @@ li img{
 
 	h1{
 	    hyphens: auto;
+	    font-size:40px;
 	}
 
 	h1#intro{
 	    margin:0;
+	    font-size:40px;
+	    padding-right: 0;
 	}
 
 	#connexion {
