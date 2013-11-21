@@ -20,9 +20,8 @@ else:
 		<meta name="viewport" content="initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="assets/css/simplegrid.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-		<script src="js/modernizr.custom.js"></script>
 	</head>
-	<body onload="initialize()">
+	<body>
 		<!-- All modals added here for the demo. You would of course just have one, dynamically created -->
 		<div class="md-modal md-effect-1" id="connexion-modal">
 			<div class="md-content">
@@ -32,7 +31,12 @@ else:
 		 		 		<div id="messageLogin"></div>
 			 		 	<input type="text" name="nickname" placeholder="Pseudo" id="nickname" required/>
 			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
-			 		 	<div id="btn-connexion"> <input type="submit"  name="submit_login" value="Se connecter" /></div>	 
+			 		 	<div id="btn-connexion"> <input type="submit"  name="submit_login" value="Se connecter" /></div>
+			 		 	<div id="sep">
+			 		 		<p>ou</p>
+			 		 	</div>
+			 		 	<a id="btn-facebook" onclick="popup('<?php echo $loginUrl; ?>')" href="#">Connexion avec <strong>Facebook</strong></a>
+			 		 		 
 			 		 </form>
 			</div>
 		</div>
@@ -241,7 +245,7 @@ else:
 
 		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script src="assets/js/config.js"></script> 
+		<script src="assets/js/classes.js"></script>
 		<script src="assets/js/login.js"></script> 
 		<script src="assets/js/classie.js"></script>
 		<script src="assets/js/modalEffects.js"></script>
