@@ -146,7 +146,6 @@ require_once('includes/edit-profile.inc.php');
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
 	<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
-	<script src="assets/js/config.js"></script>
 	<script src="assets/js/functions.js"></script>
 	<script src="assets/js/classes.js"></script>
 	<script src="assets/js/navigation-ajax.js"></script>

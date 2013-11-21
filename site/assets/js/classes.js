@@ -21,7 +21,17 @@ var Carte = function() {
 	_this.defaults = {
 		init : {
 			element : '#carte',
-			streetViewControl : false
+			streetViewControl : false,
+			zoom : 15,
+			center : {
+				latitude : 48.858565,
+				longitude : 2.347198
+			},
+			scrollwheel: true,
+		    navigationControl: true,
+		    mapTypeControl: true,
+		    scaleControl: true,
+		    draggable: true
 		},
 		setStyleMap : {
 			url : null,
@@ -124,8 +134,14 @@ var Carte = function() {
 	    	params.element,
 	    	{
 	      		mapTypeId: google.maps.MapTypeId.ROADMAP,
-	     		zoom: 15,
-	      		streetViewControl : params.streetViewControl
+	     		zoom: params.zoom,
+	      		streetViewControl : params.streetViewControl,
+	      		center : new google.maps.LatLng(params.center.latitude,params.center.longitude),
+	      		scrollwheel: params.scrollwheel,
+			    navigationControl: params.navigationControl,
+			    mapTypeControl: params.mapTypeControl,
+			    scaleControl: params.scaleControl,
+			    draggable: params.draggable
 	    	}
 	    );
 	};
@@ -153,7 +169,7 @@ var Carte = function() {
 	## setCenter() ##
 			Paramètre attendu : objet
 				 {
-					position : objet google.maps.LatLng
+					position : objet {latitude, longitude}
 				 }
 	*/
 	_this.setCenter = function(params){
@@ -368,7 +384,7 @@ var Carte = function() {
 	## ajouterMarker() ##
 			Paramètre attendu : objet
 				 {
-				 	position : objet google.maps.LatLng
+				 	position : objet {latitude, longitude}
 					categorie : int,
 					nom : String,
 					infoWindow : (optionnel) {

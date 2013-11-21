@@ -1,30 +1,45 @@
 $(function(){
 
-  var map = new google.maps.Map(document.getElementById("map-canvas"), {
+  var map = new Carte();
+  map.init({
+    element : document.getElementById('map-canvas'),
     zoom: 17,
-    center: new google.maps.LatLng(48.858565, 2.347198),
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    center: {
+      latitude : 48.858565,
+      longitude : 2.347198
+    },
     scrollwheel: false,
     navigationControl: false,
     mapTypeControl: false,
     scaleControl: false,
     draggable: false
   });
+  map.setStyleMap({
+    url : 'assets/js/config.json',
+    key : 'mapStyle'
+  });
+  map.ajouterMarker({
+    position : {
+      latitude : 48.858565,
+      longitude : 2.347198
+    },
+    nom : 'Votre position !',
+    categorie : 'depart'
+  });
 
-  if(typeof(stylesCarte)!='undefined'){
-    map.mapTypes.set('map_style', new google.maps.StyledMapType(stylesCarte));
-    map.setMapTypeId('map_style');
-  }
-
-  if (navigator.geolocation){
+  /*
+  if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(function(position) {
-      map.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-      var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-        map: map,
-        icon: 'assets/img/maps_icons/icon_depart.svg'
+      map.ajouterMarker({
+        position : {
+          latitude : position.coords.latitude,
+          longitude : position.coords.longitude
+        },
+        nom : 'Votre position !',
+        categorie : 'depart'
       });
+      map.setCenter(position.coords.latitude, position.coords.longitude);
     });
   }
-
+  */
 });
