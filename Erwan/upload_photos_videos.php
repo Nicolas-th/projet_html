@@ -122,7 +122,7 @@
 		$destinationDirectory   = '/var/www/illio.fr/web/projet_html/tests_erwan/uploads/';
 		$destinationURL   		= 'http://www.find-it-out.fr/tests_erwan/uploads/';
 
-		$typesValides = ['video/webm','video/mp4','video/ogg'];
+		$typesValides = ['video/webm','video/mp4','video/ogg','video/quicktime'];
 
 		$videoName      = str_replace(' ','-',strtolower($_FILES['videoFile']['name']));
 	    $videoSize      = filesize($_FILES['videoFile']['tmp_name']);
@@ -143,7 +143,7 @@
 		    	}
 
 		    }else{
-		    	$erreur = 'Le format de vidéo n\'est pas accepté. Votre vidéo doit être encodée aux formats .webm .mp4 ou .ogg';
+		    	$erreur = 'Le format de vidéo n\'est pas accepté. Votre vidéo doit être encodée aux formats .webm .mp4, .ogg ou .mov. Votre fichier vidéo est actuellement au format '.$videoType.'.';
 		    }
 
 		}else{
