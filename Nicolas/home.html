@@ -2,6 +2,9 @@
 <html>
   <head>
   	<meta charset="UTF-8">
+  	<!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   	
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     
@@ -18,9 +21,11 @@
   
   <header>
   	
-	  <div class="icon" id="menu"></div>
-	  <div class="icon" id="profile"></div>
-	  <div class="icon" id="settings"></div>
+	  
+	  <div class="icon"></div>
+	  <div class="icon"></div>
+	  <div class="icon"></div>
+	  
 	  
   </header>
   
@@ -103,10 +108,10 @@
  
   
   
-  <div id="popup_right">
+  <section id="popup_right">
 	 
 
-<p><img src="img/avatar.png"/></p>
+<p><div class="mask"><img src="img/avatar.png"/></div></p>
 	  
 <h3>Manon Baudemont</h3>
 
@@ -162,7 +167,7 @@
  
  
 <!--
-<p id="profile_picture"><img src="img/avatar.png"/></p>
+<p id="profile_picture"><div class="mask"><img src="img/avatar.png"/></div></p>
 	  
 	  <h3>Manon Baudemont</h3>
   
@@ -229,7 +234,7 @@
 -->
 
 	   
-</div> <!-- Fin div profil --> 	
+</section> <!-- Fin div profil --> 	
  
 
   <div id="map-canvas"></div>
@@ -239,7 +244,7 @@
   
   $("#bouton2").css("display","none");
   
-  $("#profile").click(function(){
+  $("header div:nth-child(3),header div:nth-child(2)").click(function(){
   	console.log($("#popup_right").attr('style'));
   	  if($('#popup_right').attr('style') != "right: -280px;"){
   	  	 $("#popup_right").animate({
@@ -321,6 +326,7 @@ $("#edit_password img").click(function(){
 
 $("#edit img").click(function(){
 	  $("#update_info input").removeAttr('disabled');
+	  $("#update_info input[type=text],#update_info input[type=email]").css("background-color","grey");
 	  $("#save_infos").css("display","block");
 	  //$("#popup_right form input[type=text]").css('background-color','grey');
   });
