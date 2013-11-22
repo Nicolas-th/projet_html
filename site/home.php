@@ -37,76 +37,39 @@ require_once('includes/profile.inc.php');
   <div id="bouton2"></div>
   
   <section id="popup"> <!-- début barre latérale gauche -->
-	  <div id="bouton"></div>
-	  
-	  <p>Indiquez votre trajet :</p>
+
+	<div id="bouton"></div>
+
+	<p>Indiquez votre trajet :</p>
 	  
 	<form id="formulaire_itineraire" method="post" action="#">
-	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ" />
-	    <button id="position">Ma position</button>
-	    <input type="hidden" name="latitude_position" />
-	    <input type="hidden" name="longitude_position" />
-	    
-	    
-	    
-	    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
-	    <ul id="resultats_lieux_depart"></ul>
-	    <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
-	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
-    
-	        
-	    <ul id="resultats_lieux_arrive"></ul>
-	    <div class="choix_transport">
+		<input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ" />
+		<button id="position">Ma position</button>
+		<input type="hidden" name="latitude_position" />
+		<input type="hidden" name="longitude_position" />
+
+
+
+		<input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
+		<ul id="resultats_lieux_depart"></ul>
+		<input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
+		<input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
+
+		    
+		<ul id="resultats_lieux_arrive"></ul>
+		<div class="choix_transport">
 		    <a href="#" id="marche" class="actif">A pied</a>
 		    <a href="#" id="velo">En vélo</a>
 		    <a href="#" id="metro">En métro</a>
 		</div>
-		
+
 		<input type="submit" value="Rechercher"/>
-		
-   </form>
-   
-   
-   <hr>
 
-   
-   
-  <div id="resultat_lieux">
+	</form>
 
-	  <ul>
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label class="place">Nom du lieu</label>
-		 	<div class="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul> 
-	  
-	  <ul>
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label class="place">Nom du lieu</label>
-		 	<div class="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul>  
-	  
-	  <ul>
-	  	<li>
-		 	<img src="assets/img/yellow_marker.svg" width="20" height="20"/>
-		 	<label class="place">Nom du lieu</label>
-		 	<div class="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul>   
-	  
-  </div>
+	<hr>
+
+	<div id="resultat_lieux"></div>
 	  
   </section> <!-- fin barre latérale gauche -->
   
@@ -266,10 +229,16 @@ if($user) { ?>
  
 
   <div id="map-canvas"></div>
+  <div id="hidden"></div>
 
   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1HpcMfIYTfqx8XfYENLIFDfMHWK-0-IY&sensor=true"></script>
-  <script src="js/map_style.js"></script>
+  <script src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
+  <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
+  <script src="js/functions.js"></script>
+  <script src="js/classes.js"></script>
+  <script src="js/navigation-ajax.js"></script>
+  <script src="js/itineraires.js"></script>
+  <script src="js/home.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/edit-profile.js"></script>
   <script src="js/jquery.form.js"></script>
