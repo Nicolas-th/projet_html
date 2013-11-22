@@ -58,8 +58,8 @@ header .icon{
 }
       
 header div:nth-child(3){
-  background:url('../img/personne.svg') no-repeat; 
-  background-size:cover;   
+  background:url('../img/personne.svg') no-repeat;
+  background-size:cover; 
 }
 
 header div:nth-child(2){
@@ -69,8 +69,8 @@ header div:nth-child(2){
 }
 
 header div:nth-child(1){
-  background:url('../img/menu.svg') no-repeat;
-  background-size:cover; 
+  background:url('../img/menu.svg') no-repeat; 
+  background-size:cover;   
 }
 
 #popup{
@@ -87,7 +87,7 @@ header div:nth-child(1){
 #bouton, #bouton2{
   width:30px;
   height:30px;
-  background:url('../img/menu.svg') no-repeat;
+  background:url('../img/route.svg') no-repeat;
   background-size:cover;
   cursor:pointer;
   position:absolute;
@@ -211,23 +211,15 @@ margin-right:4px;
 	max-width:280px;
 }
 
-#bouton_right{
-	width:30px;
-	height:30px;
-	background:url('../img/menu.svg') no-repeat;
-	background-size:cover;
-	cursor:pointer;
-	
-}
-
-
-#popup_right > :nth-child(2){
+#popup_right > :nth-child(1){
 	text-align:center;
+	margin-left:-20px;
+	margin-top:20px;
 }
 
 #popup_right p{
 	font-size:15px;
-	margin:0;
+	margin:0 auto;
 }
 
 #popup_right h3{
@@ -350,13 +342,19 @@ hr{
 
 /************* profile settings ************/
 
+#popup_right:first-child{
+	border:1px solid red;
+}
+
 #popup_right form input[type=text],#popup_right form input[type=email],#hidden_password input[type=password]{
+	width:160px;
 	border-radius:6px;
 	background:none;
 	border:none;
 	color:white;
 	font-size:14px;
 	margin-left:20px;
+	overflow:visible;
 }
 
 div.upload {
@@ -409,9 +407,8 @@ p + img{
 #hidden_password, #update_info{
 	position:relative;
 	left:20px;
+	width:240px;
 }
-
-
 
 
 #hidden_password{
