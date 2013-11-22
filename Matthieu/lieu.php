@@ -1,3 +1,34 @@
+<?php
+	require_once('config/config.php');
+	require_once('includes/functions.inc.php');
+	
+	//On récupère la valeur de l'id passé par l'url
+	$id_lieu = $_GET['id'];
+	$id_user = 11;
+	
+	//Fonction d'affichage des commentaires
+	if(isset($_POST['message']) ){
+		$message = $_POST['message'];
+		$valid = 1;
+	
+	
+		$reqComment = $dbh->prepare("INSERT INTO comments VALUES('',:message,NOW(),:valid,:id_user,:id_lieu)");
+			$reqComment->bindValue('message',$message,PDO::PARAM_STR);
+			$reqComment->bindValue('valid',$valid,PDO::PARAM_INT);
+			$reqComment->bindValue('id_user',$id_user,PDO::PARAM_INT);
+			$reqComment->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+		$reqComment->execute();
+	}
+	
+	//On récupère les informations du lieu demandé
+	$reqPlace = $dbh->prepare("SELECT * FROM places WHERE id LIKE :id_lieu");
+		$reqPlace->bindValue('id_lieu',$id_lieu,PDO::PARAM_STR);
+	$reqPlace->execute();
+	
+	$result = $reqPlace->fetch();
+	
+	print_r($result);
+?>
 <!doctype html>
 <html>
 	<head>
@@ -77,8 +108,6 @@
 				<div id="leave-comment">
 	        		<h3>Répondre</h3>
 	       			<form method="post" action="../Comments/addComments.php" id="formCom">
-	                	<input type="hidden" name="id_user" value="<?php echo $id_user; ?>"/>
-	                	<input type="hidden" name="id_lieu" value="<?php echo $id_lieu; ?>"/>
 	                	<p><textarea id="comments" name="message" placeholder="Commentaire" required></textarea></p>
 	                	<p class="submit"><button>Envoyer</button></p>
 	       			</form>
