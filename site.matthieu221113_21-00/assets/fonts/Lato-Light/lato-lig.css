@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'LatoLight';
+    src: url('lato-lig.eot');
+    src: url('lato-lig.eot') format('embedded-opentype'),
+         url('lato-lig.woff') format('woff'),
+         url('lato-lig.ttf') format('truetype'),
+         url('lato-lig.svg#LatoLight') format('svg');
+}
