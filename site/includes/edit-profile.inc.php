@@ -1,7 +1,7 @@
 <?php
 /*------------ACCÈS BASE DE DONNÉES ET FACEBOOK--------------*/
-require_once('config/config.php'); 
-//$idUser = $_GET['id'];
+require_once("../config/config.php");
+$idUser = $_GET['id'];
 
 /*-----------------------------------------------------------*/	
 /*------ MODIFICATIONS DES INFORMATION DE L'UTILISATEUR -----*/
@@ -17,9 +17,8 @@ if (isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email']))
 	  	 							surname = '$modify_surname',
 	  	 							email = '$modify_email'
 	  	 						WHERE id = '$idUser'");
-	var_dump($edit_profile);
-	echo ($success_edit_profil = "Vos informations ont bien été enregistrées");	
-}
+	echo "successProfile";	
+} 
 
 
 /*-----------------------------------------------------------*/	
@@ -40,7 +39,7 @@ if (isset($_FILES["avatar"]) != "") {
 	$tmp_file = $_FILES['avatar']['tmp_name'];
 	if( !is_uploaded_file($tmp_file) )
 	{
-		$error_avatar_find_modify = "Le fichier n'a pas été trouvé";
+		echo "missingFiles";
 	}
 
 	$image =$_FILES["avatar"]["name"];
@@ -49,7 +48,6 @@ if (isset($_FILES["avatar"]) != "") {
 	$filename = stripslashes($_FILES['avatar']['name']);
 	$extension = getExtension($filename);
 	$extension = strtolower($extension);
-	var_dump($image);
 		  if (($extension != "jpg") && ($extension != "jpeg") && ($extension != "png") && ($extension != "gif")) {
 			  echo ' Unknown Image extension ';
 			  $errors=1;
@@ -73,20 +71,20 @@ if (isset($_FILES["avatar"]) != "") {
 			  
 			  imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight,$width,$height);
 			  
-			  if (!file_exists("media/avatar")) {
-					mkdir ("media/avatar", 0700);
+			  if (!file_exists("../media/avatar")) {
+					mkdir ("../media/avatar", 0700);
 			  }	
 
 			  $extension = strrchr($_FILES['avatar']['name'], '.');
 			  $new_name_file = "avatar_".$idUser.$extension;
-			  $directory_file = "media/avatar/avatar_".$idUser.$extension;
+			  $directory_file = "../media/avatar/avatar_".$idUser.$extension;
 			  imagejpeg($tmp,$directory_file,100);
 			  
 			  imagedestroy($src);
 			  //imagedestroy($tmp);
 			  
 			  $dbh->query("UPDATE users SET avatar='$new_name_file' WHERE id = '$idUser'");
-			  echo $success_avatar_upload_modify = "Votre photo de profil a été modifiée";
+			  echo "successAvatar";
 			  
 		  }
 	   }
@@ -100,7 +98,7 @@ if (isset($_POST['old_password']) && isset($_POST['password']) && isset($_POST['
 	$idUser = $_GET['id'];
 	$profile = $dbh -> query("SELECT * FROM users WHERE id LIKE '$idUser'")->fetch();
 	$modify_old_password= md5($_POST['old_password']);
-	echo $modify_password= md5($_POST['password']);
+	$modify_password= md5($_POST['password']);
 	$modify_confirm_password= md5($_POST['confirm_password']);
 	
 	if ($modify_old_password == $profile['password']) {
@@ -109,11 +107,10 @@ if (isset($_POST['old_password']) && isset($_POST['password']) && isset($_POST['
 				$edit_password = $dbh->query("UPDATE users SET 
 				  	 							password = '$modify_password'
 				  	 						WHERE id = '$idUser'");
-				var_dump($edit_password);
-				echo ($success_edit_profil = "Vos informations ont bien été enregistrées");	
+				echo "successPswd";	
 
-		} else { echo "Les 2 mots de passe ne corresponde pas";   }
-	} else { echo "Le mot de passe actuel n'est pas correct";}
+		} else { echo "newPswdWrong";   }
+	} else { echo "oldPswdWrong";}
 }
 
 

@@ -120,4 +120,75 @@
 	    imagecopy($white, $trans, 0, 0, 0, 0, $w, $h);
 	    return $white;
 	}
+	
+	/**
+	 ## Fonctions sur les pages lieux ##
+	**/
+	
+	//Fonction qui permet de nettoyer les url
+	function getRewrite($title,$id){
+		$title = str_replace(' ', "-", $title);
+		$title = strtolower($title);
+		$title .='-'.$id.'.html';
+		$title = 'lieux/'.$title;
+		return $title;
+	}
+	
+	//Fonction pour afficher les commentaires en fonction du lieu
+	function displayComments($dbh, $lieu){
+		$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE places_id LIKE :id_lieu AND valid = 1 ORDER BY date_comment ASC");
+			$reqDisplay->bindValue('id_lieu',$lieu,PDO::PARAM_INT);
+		$reqDisplay->execute();
+		
+		$has_res = false;
+		while($result = $reqDisplay->fetch()){
+			echo($result['nickname'].' : ');	
+			echo($result['content'] . ' ');
+			echo('<a href="../ajax/signaler.xhr.php?id=' . $result['id'] . '" class="signaler" id="'.$result['id'].'">Signaler</a>');
+			echo('<br/>');
+			$has_res = true;		
+		}
+		if(!$has_res){
+			echo 'il n\'y a pas de commentaires sur ce lieu';
+		}
+		$reqDisplay->closeCursor();
+	}
+	
+	//Fonction pour afficher les votes des utilisateurs sur le lieu 
+	function positiverate($dbh,$id_lieu){
+		$reqNbLike = $dbh->prepare("SELECT COUNT(*) FROM `like` WHERE id_lieu LIKE :id_lieu");
+			$reqNbLike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+		$reqNbLike->execute();
+		$resultNbLike = $reqNbLike->fetch();
+		
+		return $resultNbLike[0];
+	}	
+		
+	function negativerate($dbh,$id_lieu){
+		$reqNbDislike = $dbh->prepare("SELECT COUNT(*) FROM `dislike` WHERE id_lieu LIKE :id_lieu");
+			$reqNbDislike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+		$reqNbDislike->execute();
+		$resultNbDislike = $reqNbDislike->fetch();
+		
+		return $resultNbDislike[0];
+	}
+		/*if($null == 2  ){
+			echo '<div id="resultLike"></div><div id="resultDislike"></div>';
+			echo '<div id="result">Ce lieu n\'a pas encore de vote. Soyez le premier à voter</div>';
+		}
+		else {
+			if($resultNbLike[0] == 1){
+				echo  '<div id="resultLike">'.$resultNbLike[0].' utilisateur aime ce lieu</div>';
+			}
+			else {
+				echo '<div id="resultLike">'.$resultNbLike[0].' utilisateurs aiment ce lieu</div>';
+			}
+			if($resultNbDislike[0] == 1){
+				echo '<div id="resultDislike">'.$resultNbDislike[0].' utilisateur n\'aime pas ce lieu</div>';
+			}
+			else {
+				echo '<div id="resultDislike">'.$resultNbDislike[0].' utilisateurs n\'aiment pas ce lieu</div>';
+			}
+			echo '<div id="result"></div>';
+		}*/
 ?>

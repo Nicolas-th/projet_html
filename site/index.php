@@ -7,7 +7,6 @@ require_once('config/config.php');
 /*----------------------ACCÈS À FACEBOOK---------------------*/
 require_once('config/fb_config.php'); 
 
-
 if (isset($_SESSION["nickname"]) || $user):
 	header('Location: home.php');
 else: 
@@ -27,7 +26,7 @@ else:
 			<div class="md-content">
 				<p>Connexion</p>
 		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
-		 		 	<form method='post' action='login.php' id="loginForm">
+		 		 	<form method="post" action="login.php" id="loginForm">
 		 		 		<div id="messageLogin"></div>
 			 		 	<input type="text" name="nickname" placeholder="Pseudo" id="nickname" required/>
 			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
@@ -35,9 +34,8 @@ else:
 			 		 	<div id="sep">
 			 		 		<p>ou</p>
 			 		 	</div>
-			 		 	<a id="btn-facebook" onclick="popup('<?php echo $loginUrl; ?>')" href="#">Connexion avec <strong>Facebook</strong></a>
-			 		 		 
-			 		 </form>
+						<a id="btn-facebook" onclick="popup('<?php echo $loginUrl; ?>')" href="#">Connexion avec <strong>Facebook</strong></a>
+			 		</form>
 			</div>
 		</div>
 		
@@ -45,16 +43,16 @@ else:
 			<div class="md-content">
 				<p>Inscription</p>
 		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
-		 		 	<form method="post" action="signin.php" id="signinForm">
-		 		 			<div id="messageSignin"></div>
-			 		 		<input type="text" name="nom" placeholder="Nom" id="name" /><br>
-			 		 		<input type="text"name="prenom" placeholder="Prénom" id="surname" /><br>
-			 		 		<input type="text" name="pseudo" placeholder="Pseudo" id="pseudo" required /><br>
-			 		 		<input type="email" name="mail" id="mail" placeholder="email" required /><br>
-			 		 		<input type="password" name="password1" id="pass1" placeholder="Mot de passe" required /><br>
-			 		 		<input type="password" name="password2" id="pass2" placeholder="Retapez votre mot de passe" required /><br>
-			 		 		<div id="btn-connexion"> <input type="submit"  name="submit_signin" value="Valider l'inscription" /></div>
-			 		 </form>
+		 		 <form method="post" action="signin.php" id="signinForm">
+	 		 		<div id="messageSignin"></div>
+		 		 	<input type="text" name="nom" placeholder="Nom" id="name" /><br>
+		 		 	<input type="text" name="prenom" placeholder="Prénom" id="surname" /><br>
+		 		 	<input type="text" name="pseudo" placeholder="Pseudo" id="pseudo" required /><br>
+		 		 	<input type="email" name="mail" id="mail" placeholder="email" required /><br>
+		 		 	<input type="password" name="password1" id="pass1" placeholder="Mot de passe" required /><br>
+		 		 	<input type="password" name="password2" id="pass2" placeholder="Retapez votre mot de passe" required /><br>
+		 		 	<div id="btn-connexion"> <input type="submit"  name="submit_signin" value="Valider l'inscription" /></div>
+			 	</form>
 			</div>
 		</div>
 
@@ -245,7 +243,7 @@ else:
 
 		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script src="assets/js/classes.js"></script>
+		<script src="assets/js/classes.js"></script> 
 		<script src="assets/js/login.js"></script> 
 		<script src="assets/js/classie.js"></script>
 		<script src="assets/js/modalEffects.js"></script>
