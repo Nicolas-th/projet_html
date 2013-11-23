@@ -38,6 +38,10 @@
          url('../fonts/opensans-semibold.svg#OpenSansSemibold') format('svg');
 }
 
+html,body{
+	height:100%;
+}
+
 body, p{
 	margin:0;
 	font-family:LatoLight;
@@ -153,7 +157,44 @@ h2{
 }
 
 
-/* 540px : largeur du container pour la fiche lieu*/
+/* page 'create-place.php' */
+
+form{
+	margin-top:30px;
+	line-height: 0.6;
+}
+
+label{
+    float: left;
+    margin-right: 10px;
+    text-align: right;
+    width: 40%;
+    vertical-align: top;
+    line-height: 1.2;
+}
+
+input:not(.submit), textarea{
+	width:40%;
+}
+
+input[type="submit"]{
+	background-color: #4ECE9C;
+    border: 1px solid #4ECE9C;
+    border-radius: 4px 4px 4px 4px;
+    color: #FFFFFF;
+    margin-top: 20px;
+}
+
+
+div#fields-select-submit{
+	text-align:center;
+	margin-top:10px;
+	margin-bottom:20px;
+}
+
+
+
+/* 540px : largeur du container*/
 @media screen and (max-width: 540px){
 	
 	#description{
@@ -174,5 +215,29 @@ h2{
 	#container-canvas{
 		display: block;
 		margin: 10px 0;
+	}
+	
+	/*page 'create place'*/
+	
+	label{
+		width:100%;
+		text-align: left;
+	}
+
+	input:not(.submit), textarea{
+		margin-top: 2px;
+    	width: 100%;
+	}
+
+}
+
+@media screen and (max-width: 208px){
+
+	div#fields-select-submit select{
+		width:100%;
+	}
+
+	div#fields-select-submit:nth-child(2){
+		margin-top:10px;
 	}
 }

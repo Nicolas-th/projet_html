@@ -32,11 +32,11 @@
 	<head>
 		<meta charset="utf-8">
 		<title><?php echo $result['name'] ?></title>
-		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/lieu.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/place.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body>
-		<div id="container-lieu" data-id="<?php echo $id_lieu; ?>">
+		<div id="container" data-id="<?php echo $id_lieu; ?>">
 			<div class="grid">
 				<img src="<?php echo($chemin_relatif_site); ?>assets/img/place_cover.png" id="photo-lieu" alt="photo du lieu">
 			</div>
