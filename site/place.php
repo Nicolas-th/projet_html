@@ -32,16 +32,13 @@
 	<head>
 		<meta charset="utf-8">
 		<title><?php echo $result['name'] ?></title>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script src="../assets/js/chart.js"></script>
-		<script src="../assets/js/place.js"></script>
-		<link rel="stylesheet" type="text/css" href="../assets/css/lieu.css" />
-		<link rel="stylesheet" type="text/css" href="../assets/css/simplegrid-lieu.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/lieu.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body id="lieu_<?php echo $id_lieu; ?>">
 		<div id="container-lieu">
 			<div class="grid">
-				<img src="../assets/img/place_cover.png" id="photo-lieu" alt="photo du lieu">
+				<img src="<?php echo($chemin_relatif_site); ?>assets/img/place_cover.png" id="photo-lieu" alt="photo du lieu">
 			</div>
 
 			<div class="grid grid-pad">
@@ -54,7 +51,7 @@
 			<div class="grid grid-pad">
 				<div class="col-1-1">
 					<div id="adresse">
-						<img src="../assets/img/icone-lieu.png" id="icone-lieu" alt="icone du lieu"> 
+						<img src="<?php echo($chemin_relatif_site); ?>assets/img/icone-lieu.png" id="icone-lieu" alt="icone du lieu"> 
 						<?php echo '<h2>'.$result['address'].', '.$result['city'].'</h2>'; ?>
 					</div>
 				</div>
@@ -145,7 +142,7 @@
 					</div>
 				</div>
 				<div class="col-1-1">
-					<img id="voir-photos" src="../assets/img/bouton-photos.png" alt="Bouton 'voir plus de photos'">
+					<img id="voir-photos" src="<?php echo($chemin_relatif_site); ?>assets/img/bouton-photos.png" alt="Bouton 'voir plus de photos'">
 				</div>
 			</div>
 
@@ -163,5 +160,9 @@
 	       			</form>
 				</div>
 			</div>
-
-		</div><!-- #container-lieu -->			
+		</div><!-- #container-lieu -->
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/chart.js"></script>
+		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/place.js"></script>
+	</body>
+</html>			

@@ -236,18 +236,13 @@ else:
 		</div><!-- /container -->
 		<div class="md-overlay"></div><!-- the overlay element -->
 
-
-
-
-
-
-		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script src="assets/js/classes.js"></script> 
-		<script src="assets/js/login.js"></script> 
-		<script src="assets/js/classie.js"></script>
-		<script src="assets/js/modalEffects.js"></script>
-		<script type="text/javascript" src="assets/js/firstpage.js"></script>
+		<script type="text/javascript" src="js/classes.js"></script> 
+		<script type="text/javascript" src="js/login.js"></script> 
+		<script type="text/javascript" src="js/classie.js"></script>
+		<script type="text/javascript" src="js/modalEffects.js"></script>
+		<script type="text/javascript" src="js/firstpage.js"></script>
 		<script>
 		  window.fbAsyncInit = function() {
 		    // init the FB JS SDK
@@ -271,6 +266,5 @@ else:
 		   }(document, 'script', 'facebook-jssdk'));
 	   </script>
 	</body>
-	
 </html>
 <?php endif ?>

@@ -127,15 +127,17 @@
 	
 	//Fonction qui permet de nettoyer les url
 	function getRewrite($title,$id){
+		global $dir_lieux;
 		$title = str_replace(' ', "-", $title);
 		$title = strtolower($title);
 		$title .='-'.$id.'.html';
-		$title = 'lieux/'.$title;
+		$title = $dir_lieux.$title;
 		return $title;
 	}
 	
 	//Fonction pour afficher les commentaires en fonction du lieu
 	function displayComments($dbh, $lieu){
+		global $chemin_relatif_site;
 		$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE places_id LIKE :id_lieu AND valid = 1 ORDER BY date_comment ASC");
 			$reqDisplay->bindValue('id_lieu',$lieu,PDO::PARAM_INT);
 		$reqDisplay->execute();
@@ -144,7 +146,7 @@
 		while($result = $reqDisplay->fetch()){
 			echo($result['nickname'].' : ');	
 			echo($result['content'] . ' ');
-			echo('<a href="../ajax/signaler.xhr.php?id=' . $result['id'] . '" class="signaler" id="'.$result['id'].'">Signaler</a>');
+			echo('<a href="'.$chemin_relatif_site.'ajax/signaler.xhr.php?id=' . $result['id'] . '" class="signaler" id="'.$result['id'].'">Signaler</a>');
 			echo('<br/>');
 			$has_res = true;		
 		}

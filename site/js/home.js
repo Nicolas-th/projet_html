@@ -33,7 +33,7 @@ $(function(){
     element : document.getElementById('map-canvas')
   });
   carte.map.setStyleMap({
-    url : 'assets/js/config.json',
+    url : 'js/config.json',
     key : 'mapStyle'
   });
 

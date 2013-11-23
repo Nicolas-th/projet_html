@@ -231,22 +231,17 @@ if($user) { ?>
   <div id="map-canvas"></div>
   <div id="hidden"></div>
 
-  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
-  <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
-  <script src="js/functions.js"></script>
-  <script src="js/classes.js"></script>
-  <script src="js/navigation-ajax.js"></script>
-  <script src="js/itineraires.js"></script>
-  <script src="js/home.js"></script>
-  <script src="js/sidebar.js"></script>
-  <script src="js/edit-profile.js"></script>
-  <script src="js/jquery.form.js"></script>
- 
-  
- 
-    
-  </body>
-  
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
+  <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
+  <script type="text/javascript" src="js/functions.js"></script>
+  <script type="text/javascript" src="js/classes.js"></script>
+  <script type="text/javascript" src="js/navigation-ajax.js"></script>
+  <script type="text/javascript" src="js/itineraires.js"></script>
+  <script type="text/javascript" src="js/home.js"></script>
+  <script type="text/javascript" src="js/sidebar.js"></script>
+  <script type="text/javascript" src="js/edit-profile.js"></script>
+  <script type="text/javascript" src="js/jquery.form.js"></script>
+  </body>  
 </html>
 

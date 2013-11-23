@@ -15,7 +15,7 @@ $(function(){
     draggable: false
   });
   map.setStyleMap({
-    url : 'assets/js/config.json',
+    url : 'js/config.json',
     key : 'mapStyle'
   });
   map.ajouterMarker({
