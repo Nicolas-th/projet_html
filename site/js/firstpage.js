@@ -27,19 +27,19 @@ $(function(){
     categorie : 'depart'
   });
 
-  /*
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(position) {
-      map.ajouterMarker({
-        position : {
-          latitude : position.coords.latitude,
-          longitude : position.coords.longitude
-        },
-        nom : 'Votre position !',
-        categorie : 'depart'
-      });
-      map.setCenter(position.coords.latitude, position.coords.longitude);
-    });
-  }
-  */
+  /* Modals */
+
+  $('.md-modal').addClass('load');
+
+  $('.modal-connexion').on('click',function(){
+    $('#connexion-modal').addClass('md-show');
+  });
+
+  $('.modal-inscription').on('click',function(){
+    $('#inscription-modal').addClass('md-show');
+  });
+
+  $('.md-close,.md-overlay').on('click',function(){
+    $('.md-modal').removeClass('md-show');
+  });
 });

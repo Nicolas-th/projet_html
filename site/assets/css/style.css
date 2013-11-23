@@ -380,10 +380,11 @@ li img{
 /*----------------- MODAL ---------------*/
 
 .md-modal {
+	display: none;
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	width: 50%;
+	/*width: 50%;*/
 	max-width: 630px;
 	min-width: 320px;
 	height: auto;
@@ -398,6 +399,10 @@ li img{
 	transform: translateX(-50%) translateY(-50%);
 	font-size:14px;
 	font-family : OpenSansSemibold;
+}
+
+.md-modal.load{
+	display: block;
 }
 
 .md-show {
@@ -527,10 +532,6 @@ li img{
 	position:absolute;
 	right:14px;
 	top:18px;
-}
-
-.messageModal {
-	
 }
 
 .messageError {

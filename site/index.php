@@ -21,7 +21,6 @@ else:
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 	</head>
 	<body>
-		<!-- All modals added here for the demo. You would of course just have one, dynamically created -->
 		<div class="md-modal md-effect-1" id="connexion-modal">
 			<div class="md-content">
 				<p>Connexion</p>
@@ -64,7 +63,7 @@ else:
 				</div>
 	
 				<div class="col-2-12 center push-right">
-					<a href="#" class="md-trigger bouton-connexion" data-modal="connexion-modal">Se connecter</a>
+					<a href="#" class="bouton-connexion modal-connexion">Se connecter</a>
 				</div>
 			</div>
 	
@@ -79,7 +78,7 @@ else:
 				
 				<div class="grid">
 					<div class="col-1-1">
-						<p id="connexion">Vous avez déjà un compte ?<a href="#" class="md-trigger" data-modal="connexion-modal"> Se connecter</a></p>
+						<p id="connexion">Vous avez déjà un compte ?<a href="#" class="modal-connexion"> Se connecter</a></p>
 					</div>
 				</div>
 	
@@ -89,7 +88,7 @@ else:
 							<a href="<?php echo $loginUrl; ?>">Connexion avec <strong>Facebook</strong></a>
 						</div> 
 						<div id="creer-mon-compte">
-							<a href="#" class="md-trigger" data-modal="inscription-modal">Créer mon compte</a>
+							<a href="#" class="modal-inscription">Créer mon compte</a>
 						</div>
 					</div>
 				</div>
@@ -234,14 +233,12 @@ else:
 				©HETIC - P2016 - Tous droits réservés
 			</div>
 		</div><!-- /container -->
-		<div class="md-overlay"></div><!-- the overlay element -->
+		<div class="md-overlay"></div>
 
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 		<script type="text/javascript" src="js/classes.js"></script> 
 		<script type="text/javascript" src="js/login.js"></script> 
-		<script type="text/javascript" src="js/classie.js"></script>
-		<script type="text/javascript" src="js/modalEffects.js"></script>
 		<script type="text/javascript" src="js/firstpage.js"></script>
 		<script>
 		  window.fbAsyncInit = function() {
