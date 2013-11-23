@@ -15,8 +15,8 @@
 		<meta name="description" content="">
 		
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<link rel="stylesheet" type="text/css" href="assets/css/place.css" />
-		<link rel="stylesheet" type="text/css" href="assets/css/simplegrid-lieu.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/place.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body>
 		<div id="container">
