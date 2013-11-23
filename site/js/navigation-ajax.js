@@ -3,6 +3,7 @@ var Transition = function(){
 	_this.params = {};
 	var defaults = {
 		conteneur : '#conteneur',
+		overlay : '.md-overlay',
 		pages : [],
 		opened : null
 	}
@@ -20,7 +21,7 @@ var Transition = function(){
 			(function(page) {
 				$(_this.params.conteneur).on('click',page.links.open,function(evt){
 					evt.preventDefault();
-					_this.open(page);
+					_this.open(page,$(this));
 				});
 
 				$(_this.params.conteneur).on('click',page.links.close,function(evt){
@@ -30,15 +31,15 @@ var Transition = function(){
 			})(page);
 		}
 
-		$('.md-overlay').on('click',function(){
+		$(_this.params.overlay).on('click',function(){
 			if(_this.params.opened!=null){
 				_this.close(_this.params.opened);
 			}
 		});
 	};
 
-	_this.open = function(page){
-		var href = $(page.links.open).attr('href');
+	_this.open = function(page,clicked){
+		var href = clicked.attr('href');
 		$.ajax({
 			url : href,
 			success : function(data){

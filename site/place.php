@@ -35,8 +35,8 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/lieu.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
-	<body id="lieu_<?php echo $id_lieu; ?>">
-		<div id="container-lieu">
+	<body>
+		<div id="container-lieu" data-id="<?php echo $id_lieu; ?>">
 			<div class="grid">
 				<img src="<?php echo($chemin_relatif_site); ?>assets/img/place_cover.png" id="photo-lieu" alt="photo du lieu">
 			</div>

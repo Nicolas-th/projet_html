@@ -51,6 +51,7 @@
 
 
 					foreach($lieux as $l){
+						$l['href'] = getRewrite($l['name'],$l['id']);
 						$l['meteo'] = $meteo_lieux;
 						$retour['lieux'][$l['id']] = $l;
 					}

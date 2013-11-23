@@ -21,6 +21,7 @@ require_once('includes/profile.inc.php');
   	
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="assets/css/home.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/modals.css">
     
   </head>
   
@@ -229,6 +230,8 @@ if($user) { ?>
  
 
   <div id="map-canvas"></div>
+  <div id="navigation-ajax"></div>
+  <div class="md-overlay"></div>
   <div id="hidden"></div>
 
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>

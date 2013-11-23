@@ -33,9 +33,10 @@ padding: 0;
 font-family: 'LatoLight',Verdana,Arial;
 font-size:18px;
 color:white; 
-	-webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-	text-rendering: optimizeLegibility;
+-webkit-font-smoothing: antialiased;
+font-smoothing: antialiased;
+text-rendering: optimizeLegibility;
+overflow: hidden;
 }
 #map-canvas { display:block; height: 100%; z-index:1; }
       
@@ -422,3 +423,15 @@ p + img{
 	display:none;
 }
 
+/* Modals */
+#navigation-ajax{
+	height: 80%;
+}
+
+#container-lieu, .md-content{
+	height: 100%;
+}
+
+#container-lieu{
+	overflow-y: scroll;
+}

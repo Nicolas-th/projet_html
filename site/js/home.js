@@ -6,17 +6,10 @@ $(function(){
     conteneur : 'body',
     pages : [
       {
-        element : '#page_1',
+        element : '#navigation-ajax',
         links : {
-          open : '.open_page_1',
-          close : '.ajax_nav'
-        }
-      },
-      {
-        element : '#page_2',
-        links : {
-          open : '.open_page_2',
-          close : '.ajax_nav'
+          open : '.ajax-link',
+          close : '.close-ajax-page,.overlay'
         }
       }
     ]

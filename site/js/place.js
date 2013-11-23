@@ -1,7 +1,8 @@
 ////FONCTION AJAX qui gère l'affichage du dougnhnut de vote
 
 $(function() {
-	var lieu = parseInt($('body').attr('id').replace("lieu_",""));
+
+	var lieu = parseInt($('#container-lieu').data('id'));
 	$('#buttonLike').on('click',function () {envoyerLike(lieu)});
 	$('#buttonDislike').on('click',function () {envoyerDislike(lieu)});
 	$('.signaler').on('click',function (event){
@@ -9,7 +10,7 @@ $(function() {
 		signal($(this).attr('id'),$(this))
 	});
 	
-	$.post('../ajax/displaydoughnut.xhr.php',
+	$.post('/site/ajax/displaydoughnut.xhr.php',
 		{
 			lieu : lieu,
 		},
@@ -39,7 +40,7 @@ $(function() {
 
 //Fonction qui insert un like en fonction du lieu et de l'user
 function envoyerLike(lieu) {
-	$.post("../ajax/ajoutlike.xhr.php",
+	$.post("/site/ajax/ajoutlike.xhr.php",
 		{"lieu": lieu},
 					
 		function (){
@@ -80,7 +81,7 @@ function envoyerLike(lieu) {
 
 //Fonction qui insert un dislike en fonction du lieu et de l'user
 function envoyerDislike(lieu) {
-	$.post("../ajax/ajoutdislike.xhr.php",
+	$.post("/site/ajax/ajoutdislike.xhr.php",
 		{"lieu": lieu},
 		
 		function (){
@@ -120,7 +121,7 @@ function envoyerDislike(lieu) {
 } 
 
 function signal(id,lien){
-	$.post("../ajax/signaler.xhr.php",{
+	$.post("/site/ajax/signaler.xhr.php",{
 		id : id
 	},
 	function(){

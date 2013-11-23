@@ -98,7 +98,7 @@ carte.lancerRechercheLieux = function(params){
 						liste_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
 						liste_lieux+=  '<div class="icons">';
 						liste_lieux+=  '	<a href="#" class="ajouter_lieu">+</a>';
-						liste_lieux+=  '	<a href="#" class="voir_lieu">Voir</a>';
+						liste_lieux+=  '	<a href="'+lieu.href+'" class="voir_lieu ajax-link">Voir</a>';
 						liste_lieux+='	</div>';
 						liste_lieux+='</li>';
 
