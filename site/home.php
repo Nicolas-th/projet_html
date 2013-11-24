@@ -63,17 +63,18 @@ function getPlaces($str) {
 	  <p>Définissez votre trajet:</p>
 	  
 	<form id="formulaire_itineraire" method="post" action="#">
-		<button id="position">Partir de ma position</button>
 		 
 	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ"  />
+	    <button id="position">Partir de ma position</button>
 	    <input type="hidden" name="latitude_position" />
 	    <input type="hidden" name="longitude_position" />
-	    
-	    
 	    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
 	    <ul id="resultats_lieux_depart"></ul>
+
+
 	    <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
 	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
+	    <ul id="resultats_lieux_arrive"></ul>
     
 	        
 	    
@@ -92,35 +93,8 @@ function getPlaces($str) {
    
    <hr>
    
-   <div id="resultat_lieux">
-   
-   <ul>
-	  	<li>
-		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
-		 	<label class="place">Nom du lieu</label>
-		 	<div class="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul> 
-	  
-	  <ul>
-	  	<li>
-		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
-		 	<label class="place">Nom du lieu</label>
-		 	<div class="icons">
-			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
-			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
-		 	</div>
-	  	</li>
-	  </ul> 
-	  
-	  <form method="post" action="#">
-			<input type="submit" value="Faites un détour!"/>
-	  </form> 
-	   
-   </div>
+   <div id="resultat_lieux"></div>
+   <div id="guidage_itineraire"></div>
 	  
   </section> <!-- fin barre latérale gauche -->
   
@@ -317,7 +291,8 @@ if($user) { ?>
   <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
     <script type="text/javascript" src="js/jquery.form.js"></script>
   <script type="text/javascript" src="js/functions.js"></script>
-  <script type="text/javascript" src="js/classes.js"></script>
+  <script type="text/javascript" src="js/autocompletion.js"></script>
+  <script type="text/javascript" src="js/carte.js"></script>
   <script type="text/javascript" src="js/navigation-ajax.js"></script>
   <script type="text/javascript" src="js/itineraires.js"></script>
   <script type="text/javascript" src="js/home.js"></script>

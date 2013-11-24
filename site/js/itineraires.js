@@ -107,17 +107,8 @@ carte.lancerRechercheLieux = function(params){
 					liste_lieux+='</ul>';
 
 					$('#resultat_lieux').html(liste_lieux);
-
-					/*var choix_transport = '<div class="choix_transport">';
-					choix_transport += '	<a href="#" id="marche">A pieds</a>';
-					choix_transport += '	<a href="#" id="velo">En vélo</a>';
-					choix_transport += '	<a href="#" id="metro" class="actif">En métro</a>';
-					choix_transport += '	<a href="#" id="voiture">En voiture</a>';
-					choix_transport += '</div>';
-
-					$('#resultat_lieux').append(choix_transport);*/
-					$('#resultat_lieux').append('<button id="demarrer_itineraire">Démarrer l\'itinéraire</button>');
-					$('#resultat_lieux').append('<button id="enregistrer_itineraire">Enregistrer l\'itinéraire</button>');
+					$('#resultat_lieux').append('<button id="demarrer_itineraire">Démarrer</button>');
+					$('#resultat_lieux').append('<button id="enregistrer_itineraire">Enregistrer</button>');
 				}else if(data.code=='404'){
 					var message = '<p>Aucun lieu n\'a été trouvé sur votre itinéraire. </p>';
 					message += '<a href="#">Vous en connaissez un ? Partagez-le !</a>';
@@ -199,8 +190,8 @@ carte.lancerRechercheLieux = function(params){
 
 											carte.map.traceItineraire({
 												points : {
-													depart : latLng_depart,
-													arrivee : latLng_arrivee
+													depart : points.depart,
+													arrivee : points.arrivee
 												},
 												type : 'current_itineraire',
 												finished : function(returns){
@@ -239,15 +230,23 @@ carte.lancerRechercheLieux = function(params){
 																	}
 																}
 																htmlInstructions+='</ul>';
+																$('#resultat_lieux').hide();
 																$('#guidage_itineraire').empty();
 
 																var duree = secondesToDuree(returns.directionsServiceResponse.routes[0].legs[0].duration.value);
 											        			if($('.duree_itineraires').length>0){
 											        				$('.duree_itineraires').remove();
 											        			}
-																$('#guidage_itineraire').append('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree);
+																$('#guidage_itineraire').append('<button id="modifier_itineraire">Modifier</button>');
+																$('#guidage_itineraire').append($('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree));
 
-											        			$('#guidage_itineraire').append('<div class="instructions_itineraire"></div>').append(htmlInstructions);
+											        			$('#guidage_itineraire').append($('<div class="instructions_itineraire"></div>').append(htmlInstructions));
+																$('#guidage_itineraire').show();
+
+																$('#modifier_itineraire').on('click',function(){
+																	$('#resultat_lieux').show();
+																	$('#guidage_itineraire').hide();
+																});
 															}
 														}
 													}

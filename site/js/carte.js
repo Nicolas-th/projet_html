@@ -239,8 +239,8 @@ var Carte = function() {
 	_this.tracerItineraires = function(params){
 		params = $.extend({},_this.defaults.tracerItineraires, params);
 		if(typeof(params.trajets[params.key])!='undefined'){
-	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
-	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
+	        //var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
+	        //var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
 	        var positions = {
 	        	depart :{
@@ -282,8 +282,8 @@ var Carte = function() {
 
 	        _this.traceItineraire({
 	        	points : {
-	        		depart : latLng_depart,
-	        		arrivee : latLng_arrivee
+	        		depart : positions.depart,
+	        		arrivee : positions.arrivee
 	        	},
 	        	type : 'itineraires_lieux',
 	        	finished : function(returns){
@@ -322,8 +322,8 @@ var Carte = function() {
 	_this.traceItineraire = function(params){
 		params = $.extend({},_this.defaults.traceItineraire, params);
 		var request = {
-	        origin      : params.points.depart,
-	        destination : params.points.arrivee,
+	        origin      : new google.maps.LatLng(params.points.depart.latitude,params.points.depart.longitude),
+	        destination : new google.maps.LatLng(params.points.arrivee.latitude,params.points.arrivee.longitude),
 	        travelMode  : _this.preferencesItineraire.moyenTransport
 	    }
 	    var directionsService = new google.maps.DirectionsService();
@@ -506,73 +506,4 @@ var Carte = function() {
 		}
 		params.finished.call(this);
 	};
-};
-
-
-/**** Autocomplétion ****/
-var Autocompletion = function(){
-
-	var _this = this;
-	var defauts = {
-		inputText : '#autocomplete',
-		divResultats : '#resultats_autocompletion'
-	}
-
-	/*
-	## init() ##
-	Paramètre attendu : objet
-		 {
-		 	inputText : String (selector)
-		 	divResultats : String (selector)
-		 }
-	*/	
-	_this.init = function(params){
-		params = $.extend({},defauts, params);
-
-		_this.inputText = $(params.inputText);
-		_this.divResultats = $(params.divResultats);
-		_this.defaults = {
-			afficherResultats : {
-				resultats : []
-			}
-		}
-	}
-
-	/*
-	## rechercher() ##
-			Paramètre attendu : aucun
-	*/
-	_this.rechercher = function(){
-		var lieuRecherche = _this.inputText.val();
-		var service = new google.maps.places.AutocompleteService();
-	    service.getQueryPredictions({ input: lieuRecherche }, function(reponse, status){
-	      if(status == google.maps.places.PlacesServiceStatus.OK) {
-	        _this.afficherResultats({resultats : reponse});
-	      }
-	    });
-	},
-
-	/*
-	## afficherResultats() ##
-			Paramètre attendu : objet
-				 {
-				 	resultats : Array (résultatgoogle.maps.places.AutocompleteService)
-				 }
-	*/	
-	_this.afficherResultats = function(params){
-		params = $.extend({},_this.defaults.afficherResultats, params);
-		var htmlContent = '';
-		for (var i = 0; i<params.resultats.length; i++) {
-			htmlContent += '<li id="'+params.resultats[i].reference+'">' + params.resultats[i].description + '</li>';
-		}
-		_this.divResultats.html(htmlContent);
-
-		_this.divResultats.find('li').on('click',function(){
-          _this.inputText.val($(this).html());
-          _this.inputText.nextAll('input[type="hidden"].ref_lieu').val($(this).attr('id'));
-          _this.divResultats.html(htmlContent);
-          _this.divResultats.empty();
-      	});
-	}
-
 };

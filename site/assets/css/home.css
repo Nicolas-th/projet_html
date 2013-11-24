@@ -77,12 +77,14 @@ header div:nth-child(1){
 #popup{
   width:100%;
   height:100%;
+  box-sizing : border-box;
+  padding-bottom:44px;
   background-color:rgba(151,151,151,0.9);
   z-index:1000;
   position:absolute;
   overflow:auto;
   max-width:280px;
-
+	
 }
 
 #bouton, #bouton2{
@@ -129,7 +131,7 @@ header div:nth-child(1){
 
 }
 
-#popup input[type=submit]{
+#popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire, #modifier_itineraire{
   border-radius:7px;
   background-color:#4ece9d;
   border:none;
@@ -167,17 +169,19 @@ header div:nth-child(1){
 }
 
 #position{
-	background:url('../img/marker.png') no-repeat;
-	background-size:cover;
+	padding-left:25px;
+	margin-right : 20px;
+	margin-top : 5px;
+	background:url('../img/mark_start.svg') no-repeat center left;
+	background-size:auto 100%;
 	display:block;
 	border:none;
-	font-size:14px;
+	font-size:12px;
 	cursor:pointer;
 	color:#FFF;
-	background:none;
 	margin-left:20px;
 	margin-bottom:10px;
-	
+	float: right;
 }
 
 #position:hover{
@@ -196,14 +200,23 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	margin-left:-15px;
 }
 
+#resultat_lieux ul{
+	margin: 0 auto;
+}
+
 #resultat_lieux ul li{
 	background-color:white;
 	list-style: none;
 	width:230px;
 	height:30px;
+	margin:10px 0;
 	border-radius:9px;
 	position:relative;
 	left:-15px;
+}
+
+#guidage_itineraire{
+	display: none;
 }
 
 #popup ul li label{
@@ -214,9 +227,6 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 ul li img{
 	position:relative;
 	top:5px;
-	left:8px;
-	
-	
 }
 
 .icons{
@@ -224,22 +234,23 @@ float:right;
 margin-right:4px;
 }
 
-#add_place, #see_place{
+.ajouter_lieu, .voir_lieu{
 	position:relative;
 	top:6px;
 	left:-1px;
 	width:18px;
 	height:18px;
 	display:inline-block;
+	text-indent: -9999px;
 }
 
-#add_place{
+.ajouter_lieu{
 	background:url('../img/more.svg');
 	background-size:cover;
 	margin-right:2px;
 }
 
-#see_place{
+.voir_lieu{
 	background:url('../img/see.svg');
 	background-size:cover;
 	
@@ -247,7 +258,7 @@ margin-right:4px;
 }
 
 
-#see_place:active{
+.voir_lieu:active{
 	background:url('../img/see_active.svg');
 	background-size:cover;
 }
@@ -266,8 +277,6 @@ margin-right:4px;
 	right:0px; /* - 280 pour la masquer */
 	max-width:280px;
 }
-
-
 
 .mask{
 	width:120px;
@@ -303,6 +312,19 @@ margin-right:4px;
 	list-style:none;
 	font-family: 'OpenSansRegular';
 	
+}
+
+#sidebar_profile{
+	padding:20px;
+}
+
+#sidebar_profile ul li a{
+	text-decoration:none;
+	color:white;
+}
+
+hr + p{
+	font-family:'OpenSansRegular',Verdana,Arial;
 }
 
 label.place{ 
@@ -342,7 +364,6 @@ label.place{
 }
 
 #pictures{
-	width:85%;
 	margin:15px auto 15px auto;
 }
 
@@ -369,7 +390,6 @@ label.place{
 }
 
 hr{
-	width:85%;
 	margin-bottom: 15px;
 	opacity:0.5;
 	
@@ -386,7 +406,7 @@ hr{
     cursor:pointer;
     width:95px;
     height:20px;
-    margin-left:153px;
+    margin-left:137px;
     margin-top:10px;
 }
 
@@ -408,7 +428,7 @@ hr{
 	margin-top: -45px;
 	width: 38px;
 	height: 31px;
-	margin-left: 185px;
+	margin-left: 200px;
 	background-color: #49C495;
 	border-radius: 0px 6px 6px 0px;
 	
@@ -461,15 +481,16 @@ div.upload input {
 	display: inline-block;
 	background-color: #4ece9d;
 	border-radius: 6px 0px 0px 6px;
-	width: 145px;
+	width: 155px;
 	padding: 7px 0px;
 	outline: none;
 	white-space: nowrap;
 	-webkit-user-select: none;
 	cursor: pointer;
-	margin: 0px 25px;
+	margin: 0px auto;
 	font-size: 13px;
-	padding-left: 15px;
+	padding-left: 26px;
+	margin-left: 25px;
 }
 #avatar:hover:before {
  background-color: #4ece9d;
@@ -488,11 +509,13 @@ div.upload input {
 	text-align:left;
 	margin: 0px 25px;
 }
+
 .progress_bar {
 	height:5px;
 	background-color: #FFF;
 	width:1%;
 }
+
 .progress_value {
 	margin: 0px auto;
 	position:absolute;
@@ -516,9 +539,9 @@ div.upload input {
 }
 
 .response {
-	margin: 0 auto; 
 	color: #FFF; 
-	font-weight: 200;
+	font-weight: 700;
+	text-align: center;
 }
 
 p + img{
@@ -535,6 +558,23 @@ p + img{
 
 .col{
 	float:left;
+}
+
+/* Chargement des lieux en ajax */
+
+#navigation-ajax{
+	height: 80%;
+	overflow-y:auto;
+}
+
+#navigation-ajax #container-lieu{
+	width: 100%;
+	max-width: 100%;
+	margin:0;
+}
+
+#navigation-ajax .md-content{
+	padding:0;
 }
 
 /*A revoir*/
