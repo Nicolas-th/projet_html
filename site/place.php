@@ -1,18 +1,35 @@
 <?php
+	session_start();
 	require_once('config/config.php');
 	require_once('includes/functions.inc.php');
-	
+
+	if(!isset($_GET['id'])){
+		header("HTTP/1.1 301 Moved Permanently");
+   		header('Location : '.$chemin_relatif_site.'index.php');
+		exit;
+	}
+
 	//On récupère la valeur de l'id passé par l'url
 	$id_lieu = $_GET['id'];
-	$id_user = 9;
-	
+
+	$reqExistPlace = $dbh->prepare("SELECT * FROM places WHERE id=:id_lieu");
+	$reqExistPlace->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+	$reqExistPlace->execute();
+	$existPlace = $reqExistPlace->fetch();
+
+	if($existPlace==false){
+		header("HTTP/1.1 301 Moved Permanently");
+   		header('Location : '.$chemin_relatif_site.'index.php');
+		exit;
+	}
+
 	//Fonction d'affichage des commentaires
-	if(isset($_POST['message']) ){
+	if(isset($_POST['message']) && isset($_SESSION['id'])){
+		$id_user = $_SESSION['id'];
 		$message = $_POST['message'];
 		$valid = 1;
 	
 		$reqComment = $dbh->prepare("INSERT INTO comments VALUES('',:message,NOW(),:valid,:id_user,:id_lieu)");
-		var_dump($reqComment);
 			$reqComment->bindValue('message',$message,PDO::PARAM_STR);
 			$reqComment->bindValue('valid',$valid,PDO::PARAM_INT);
 			$reqComment->bindValue('id_user',$id_user,PDO::PARAM_INT);
@@ -32,11 +49,12 @@
 	<head>
 		<meta charset="utf-8">
 		<title><?php echo $result['name'] ?></title>
+		<meta name="viewport" content="initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/place.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body>
-		<div id="container" data-id="<?php echo $id_lieu; ?>">
+		<div id="container-lieu" data-id="<?php echo $id_lieu; ?>">
 			<div class="grid">
 				<img src="<?php echo($chemin_relatif_site); ?>assets/img/place_cover.png" id="photo-lieu" alt="photo du lieu">
 			</div>
@@ -74,7 +92,7 @@
 									echo '0 vote positif';
 								}
 								else if(positiverate($dbh,$id_lieu) == 1){
-									echo '<strong>'. positiverate($dbh,$id_lieu).'</strong> aiment ce lieu';
+									echo '<strong>'. positiverate($dbh,$id_lieu).'</strong> aime ce lieu';
 								}
 								else {
 									echo '<strong>'. positiverate($dbh,$id_lieu).'</strong> aiment ce lieu';
@@ -102,29 +120,32 @@
 				<div class="col-1-1">
 					<?php
 						///////Vérification si l'id_user a déjà voté
+
+						if(isset($_SESSION['id'])){
+							$id_user = $_SESSION['id'];
+							
+							$reqVoteLike = $dbh->prepare("SELECT COUNT(id_user) FROM `like` WHERE id_lieu LIKE :id_lieu AND id_user=:id_user");
+								$reqVoteLike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+								$reqVoteLike->bindValue('id_user',$id_user,PDO::PARAM_INT);
+							$reqVoteLike->execute();
+							$resultLike = $reqVoteLike->fetch();
+							
+							$reqVoteDislike = $dbh->prepare("SELECT COUNT(id_user) FROM `dislike` WHERE id_lieu LIKE :id_lieu AND id_user=:id_user");
+								$reqVoteDislike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+								$reqVoteDislike->bindValue('id_user',$id_user,PDO::PARAM_INT);
+							$reqVoteDislike->execute();
+							$resultDislike = $reqVoteDislike->fetch();
 						
-						$reqVoteLike = $dbh->prepare("SELECT COUNT(id_user) FROM `like` WHERE id_lieu LIKE :id_lieu AND id_user LIKE :id_user");
-							$reqVoteLike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
-							$reqVoteLike->bindValue('id_user',$id_user,PDO::PARAM_INT);
-						$reqVoteLike->execute();
-						$resultLike = $reqVoteLike->fetch();
-						
-						$reqVoteDislike = $dbh->prepare("SELECT COUNT(id_user) FROM `dislike` WHERE id_lieu LIKE :id_lieu AND id_user LIKE :id_user");
-							$reqVoteDislike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
-							$reqVoteDislike->bindValue('id_user',$id_user,PDO::PARAM_INT);
-						$reqVoteDislike->execute();
-						$resultDislike = $reqVoteDislike->fetch();
-						
-						if($resultLike[0] == 0 && $resultDislike[0] == 0){
+							if($resultLike[0] == 0 && $resultDislike[0] == 0){
 					?>
-						<div id="button-validate">
-							<input type="button" id="buttonLike" value="Like" "/> 
-							<input type="button" id="buttonDislike" value="Dislike" "/> 
-						</div>
+							<div id="button-validate">
+								<input type="button" id="buttonLike" value="Like"/> 
+								<input type="button" id="buttonDislike" value="Dislike"/> 
+							</div>
 					<?php
-						}
-						else {
-							echo '<div id="button-validate"><br>Vous avez déjà voté</div>';
+							}else {
+								echo '<div id="button-validate"><br>Vous avez déjà voté</div>';
+							}
 						}
 					?>
 				</div>
@@ -147,16 +168,32 @@
 			</div>
 
 			<div class="grid grid-pad">
-				<p id="voir-commentaires">Voir les commentaires</p>
-				<?php displayComments($dbh, $id_lieu); ?>
+				<div class="col-1-1">
+					<p id="voir-commentaires">Voir les commentaires</p>
+					<?php 
+					$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE places_id LIKE :id_lieu AND valid = 1 ORDER BY date_comment ASC");
+					$reqDisplay->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
+					$reqDisplay->execute();
+					
+					$has_res = false;
+					while($result = $reqDisplay->fetch()){
+						echo(structureCommentaire($result));
+						$has_res = true;	
+					}
+					if(!$has_res){
+						echo 'Il n\'y a pas de commentaires sur ce lieu';
+					}
+					$reqDisplay->closeCursor();
+					?>
+				</div>
 			</div>
 
 			<div class="grid grid-pad">
 				<div id="leave-comment">
 	        		<h3>Répondre</h3>
-	       			<form method="post" action="" id="formCom">
-	                	<p><textarea id="comments" name="message" placeholder="Commentaire" required></textarea></p>
-	                	<p class="submit"><button>Envoyer</button></p>
+	       			<form method="post" action="">
+	                	<textarea name="message"></textarea>
+	                	<input type="submit" value="Envoyer">
 	       			</form>
 				</div>
 			</div>

@@ -135,27 +135,20 @@
 		return $title;
 	}
 	
+
 	//Fonction pour afficher les commentaires en fonction du lieu
-	function displayComments($dbh, $lieu){
+	function structureCommentaire($commentaire){
 		global $chemin_relatif_site;
-		$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE places_id LIKE :id_lieu AND valid = 1 ORDER BY date_comment ASC");
-			$reqDisplay->bindValue('id_lieu',$lieu,PDO::PARAM_INT);
-		$reqDisplay->execute();
-		
-		$has_res = false;
-		while($result = $reqDisplay->fetch()){
-			echo($result['nickname'].' : ');	
-			echo($result['content'] . ' ');
-			echo('<a href="'.$chemin_relatif_site.'ajax/signaler.xhr.php?id=' . $result['id'] . '" class="signaler" id="'.$result['id'].'">Signaler</a>');
-			echo('<br/>');
-			$has_res = true;		
-		}
-		if(!$has_res){
-			echo 'il n\'y a pas de commentaires sur ce lieu';
-		}
-		$reqDisplay->closeCursor();
+		$html = '';
+		$html.='<div class="commentaire">';
+		$html.='<span class="commentaire-nickname">Le '.date('d/m/Y', $commentaire['date_comment']).' à '.date('H\hi', $commentaire['date_comment']).' par '.$commentaire['nickname'].'</span><br/> ';	
+		$html.='<span class="commentaire-content">'.$commentaire['content'].'</span><br/>';
+		$html.='<a class="signaler" href="'.$chemin_relatif_site.'ajax/signaler.xhr.php?id=' . $commentaire['id'] . '" class="signaler" id="'.$commentaire['id'].'">Signaler</a>';
+		$html.='</div>';
+
+		return $html;
 	}
-	
+
 	//Fonction pour afficher les votes des utilisateurs sur le lieu 
 	function positiverate($dbh,$id_lieu){
 		$reqNbLike = $dbh->prepare("SELECT COUNT(*) FROM `like` WHERE id_lieu LIKE :id_lieu");

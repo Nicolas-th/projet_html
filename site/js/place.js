@@ -1,23 +1,42 @@
-////FONCTION AJAX qui gère l'affichage du dougnhnut de vote
+////FONCTION AJAX qui g¬ère l'affichage du dougnhnut de vote
 
 $(function() {
 
 	var lieu = parseInt($('#container-lieu').data('id'));
-	$('#buttonLike').on('click',function () {envoyerLike(lieu)});
-	$('#buttonDislike').on('click',function () {envoyerDislike(lieu)});
+	$('#buttonLike').on('click',function (evt) {
+		evt.preventDefault();
+		likeDislike(lieu,'like');
+	});
+	$('#buttonDislike').on('click',function (evt) {
+		evt.preventDefault();
+		likeDislike(lieu,'dislike');
+	});
+
 	$('.signaler').on('click',function (event){
 		event.preventDefault();
 		signal($(this).attr('id'),$(this))
 	});
+
+	$('#leave-comment form input[type=submit]').on('click',function (event){
+		event.preventDefault();
+		var commentaire = $('#leave-comment form textarea[name=message]').val();
+		if(commentaire.length>0){
+			postCommentaire(lieu,commentaire);
+		}else{
+			console.log('test');
+		}
+	});
 	
-	$.post('/site/ajax/displaydoughnut.xhr.php',
-		{
-			lieu : lieu,
+	$.ajax({
+		type : "POST",
+		url : '/site/ajax/displaydoughnut.xhr.php',
+		data : {
+			'lieu' : lieu,
 		},
-		function(reponse) { 
-			var string = reponse.split('-');
-			var nblike = parseInt(string[0]);
-			var nbdislike = parseInt(string[1]);
+		dataType : 'json',
+		success: function(reponse, status) {
+			var nblike = parseInt(reponse.likes);
+			var nbdislike = parseInt(reponse.dislikes);
 			var doughnutData = [
 				{
 					value: nblike,
@@ -32,99 +51,60 @@ $(function() {
 			var myDoughnut = new Chart(document.getElementById("canvas").getContext("2d")).Doughnut(doughnutData);
 		}
 		
-	);	
+	});	
 });
 ////////FIN de la fonction AJAX
 
-/* Fonction gérant les boutons like et dislike sur les pages lieux */
-
-//Fonction qui insert un like en fonction du lieu et de l'user
-function envoyerLike(lieu) {
-	$.post("/site/ajax/ajoutlike.xhr.php",
-		{"lieu": lieu},
-					
-		function (){
-			$.post('../ajax/displaydoughnut.xhr.php',{
-				lieu : lieu,
+/* Fonction g√©rant les boutons like et dislike sur les pages lieux */
+function likeDislike(lieu,type) {
+	$.ajax({
+		type : "POST",
+		url : "/site/ajax/ajoutLikeDislike.xhr.php",
+		dataType : 'json',
+		data : {
+			'lieu' : lieu,
+			'type' : type
+		},			
+		success: function(reponse, status) {
+			var nblike = parseInt(reponse.likes);
+			var nbdislike = parseInt(reponse.dislikes);
+			
+			var doughnutData = [
+				{
+					value: nblike,
+					color:"white"
 				},
-		
-				function(reponse) { 
-					var nbLike = reponse[0];
-					var string = reponse.split('-');
-					var nblike = parseInt(string[0]);
-					var nbdislike = parseInt(string[1]);
-					
-					var doughnutData = [
-						{
-							value: nblike,
-							color:"white"
-						},
-						{
-							value : nbdislike,
-							color : "#FF8E00"
-						}			
-					];
-	
-					var myDoughnut = new Chart(document.getElementById("canvas").getContext("2d")).Doughnut(doughnutData);
-					
-					if(nblike == 1){
-						document.getElementById("votes-positifs").innerHTML = '<strong>'+nblike+'</strong> aime ce lieu';
-					}
-					else {	
-						document.getElementById("votes-positifs").innerHTML = '<strong>'+nblike+'</strong> aiment ce lieu';
-					}	
-					document.getElementById("button-validate").innerHTML = "Votre vote a été soumis";
-				}
-			);	
-		});
+				{
+					value : nbdislike,
+					color : "#FF8E00"
+				}			
+			];
+
+			var myDoughnut = new Chart(document.getElementById("canvas").getContext("2d")).Doughnut(doughnutData);
+
+			$('#votes-positifs').html('<strong>'+nblike+'</strong> '+((nblike>1)?'aiment ce lieu':'aime ce lieu'));
+			$('#votes-negatifs').html('<strong>'+nbdislike+'</strong> '+((nbdislike>1)?'n\'aiment pas ce lieu':'n\'aime pas ce lieu'));
+			$('#button-validate').html('Votre vote a √©t√© soumis');
+		}
+	});	
 }
 
-//Fonction qui insert un dislike en fonction du lieu et de l'user
-function envoyerDislike(lieu) {
-	$.post("/site/ajax/ajoutdislike.xhr.php",
-		{"lieu": lieu},
-		
-		function (){
-			$.post('../ajax/displaydoughnut.xhr.php',{
-				lieu : lieu,
-				},
-		
-				function(reponse) {
-					var nbDislike = reponse[0];
-					var string = reponse.split('-'); 
-					var nblike = parseInt(string[0]);
-					var nbdislike = parseInt(string[1]);
-					
-					var doughnutData = [
-						{
-							value: nblike,
-							color:"white"
-						},
-						{
-							value : nbdislike,
-							color : "#FF8E00"
-						}			
-					];
-	
-					var myDoughnut = new Chart(document.getElementById("canvas").getContext("2d")).Doughnut(doughnutData);
-					
-					if(nbdislike == 1){
-						document.getElementById("votes-negatifs").innerHTML = '<span style="color:#ff850b; font-weight:bold;">'+nbdislike+'</span> n\'a pas aimé';
-					}
-					else {
-						document.getElementById("votes-negatifs").innerHTML = '<span style="color:#ff850b; font-weight:bold;">'+nbdislike+'</span> n\'ont pas aimé';
-					}
-					document.getElementById("button-validate").innerHTML = "Votre vote a été soumis";
-				}
-			);	
-		});
-} 
 
 function signal(id,lien){
 	$.post("/site/ajax/signaler.xhr.php",{
 		id : id
 	},
 	function(){
-		lien.replaceWith('Vous avez signalé ce commentaire. Merci :)');
+		lien.replaceWith('Vous avez signal√© ce commentaire. Merci :)');
 	});
+}
+
+function postCommentaire(lieu,commentaire){
+	$.post("/site/ajax/addComments.xhr.php",{
+		'lieu' : lieu,
+		'message' : commentaire
+	}, 
+	function(data){
+		$('.commentaire').last().after($(data).fadeIn());
+	});	
 }
