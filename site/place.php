@@ -2,6 +2,7 @@
 	session_start();
 	require_once('config/config.php');
 	require_once('includes/functions.inc.php');
+	require_once('classes/Mobile_Detect.class.php');
 
 	/*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
 	require_once('includes/profile.inc.php');
@@ -25,6 +26,9 @@
    		header('Location : '.$chemin_relatif_site.'index.php');
 		exit;
 	}
+
+	$detectMobile = new Mobile_Detect();
+ 
 
 	// Si un commentaire est posté
 	if(isset($_POST['message']) && isset($_SESSION['id'])){
@@ -186,7 +190,7 @@
 				</div>
 			</div>
 
-			<?php if(isset($_SESSION['id'])){ ?>
+			<?php if(isset($_SESSION['id']) && $detectMobile->isMobile()){ ?>
 
 			<div class="grid grid-pad" id="upload_medias">
 				<div id="form_photo">
