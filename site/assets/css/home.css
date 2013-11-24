@@ -33,10 +33,10 @@ padding: 0;
 font-family: 'LatoLight',Verdana,Arial;
 font-size:18px;
 color:white; 
--webkit-font-smoothing: antialiased;
-font-smoothing: antialiased;
-text-rendering: optimizeLegibility;
-overflow: hidden;
+	-webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	overflow: hidden;
 }
 #map-canvas { display:block; height: 100%; z-index:1; }
       
@@ -70,7 +70,7 @@ header div:nth-child(2){
 }
 
 header div:nth-child(1){
-  background:url('../img/menu.svg') no-repeat; 
+  background:url('../img/logout.svg') no-repeat; 
   background-size:cover;   
 }
 
@@ -85,14 +85,27 @@ header div:nth-child(1){
 
 }
 
+#bouton{
+	background:url('../img/menu.svg') no-repeat;
+}
+
+#bouton2{
+	background:url('../img/route.svg') no-repeat;
+}
+
 #bouton, #bouton2{
   width:30px;
   height:30px;
-  background:url('../img/route.svg') no-repeat;
   background-size:cover;
   cursor:pointer;
   position:absolute;
   z-index:1200;
+}
+
+#popup > p:nth-child(2){
+	padding:0;
+	margin:40px 0px 10px 20px;
+	width:200px;
 }
 
 #popup:nth-child(2){
@@ -104,10 +117,10 @@ header div:nth-child(1){
   background-color:white;
   outline:none;
   border:none;
-  width:230px;
+  width:215px;
   height:30px;
   line-height:30px;
-  padding:0px;
+  padding-left:15px;
   position:relative;
   left:25px;
 
@@ -121,24 +134,62 @@ header div:nth-child(1){
   font-size:15px;
   font-family:'OpenSansRegular';
   cursor:pointer;
-  width:140px;
+  width:150px;
   height:30px;
-  margin-left:113px;
+  margin: 10px 0px 8px 108px;
 }
 
-button#position{
-	background:url('../img/icon.svg') no-repeat;
+
+#marche{
+	background:url('../img/feet.svg') no-repeat;
+	margin-left:160px;
+}
+
+#velo{
+	background:url('../img/velo.svg') no-repeat;
+}
+
+#metro{
+	background:url('../img/subway.svg') no-repeat;
+}
+
+#marche,#velo,#metro{
+	display:inline-block;
+	width:25px;
+	height:25px;
 	background-size:cover;
-	width:20px;
-	height:20px;
+	margin-right:5px;
+}
+
+#position{
+	background:url('../img/marker.png') no-repeat;
+	background-size:cover;
 	display:block;
+	border:none;
+	font-size:14px;
+	cursor:pointer;
+	color:#FFF;
+	background:none;
+	margin-left:20px;
+	margin-bottom:10px;
+	
+}
+
+#position:hover{
+	color:orange;
 }
       
-input::-webkit-input-placeholder {font-family: 'LatoLight';font-size:14px; color:#808184; position:relative; left:15px;}
+input::-webkit-input-placeholder {font-family: 'LatoLight';font-size:14px; color:#808184;}
 input::-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 
+#resultats_lieux_depart li, #resultats_lieux_arrive li{
+	list-style: none;
+	font-family:'OpenSansSemibold';
+	font-size:13px;
+	margin-left:-15px;
+}
 
 #resultat_lieux ul li{
 	background-color:white;
@@ -212,11 +263,7 @@ margin-right:4px;
 	max-width:280px;
 }
 
-#popup_right > :nth-child(1){
-	text-align:center;
-	margin-left:-20px;
-	margin-top:20px;
-}
+
 
 .mask{
 	width:120px;
@@ -252,8 +299,6 @@ margin-right:4px;
 label.place{ 
 	color:white;
 	margin-left:10px;
-	position:relative;
-	top:-5px;
 	
 }
 
@@ -423,15 +468,3 @@ p + img{
 	display:none;
 }
 
-/* Modals */
-#navigation-ajax{
-	height: 80%;
-}
-
-#container-lieu, .md-content{
-	height: 100%;
-}
-
-#container-lieu{
-	overflow-y: scroll;
-}

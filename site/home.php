@@ -13,6 +13,25 @@ if(!(isset($_SESSION["nickname"]) || isset($_SESSION["fb_id"]))){
 
 /*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
 require_once('includes/profile.inc.php');
+
+
+/*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
+require_once('includes/functions.inc.php');
+
+
+function getPlaces($str) {
+		$clean = explode(",",$str);
+		
+		$clean[0] = preg_replace("/[^0-9\/_|+ .-]/", '', $clean[0]);
+		$clean[0] = strtolower(trim($clean[0], '-'));
+		$clean[0] = preg_replace("/[\/_|+ -]+/", '-', $clean[0]);
+		
+		$clean[1] = preg_replace("/[^0-9\/_|+ .-]/", '', $clean[1]);
+		$clean[1] = strtolower(trim($clean[1], '-'));
+		$clean[1] = preg_replace("/[\/_|+ -]+/", '-', $clean[1]);
+	
+		return $tableau = array($clean[0], $clean[1]);
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,63 +47,191 @@ require_once('includes/profile.inc.php');
   <body>
   
   <header>
-  	
-	  <div class="icon" id="menu"></div>
-	  <div class="icon" id="profile"></div>
-	  <div class="icon" id="settings"></div>
+  	  <a href="logout.php"><div class="icon"></div></a>
+	  <div class="icon"></div>
+	  <div class="icon"></div>
+	  
 	  
   </header>
   
-  <div id="bouton2"></div>
+ <div id="bouton2"></div>
   
-  <section id="popup"> <!-- début barre latérale gauche -->
-
-	<div id="bouton"></div>
-
-	<p>Indiquez votre trajet :</p>
+ <section id="popup"> <!-- début barre latérale gauche -->
+	  <div id="bouton"></div>
+	  
+	  <p>Définissez votre trajet:</p>
 	  
 	<form id="formulaire_itineraire" method="post" action="#">
-		<input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ" />
-		<button id="position">Ma position</button>
-		<input type="hidden" name="latitude_position" />
-		<input type="hidden" name="longitude_position" />
-
-
-
-		<input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
-		<ul id="resultats_lieux_depart"></ul>
-		<input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
-		<input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
-
-		    
-		<ul id="resultats_lieux_arrive"></ul>
-		<div class="choix_transport">
-		    <a href="#" id="marche" class="actif">A pied</a>
-		    <a href="#" id="velo">En vélo</a>
-		    <a href="#" id="metro">En métro</a>
+		<button id="position">Partir de ma position</button>
+		 
+	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ"  />
+	    <input type="hidden" name="latitude_position" />
+	    <input type="hidden" name="longitude_position" />
+	    
+	    
+	    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
+	    <ul id="resultats_lieux_depart"></ul>
+	    <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
+	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
+    
+	        
+	    
+	    <div class="choix_transport">
+		    <a href="#" id="marche" class="actif" alt="a pied"></a>
+		    <a href="#" id="velo" alt="velo"></a>
+		    <a href="#" id="metro" alt="metro"></a>
 		</div>
-
-		<input type="submit" value="Rechercher"/>
-
-	</form>
-
-	<hr>
-
-	<div id="resultat_lieux"></div>
+		
+		<form method="post" action="#">
+			<input type="submit" value="Calculer l'itinéraire"/>
+		</form>
+		
+   </form>
+   
+   
+   <hr>
+   
+   <div id="resultat_lieux">
+   
+   <ul>
+	  	<li>
+		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
+		 	<label class="place">Nom du lieu</label>
+		 	<div class="icons">
+			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
+			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
+		 	</div>
+	  	</li>
+	  </ul> 
+	  
+	  <ul>
+	  	<li>
+		 	<img src="img/yellow_marker.svg" width="20" height="20"/>
+		 	<label class="place">Nom du lieu</label>
+		 	<div class="icons">
+			 	<a href="#" class="ajouter_lieu"><div id="add_place"></div></a>
+			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
+		 	</div>
+	  	</li>
+	  </ul>  
+	   
+   </div>
 	  
   </section> <!-- fin barre latérale gauche -->
   
  
   
   
-<div id="popup_right">
- 
+<section id="popup_right">
 
+<!-- ***************Début de la sidebar profil******************** -->
+
+<div id="sidebar_profile">
+
+	<?php 
+	if($user) { ?>
+			<p><div class="mask"><img class="avatar mask" src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div></p>
+	<?php } else { ?>
+			<p><div class="mask"><img class="avatar mask" src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div></p>
+	<?php } ?>
+	
+		  
+	<h3><span class="prenom"><?= $profile['name']?></span> <span id="nom"><?= $profile['surname']?></span></h3>
+	
+	<hr>
+	  
+	  <p>Lieux ajoutés <?php if($count_profile_places!=0) { echo ("(".$count_profile_places.")"); }; ?></p>
+	  
+	   <ul>
+	  	<?php if($count_profile_places==0) { ?>
+		<p>Vous n'avez ajouté aucun lieu</p>
+			<?php } else { 
+				foreach ($select_profile_places as $select_profile_place) {
+				$id_profile_place = $select_profile_place['places_id'];
+				$profile_place = $dbh -> query("SELECT * FROM places WHERE id LIKE '$id_profile_place'")->fetch();
+			?>	
+				<li>
+				 	<img src="assets/img/yellow_marker.svg" width="28" height="28"/>
+				 	<a href="<?= getRewrite($profile_place['name'],$profile_place['id'])?>" class="place"><?= $profile_place['name']?></a>	
+			  	</li>
+			<?php } ?>
+		  
+	  		<a class="edit_added_places" href="#">modifier</a>
+	  	
+	  		<form method="post" action="#">
+	  	<input type="submit" value="enregistrer">	 
+	  	</form> 	
+	  </ul> 
+	  <?php } ?>
+	  <hr>
+	  
+	 <p>Itinéraires sauvegardés <?php if($count_profile_routes!=0) { echo ("(".$count_profile_routes.")"); }; ?></p>
+	  
+	  <ul>
+		  	
+	  <?php if($count_profile_routes==0) { ?>
+		<p>Vous n'avez sauvegardé aucun itinéraire</p>
+			<?php } else { 
+				foreach ($select_profile_routes as $select_profile_route) {
+					$id_profile_route = $select_profile_route['id'];
+					$profile_route = $dbh -> query("SELECT * FROM routes WHERE id LIKE '$id_profile_route'")->fetch();
+					$places = getPlaces($profile_route['places']);					
+			?>	
+			<li class="itinerary"> <!-- A comparer avec fichier local -->
+					<h5><?= $profile_route['name']?></h5>
+					<div class="saved"></div>	
+			<?php
+				foreach ($places as $place) {	
+					$place_name = $dbh -> query("SELECT * FROM places WHERE id LIKE '$place'")->fetch();
+				?>	
+					<p><?=  $place_name['name'] ?></p>		
+				<?php } ?> 
+			</li>
+			 <?php } ?>
+	  	<a class="edit_itineraries" href="#">modifier</a>
+	  	<form method="post" action="#">
+	  	<input id="save_itineraries" type="submit" value="enregistrer">
+	  	</form>	 
+	  	
+	  	<?php } ?> 
+	  </ul>
+	  
+	  
+	 <hr>
+	 
+	 <p>Vos photos  <?php if($count_profile_media_images!=0) { echo (" (".$count_profile_media_images.")"); }; ?></p>
+	 
+	 <div id="pictures">
+	<?php if($count_profile_media_images==0) { ?>
+		<p>Vous n'avez pris aucune photo</p>
+	<?php } else { 
+				foreach ($profile_media_image as $profile_media_image) {
+					$profile_media_image_id=$profile_media_image['id'];
+					$src_place = $dbh -> query("SELECT places_id FROM media WHERE id LIKE '$profile_media_image_id'")->fetch(0);
+	?>	
+					<div><img src="<?= $src_media.$src_place['places_id']."/".$profile_media_image['url_file']?>"</div> <!-- Fermer balise image ? --> 
+		  <?php } ?>
+	<?php } ?>
+
+		 <a href="#" id="other_pictures"></a>
+	 </div>
+
+</div>
+
+<!-- ***************Fin de la sidebar profil********************** -->
+
+
+
+<!-- *********début de la sidebar profile settings************** -->
+
+
+
+<div id="sidebar_edit"> 
 <?php 
 if($user) { ?>
-	<div class="mask"><img class="avatar" src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div>
+	<p><div class="mask"><img class="avatar mask" src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div></p>
 <?php } else { ?>
-	<div class="mask"><img class="avatar" src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div>
+	<p><div class="mask"><img class="avatar mask" src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div></p>
 <?php } ?>
 
 	  
@@ -138,95 +285,15 @@ if($user) { ?>
 								
 </form>
 <?php } else { ?>
-		<p> Vous ne pouvez pas modifié vos informations personnelles. Votre profil est rattaché à votre compte Facebook. </p>
+		<p> Vous ne pouvez pas modifier vos informations personnelles. Votre profil est rattaché à votre compte Facebook. </p>
 <?php }  ?>
 
 
-<!-- Début de la sidebar profile settings -->
-<!--
-	<?php 
-	if($user) { ?>
-			<div class="mask"><img class="avatar mask" src="<?= $profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div>
-	<?php } else { ?>
-			<div class="mask"><img class="avatar mask" src="<?= $src_avatar.$profile['avatar']?>" alt="Avatar de <?= $profile['name'] ?>"></div>
-	<?php } ?>
-	
-		  
-	<h3><span class="prenom"><?= $profile['name']?></span> <span id="nom"><?= $profile['surname']?></span></h3>
-	
-	<hr>
-	  
-	  <p>Lieux ajoutés <?php if($count_profile_places!=0) { echo ("(".$count_profile_places.")"); }; ?></p>
-	  
-	   <ul>
-	  	<?php if($count_profile_places==0) { ?>
-		<p>Vous n'avez ajouté aucun lieu</p>
-			<?php } else { 
-				foreach ($select_profile_places as $select_profile_place) {
-				$id_profile_place = $select_profile_place['places_id'];
-				$profile_place = $dbh -> query("SELECT * FROM places WHERE id LIKE '$id_profile_place'")->fetch();
-			?>	
-				<li>
-				 	<img src="assets/img/yellow_marker.svg" width="28" height="28"/>
-				 	<label class="place"><?= $profile_place['name']?></label>	
-			  	</li>
-			<?php } ?>
-		  
-	  		<a class="edit_added_places" href="#">modifier</a>
-	  	
-	  		<form method="post" action="#">
-	  	<input type="submit" value="enregistrer">	 
-	  	</form> 	
-	  </ul> 
-	  <?php } ?>
-	  <hr>
-	  
-	 <p>Itinéraires sauvegardés <?php if($count_profile_routes!=0) { echo ("(".$count_profile_routes.")"); }; ?></p>
-	  
-	  <ul>
-		  	
-	  <?php if($count_profile_routes==0) { ?>
-		<p>Vous n'avez sauvegardé aucun itinéraire</p>
-			<?php } else { 
-				foreach ($select_profile_routes as $select_profile_route) {
-					$id_profile_route = $select_profile_route['id'];
-					$profile_route = $dbh -> query("SELECT * FROM routes WHERE id LIKE '$id_profile_route'")->fetch();
-			?>	
-					<div class="saved"></div>
-					<p><?= $profile_route['position_start']?></p>
-					<p><?= $profile_route['position_end']?></p>
-			 <?php } ?>
-	  	<a class="edit_itineraries" href="#">modifier</a>
-	  	<form method="post" action="#">
-	  	<input id="save_itineraries" type="submit" value="enregistrer">
-	  	</form>	 
-	  	
-	  	<?php } ?> 
-	  </ul>
-	  
-	  
-	 <hr>
-	 
-	 <p>Photos que vous avez prises <?php if($count_profile_media_images!=0) { echo ("(".$count_profile_media_images.")"); }; ?></p>
-	 
-	 <div id="pictures">
-	<?php if($count_profile_media_images==0) { ?>
-		<p>Vous n'avez pris aucune photo</p>
-	<?php } else { 
-				foreach ($profile_media_image as $profile_media_image) {
-					$profile_media_image_id=$profile_media_image['id'];
-					$src_place = $dbh -> query("SELECT places_id FROM media WHERE id LIKE '$profile_media_image_id'")->fetch(0);
-	?>	
-					<img src="<?= $src_media.$src_place['places_id']."/".$profile_media_image['url_file']?>"</p>
-		  <?php } ?>
-	<?php } ?>
+</div> 
 
-		 <a href="#" id="other_pictures"></a>
-	 </div>
-
- -->
+<!-- ******************fin de la sidebar profile settings*********************** -->
 	   
-</div>  	
+</section>  <!-- ******Fin de la sidebar****** -->	
  
 
   <div id="map-canvas"></div>
