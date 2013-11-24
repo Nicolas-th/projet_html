@@ -4,9 +4,10 @@
 	include_once('../config/config.php');
 	include_once('../includes/functions.inc.php');
 	
-	$id_user = 9;
-	
-	if(isset($_POST['message']) && isset($_POST['lieu'])){
+	if(isset($_POST['message']) && isset($_POST['lieu']) && isset($_SESSION['id'])){
+
+		$id_user = $_SESSION['id'];
+
 		$id_lieu = intval($_POST['lieu']);
 		$message = strip_tags($_POST['message']);
 		$valid = 1;

@@ -21,9 +21,22 @@ $(function() {
 		event.preventDefault();
 		var commentaire = $('#leave-comment form textarea[name=message]').val();
 		if(commentaire.length>0){
-			postCommentaire(lieu,commentaire);
+			postCommentaire(
+				lieu,
+				commentaire,
+				function(){
+					$('#leave-comment form textarea[name=message]').val('');
+				}
+			);
 		}else{
-			console.log('test');
+			$('#leave-comment form')
+			.before(
+				$('<p class="error">Vous devez écrire un commentaire</p>')
+				.delay(3000)
+				.fadeOut(400,function() {
+			 		$(this).remove(); 
+				})
+			);
 		}
 	});
 	
@@ -99,12 +112,15 @@ function signal(id,lien){
 	});
 }
 
-function postCommentaire(lieu,commentaire){
+function postCommentaire(lieu,commentaire,success){
 	$.post("/site/ajax/addComments.xhr.php",{
 		'lieu' : lieu,
 		'message' : commentaire
 	}, 
 	function(data){
 		$('.commentaire').last().after($(data).fadeIn());
+		if(typeof(success)=='function'){
+			success.call();
+		}
 	});	
 }

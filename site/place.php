@@ -50,6 +50,7 @@
 		<meta charset="utf-8">
 		<title><?php echo $result['name'] ?></title>
 		<meta name="viewport" content="initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/global.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/place.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
@@ -124,19 +125,19 @@
 						if(isset($_SESSION['id'])){
 							$id_user = $_SESSION['id'];
 							
-							$reqVoteLike = $dbh->prepare("SELECT COUNT(id_user) FROM `like` WHERE id_lieu LIKE :id_lieu AND id_user=:id_user");
+							$reqVoteLike = $dbh->prepare("SELECT COUNT(id_user) AS nblikes FROM `like` WHERE id_lieu=:id_lieu AND id_user=:id_user");
 								$reqVoteLike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
 								$reqVoteLike->bindValue('id_user',$id_user,PDO::PARAM_INT);
 							$reqVoteLike->execute();
-							$resultLike = $reqVoteLike->fetch();
+							$resultLike = $reqVoteLike->fetch(PDO::FETCH_ASSOC);
 							
-							$reqVoteDislike = $dbh->prepare("SELECT COUNT(id_user) FROM `dislike` WHERE id_lieu LIKE :id_lieu AND id_user=:id_user");
+							$reqVoteDislike = $dbh->prepare("SELECT COUNT(id_user) AS nbdislikes FROM `dislike` WHERE id_lieu=:id_lieu AND id_user=:id_user");
 								$reqVoteDislike->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
 								$reqVoteDislike->bindValue('id_user',$id_user,PDO::PARAM_INT);
 							$reqVoteDislike->execute();
-							$resultDislike = $reqVoteDislike->fetch();
+							$resultDislike = $reqVoteDislike->fetch(PDO::FETCH_ASSOC);
 						
-							if($resultLike[0] == 0 && $resultDislike[0] == 0){
+							if($resultLike['nblikes'] == 0 && $resultDislike['nbdislikes'] == 0){
 					?>
 							<div id="button-validate">
 								<input type="button" id="buttonLike" value="Like"/> 
