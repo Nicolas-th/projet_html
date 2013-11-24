@@ -186,7 +186,39 @@
 				</div>
 			</div>
 
+			<?php if(isset($_SESSION['id'])){ ?>
+
+			<div class="grid grid-pad" id="upload_medias">
+				<div id="form_photo">
+					<form enctype="multipart/form-data" action="<?php echo($chemin_relatif_site); ?>ajax/upload_photos_videos.xhr.php" method="post">
+						<div>
+							<input type="file" name="imageFile" accept="image/*">
+						</div>
+						<input type="hidden" name="id_lieu" value="<?php echo($id_lieu) ?>">
+						<input type="submit" value="Charger une photo">
+					</form>
+				</div>
+
+				<div id="form_video">
+					<form enctype="multipart/form-data" action="<?php echo($chemin_relatif_site); ?>ajax/upload_photos_videos.xhr.php" method="post">
+						<div>
+					  		<input type="file" name="videoFile" accept="video/*" />
+					  	</div>
+					  	<input type="hidden" name="id_lieu" value="<?php echo($id_lieu) ?>">
+					 	<input type="submit" value="Charger une vidéo">
+					</form>
+				</div>
+				<div class="conteneur_progress_bar">
+					<div class="progress_bar"></div>
+					<div class="progress_value">0%</div >
+				</div>
+			</div>
+
+			<?php } ?>
+
 			<div class="grid grid-pad">
+
+				<?php if(isset($_SESSION['id'])){ ?>
 				<div id="leave-comment">
 					<div>	
 						<?php 
@@ -202,6 +234,7 @@
 		       			</form>
 		       		</div>
 				</div>
+				<?php }?>
 			</div>
 
 			<div class="grid grid-pad">
@@ -234,6 +267,7 @@
 			</div>
 		</div><!-- #container-lieu -->
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/jquery.form.js"></script>
 		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/chart.js"></script>
 		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/place.js"></script>
 	</body>

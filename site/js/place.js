@@ -63,6 +63,17 @@ $(function() {
 			
 		});	
 	});
+
+
+	/* Uploads */
+
+	$('#upload_medias form input[type=submit]').addClass('hide');	// On cache l'input submit
+
+	$('#upload_medias form input[type=file]').on('change',function(){
+		//$(this).parents('form').first().submit();
+		uploadFile('#'+$(this).parents('form').first().parent('div').attr('id'));
+	});
+
 	
 	$.ajax({
 		type : "POST",
@@ -148,4 +159,45 @@ function postCommentaire(lieu,commentaire,success){
 			success.call();
 		}
 	});	
+}
+
+function uploadFile(conteneurFormSelector){
+
+    var form            = $(conteneurFormSelector).children('form').first();
+    var progressbox     = $(conteneurFormSelector).parent().children('.conteneur_progress_bar').first();
+    var progressbar     = progressbox.children('.progress_bar').first();
+    var statustxt       = progressbox.children('.progress_value').first();
+    var button    		= $(conteneurFormSelector).children('input[type="file"]').first();
+    var completed       = '0%';
+
+    $(form).ajaxSubmit({
+        beforeSend: function() {
+            $('.response').remove();
+            button.attr('disabled', '');
+            statustxt.empty();
+            progressbox.slideDown(); 
+            progressbar.width(completed);
+            statustxt.html(completed);
+            statustxt.css('color','#000');
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+        	console.log(event, position, total, percentComplete);
+            progressbar.width(percentComplete + '%')
+            statustxt.html(percentComplete + '%')
+            if(percentComplete>50){
+                    statustxt.css('color','#fff');
+            }
+        },
+        complete: function(response) {
+        	console.log(response);
+            if(response.status=='200'){
+                progressbox.after('<p class="response">'+response.responseText+'</p>');
+                form.resetForm();
+                button.removeAttr('disabled');
+                progressbox.slideUp();
+            }else{
+                progressbox.after('<p class="response">'+response.responseText+'</p>');
+            }
+        }
+    });
 }
