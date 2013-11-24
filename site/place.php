@@ -3,6 +3,9 @@
 	require_once('config/config.php');
 	require_once('includes/functions.inc.php');
 
+	/*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
+	require_once('includes/profile.inc.php');
+
 	if(!isset($_GET['id'])){
 		header("HTTP/1.1 301 Moved Permanently");
    		header('Location : '.$chemin_relatif_site.'index.php');
@@ -23,11 +26,11 @@
 		exit;
 	}
 
-	//Fonction d'affichage des commentaires
+	// Si un commentaire est posté
 	if(isset($_POST['message']) && isset($_SESSION['id'])){
 		$id_user = $_SESSION['id'];
 		$message = $_POST['message'];
-		$valid = 1;
+		$valid = 0;
 	
 		$reqComment = $dbh->prepare("INSERT INTO comments VALUES('',:message,NOW(),:valid,:id_user,:id_lieu)");
 			$reqComment->bindValue('message',$message,PDO::PARAM_STR);
@@ -38,11 +41,25 @@
 	}
 	
 	//On récupère les informations du lieu demandé
-	$reqPlace = $dbh->prepare("SELECT * FROM places WHERE id LIKE :id_lieu");
+	$reqPlace = $dbh->prepare("SELECT * FROM places WHERE id=:id_lieu");
 		$reqPlace->bindValue('id_lieu',$id_lieu,PDO::PARAM_STR);
 	$reqPlace->execute();
 	
 	$result = $reqPlace->fetch();
+
+	$reqCover = $dbh->prepare("SELECT * FROM media WHERE places_id=:id_lieu AND type='img' AND cover=1");
+		$reqCover->bindValue('id_lieu',$id_lieu,PDO::PARAM_STR);
+	$reqCover->execute();
+	
+	$infosCover = $reqCover->fetch(PDO::FETCH_ASSOC);
+
+	$cover = $chemin_relatif_site.'assets/img/place_cover.png';
+	if(isset($infosCover['url_file'])){
+		$url_cover = getUrlMedia($infosCover['url_file'],$infosCover['places_id'],$infosCover['type']);
+		if(is_file($chemin_absolu.$url_cover)){
+			$cover = $url_cover;
+		}
+	}
 ?>
 <!doctype html>
 <html>
@@ -56,8 +73,9 @@
 	</head>
 	<body>
 		<div id="container-lieu" data-id="<?php echo $id_lieu; ?>">
-			<div class="grid">
-				<img src="<?php echo($chemin_relatif_site); ?>assets/img/place_cover.png" id="photo-lieu" alt="photo du lieu">
+
+			<div class="grid cover">
+				<img src="<?php echo($cover) ?>" alt="photo du lieu">
 			</div>
 
 			<div class="grid grid-pad">
@@ -169,17 +187,38 @@
 			</div>
 
 			<div class="grid grid-pad">
+				<div id="leave-comment">
+					<div>	
+						<?php 
+							$avatar = getUrlAvatar($profile['avatar']);
+							echo('<img src="'.$avatar.'" alt="Avatar de '.$profile['nickname'].'">');
+						?>
+					</div>
+					<div>
+		        		<h3>Laisser un commentaire</h3>
+		       			<form method="post" action="">
+		                	<textarea name="message"></textarea>
+		                	<input type="submit" value="Envoyer">
+		       			</form>
+		       		</div>
+				</div>
+			</div>
+
+			<div class="grid grid-pad">
 				<div class="col-1-1">
-					<p id="voir-commentaires">Voir les commentaires</p>
 					<?php 
-					$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE places_id LIKE :id_lieu AND valid = 1 ORDER BY date_comment ASC");
+					$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname, users.avatar FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE places_id LIKE :id_lieu ORDER BY date_comment DESC LIMIT 0,6");
 					$reqDisplay->bindValue('id_lieu',$id_lieu,PDO::PARAM_INT);
 					$reqDisplay->execute();
 					
 					$has_res = false;
+					$cpt=0;
 					while($result = $reqDisplay->fetch()){
-						echo(structureCommentaire($result));
-						$has_res = true;	
+						if($cpt<5){
+							echo(structureCommentaire($result,((isset($_SESSION['id'])?true:false)),$cpt));
+							$has_res = true;	
+						}
+						$cpt++;
 					}
 					if(!$has_res){
 						echo 'Il n\'y a pas de commentaires sur ce lieu';
@@ -187,16 +226,11 @@
 					$reqDisplay->closeCursor();
 					?>
 				</div>
-			</div>
-
-			<div class="grid grid-pad">
-				<div id="leave-comment">
-	        		<h3>Répondre</h3>
-	       			<form method="post" action="">
-	                	<textarea name="message"></textarea>
-	                	<input type="submit" value="Envoyer">
-	       			</form>
-				</div>
+				<?php 
+					if($cpt>5){ 
+						echo('<a id="voir-commentaires">Plus de commentaires</a');
+					}
+				?>
 			</div>
 		</div><!-- #container-lieu -->
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>

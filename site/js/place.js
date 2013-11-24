@@ -39,6 +39,30 @@ $(function() {
 			);
 		}
 	});
+
+	$('#voir-commentaires').on('click',function(evt){
+		evt.preventDefault();
+		var id_last = $('.commentaire').last().attr('id').replace('comment_','');
+		$.ajax({
+			type : "POST",
+			url : '/site/ajax/get_comments.xhr.php',
+			data : {
+				'id' : id_last,
+				'limit' : 5, 
+				'lieu' : lieu
+			},
+			dataType : 'json',
+			success: function(reponse, status) {
+				var hasNext = parseInt(reponse.hasNext);
+				if(hasNext==0){
+					$('#voir-commentaires').hide();
+				}
+				var commentaires = reponse.comments;
+				$('.commentaire').last().after($(commentaires).fadeIn(400));
+			}
+			
+		});	
+	});
 	
 	$.ajax({
 		type : "POST",
@@ -72,7 +96,7 @@ $(function() {
 function likeDislike(lieu,type) {
 	$.ajax({
 		type : "POST",
-		url : "/site/ajax/ajoutLikeDislike.xhr.php",
+		url : "/site/ajax/ajout_like_dislike.xhr.php",
 		dataType : 'json',
 		data : {
 			'lieu' : lieu,
@@ -107,18 +131,19 @@ function signal(id,lien){
 	$.post("/site/ajax/signaler.xhr.php",{
 		id : id
 	},
-	function(){
-		lien.replaceWith('Vous avez signalé ce commentaire. Merci :)');
+	function(data){
+		console.log(data);
+		lien.replaceWith('<p class="signalement">Vous avez signalé ce commentaire. Un modérateur a été averti.</p>');
 	});
 }
 
 function postCommentaire(lieu,commentaire,success){
-	$.post("/site/ajax/addComments.xhr.php",{
+	$.post("/site/ajax/add_comment.xhr.php",{
 		'lieu' : lieu,
 		'message' : commentaire
 	}, 
 	function(data){
-		$('.commentaire').last().after($(data).fadeIn());
+		$('.commentaire').first().before($(data).fadeIn());
 		if(typeof(success)=='function'){
 			success.call();
 		}

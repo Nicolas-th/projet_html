@@ -10,7 +10,7 @@
 
 		$id_lieu = intval($_POST['lieu']);
 		$message = strip_tags($_POST['message']);
-		$valid = 1;
+		$valid = 0;
 	
 		$reqComment = $dbh->prepare("INSERT INTO comments (content,date_comment,valid,users_id,places_id) VALUES(:message,:time,:valid,:id_user,:id_lieu)");
 		$reqComment->bindValue('message',$message,PDO::PARAM_STR);
@@ -21,7 +21,7 @@
 		$reqComment->execute();
 		$last_id = $dbh->lastInsertId();
 
-		$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE comments.id=:id_comment");
+		$reqDisplay = $dbh->prepare("SELECT comments.*, users.nickname, users.avatar FROM comments LEFT JOIN users ON comments.users_id = users.id WHERE comments.id=:id_comment");
 		$reqDisplay->bindValue('id_comment',$last_id,PDO::PARAM_INT);
 		$reqDisplay->execute();
 		
