@@ -34,14 +34,14 @@
   <section id="popup"> <!-- début barre latérale gauche -->
 	  <div id="bouton"></div>
 	  
-	  <p>Indiquez votre trajet :</p>
+	  <p>Définissez votre trajet:</p>
 	  
 	<form id="formulaire_itineraire" method="post" action="#">
-	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ" />
-	    <button id="position">Ma position</button>
+		<button id="position">Partir de ma position</button>
+		 
+	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ"  />
 	    <input type="hidden" name="latitude_position" />
 	    <input type="hidden" name="longitude_position" />
-	    
 	    
 	    
 	    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
@@ -50,14 +50,16 @@
 	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
     
 	        
-	    <ul id="resultats_lieux_arrive"></ul>
+	    
 	    <div class="choix_transport">
-		    <a href="#" id="marche" class="actif">A pied</a>
-		    <a href="#" id="velo">En vélo</a>
-		    <a href="#" id="metro">En métro</a>
+		    <a href="#" id="marche" class="actif" alt="a pied"></a>
+		    <a href="#" id="velo" alt="velo"></a>
+		    <a href="#" id="metro" alt="metro"></a>
 		</div>
 		
-		<input type="submit" value="Rechercher"/>
+		<form method="post" action="#">
+			<input type="submit" value="Calculer l'itinéraire"/>
+		</form>
 		
    </form>
    
@@ -101,6 +103,10 @@
 	  	</li>
 	  </ul>   
 	  
+	  <form method="post" action="#">
+			<input type="submit" value="Faites un détour!"/>
+	  </form>
+	  
   </div>
 	  
   </section> <!-- fin barre latérale gauche -->
@@ -108,144 +114,169 @@
  
   
   
-  <section id="popup_right">
-	 
-
-<p><div class="mask"><img src="img/avatar.png"/></div></p>
-	  
-<h3>Manon Baudemont</h3>
-
-<form action="" method="post" enctype="multipart/form-data">
-    <div class="upload">
-        <input value="changer" type="file" name="upload"/>
-    </div>
-</form>
-
-<hr>
-
-<div id="edit"><p>Informations du compte</p><img src="img/rouage.svg"/></div>
-
-<form id="update_info" method="post" action="#">
-		
-		<p><label for="full_name">Nom</label>
-		<input type="text"  name="nom" value="Baudemont" disabled/></p>
-		
-		<p><label for="full_name">Prénom</label>
-		<input type="text"  name="prenom" value="Manon" disabled/></p>
-		
-		<p><label for="full_name">Pseudo</label>
-		<input type="text"  name="pseudo" value="JudyMoon" disabled/> </p>
-		
-		<p><label for="full_name">Mail</label>
-		<input type="email"  name="mail" value="manon.test@gmail.com" disabled/> </p>
-		
-		<input id="save_infos" type="submit" value="Enregistrer">			
-					
-</form>
-
-<hr>
-
-<div id="edit_password"><p>Modifier le mot de passe</p><img src="img/rouage.svg"/></div>
-
-<form id="hidden_password" method="post" action="#">
-
-		<p><label for="full_name">Mot de passe actuel</label></p>
-		<input type="password" name="password" value="******" disabled/> 
-				
-		<p><label for="full_name">Nouveau mot de passe</label></p>
-		<input type="password" name="new_password" value="******" disabled/> 
-		
-		<p><label for="full_name">Confirmez</label></p>
-		<input type="password" name="confirm_password" value="******" disabled/> 
-		
-		<input id="save_password" type="submit" value="Enregistrer">
-								
-</form>
-
-
-<!-- Début de la sidebar profile settings -->
- 
- 
-<!--
-<p id="profile_picture"><div class="mask"><img src="img/avatar.png"/></div></p>
-	  
-	  <h3>Manon Baudemont</h3>
+<section id="popup_right">
   
-	  <hr>
-	  
-	  <p>2 lieux ajoutés</p>
-	  
-	   <ul>
-	  	<li>
-		 	<img src="img/yellow_marker.svg" width="28" height="28"/>
-		 	<label class="place">Nom du lieu, Paris 14ème</label>	
-	  	</li>
-	  	
-	  	<li>
-		 	<img src="img/yellow_marker.svg" width="28" height="28"/>
-		 	<label class="place">Nom du lieu, Paris 20ème</label>
-	  	</li>
-	  	
-	  	<a class="edit_added_places" href="#">modifier</a>
-	  	
-	  	<form method="post" action="#">
-	  	<input type="submit" value="enregistrer">	 
-	  	</form> 	
-	  </ul> 
-	  
-	  <hr>
-	  
-	  <p><span>2</span> itinéraires sauvegardés</p>
-	  
-	  <ul>
-	  
-	  	<li class="itinerary">
-	  	
-		  	<div class="saved"></div>
-			<p>Lieu de départ</p> 
-			<p>Lieu d'arrivée</p> 	
-	  	</li>
-	  	
-	  	<li class="itinerary">
-	  		
-		  	<div class="saved"></div>
-			<p>Lieu de départ</p> 
-			<p>Lieu d'arrivée</p> 	
-	  	</li>
-	  	
-	  	<a class="edit_itineraries" href="#">modifier</a>
-	  	<form method="post" action="#">
-	  	<input id="save_itineraries" type="submit" value="enregistrer">
-	  	</form>	  
-	  </ul>
-	  
-	  
-	 <hr>
-	 
-	 <p>Photos prises par <span>Manon</span></p>
-	 
-	 <div id="pictures">
-		 <div><img src="img/picture.png"/></div>
-		 <div><img src="img/picture.png"/></div>
-		 <div><img src="img/picture.png"/></div>
-		 <div><img src="img/picture.png"/></div>
-		 <a href="#" id="other_pictures"></a>
-	 </div>
--->
+<!-- Début de la sidebar profil -->
 
-	   
+
+<div id="sidebar_profile">
+
+	<p id="profile_picture"><div class="mask"><img src="img/avatar.png"/></div></p>
+		  
+		  <h3>Manon Baudemont</h3>
+	  
+		  <hr>
+		  
+		  <p>2 lieux ajoutés</p>
+		  
+		   <ul>
+		  	<li>
+			 	<img src="img/yellow_marker.svg" width="28" height="28"/>
+			 	<label class="place">Nom du lieu, Paris 14ème</label>	
+		  	</li>
+		  	
+		  	<li>
+			 	<img src="img/yellow_marker.svg" width="28" height="28"/>
+			 	<label class="place">Nom du lieu, Paris 20ème</label>
+		  	</li>
+		  	
+		  	<a class="edit_added_places" href="#">modifier</a>
+		  	
+		  	<form method="post" action="#">
+		  	<input type="submit" value="enregistrer">	 
+		  	</form> 	
+		  </ul> 
+		  
+		  <hr>
+		  
+		  <p><span>2</span> itinéraires sauvegardés</p>
+		  
+		  <ul>
+		  
+		  	<li class="itinerary">
+		  	
+			  	<div class="saved"></div>
+				<p>Lieu de départ</p> 
+				<p>Lieu d'arrivée</p> 	
+		  	</li>
+		  	
+		  	<li class="itinerary">
+		  		
+			  	<div class="saved"></div>
+				<p>Lieu de départ</p> 
+				<p>Lieu d'arrivée</p> 	
+		  	</li>
+		  	
+		  	<a class="edit_itineraries" href="#">modifier</a>
+		  	<form method="post" action="#">
+		  	<input id="save_itineraries" type="submit" value="enregistrer">
+		  	</form>	  
+		  </ul>
+		  
+		  
+		 <hr>
+		 
+		 <p>Photos prises par <span>Manon</span></p>
+		 
+		 <div id="pictures">
+			 <div><img src="img/picture.png"/></div>
+			 <div><img src="img/picture.png"/></div>
+			 <div><img src="img/picture.png"/></div>
+			 <div><img src="img/picture.png"/></div>
+			 <a href="#" id="other_pictures"></a>
+		 </div>
+
+</div> <!-- Fin de la sidebar profile -->
+	 
+<!-- Début de la sidebar : edit profile -->
+
+<div id="sidebar_edit">
+
+	<p><div class="mask"><img src="img/avatar.png"/></div></p>
+		  
+	<h3>Manon Baudemont</h3>
+	
+	<form action="" method="post" enctype="multipart/form-data">
+	    <div class="upload">
+	        <input value="changer" type="file" name="upload"/>
+	    </div>
+	</form>
+	
+	<hr>
+	
+	<div id="edit"><p>Informations du compte</p><img src="img/rouage.svg"/></div>
+	
+	<form id="update_info" method="post" action="#">
+			
+			<p><label for="full_name">Nom</label>
+			<input type="text"  name="nom" value="Baudemont" disabled/></p>
+			
+			<p><label for="full_name">Prénom</label>
+			<input type="text"  name="prenom" value="Manon" disabled/></p>
+			
+			<p><label for="full_name">Pseudo</label>
+			<input type="text"  name="pseudo" value="JudyMoon" disabled/> </p>
+			
+			<p><label for="full_name">Mail</label>
+			<input type="email"  name="mail" value="manon.test@gmail.com" disabled/> </p>
+			
+			<input id="save_infos" type="submit" value="Enregistrer">			
+						
+	</form>
+	
+	<hr>
+	
+	<div id="edit_password"><p>Modifier le mot de passe</p><img src="img/rouage.svg"/></div>
+	
+	<form id="hidden_password" method="post" action="#">
+	
+			<p><label for="full_name">Mot de passe actuel</label></p>
+			<input type="password" name="password" value="******" disabled/> 
+					
+			<p><label for="full_name">Nouveau mot de passe</label></p>
+			<input type="password" name="new_password" value="******" disabled/> 
+			
+			<p><label for="full_name">Confirmez</label></p>
+			<input type="password" name="confirm_password" value="******" disabled/> 
+			
+			<input id="save_password" type="submit" value="Enregistrer">
+									
+	</form>
+	
+</div> <!-- Fin de la sidebar profile settings -->
+
+
+ 	   
 </section> <!-- Fin div profil --> 	
  
 
   <div id="map-canvas"></div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   <script type="text/javascript">
   
   $("#bouton2").css("display","none");
+
+  $("header div:nth-child(2)").click(function(){
   
-  $("header div:nth-child(3),header div:nth-child(2)").click(function(){
-  	console.log($("#popup_right").attr('style'));
+  $("#sidebar_profile").css("display","none");
+  $("#sidebar_edit").css("display","block");
+  
+  	
+  
   	  if($('#popup_right').attr('style') != "right: -280px;"){
   	  	 $("#popup_right").animate({
 		  right:"-280px"
@@ -266,7 +297,67 @@
 	  
   });
   
- 
+  $("header div:nth-child(3)").click(function(){
+  
+  $("#sidebar_edit").css("display","none");
+  $("#sidebar_profile").css("display","block");
+  
+  	
+  
+  	  if($('#popup_right').attr('style') != "right: -280px;"){
+  	  	 $("#popup_right").animate({
+		  right:"-280px"
+		  },400);
+  	  }
+  	  
+  	  else {
+  	  $("#popup_right").animate({
+	  right:"0"
+	  },400);
+	  }
+	  
+	  $("#bouton2").css("display","block");	
+	  
+	  $("#popup").animate({
+	  left:"-280px"
+	  },400); 
+	  
+  });
+
+  
+  /*
+$("header div:nth-child(3), header div:nth-child(2)").click(function(){
+  
+  if(this == $('header div:nth-child(2)')) {
+  $("#sidebar_profile").css("display","none");
+  $("#sidebar_edit").css("display","block");
+  } else {
+  $("#sidebar_edit").css("display","none");
+  $("#sidebar_profile").css("display","block");
+  }
+  
+    if($('#popup_right').attr('style') != "right: -280px;"){
+     $("#popup_right").animate({
+  right:"-280px"
+  },400);
+    }
+    
+    else {
+    $("#popup_right").animate({
+  right:"0"
+  },400);
+  }
+  
+  $("#bouton2").css("display","block");
+  
+  $("#popup").animate({
+  left:"-280px"
+  },400); 
+  
+});
+*/
+
+
 
   $("#bouton_right").click(function(){
 	console.log($("#popup_right").attr('style'));
@@ -297,7 +388,7 @@
   $("#bouton2").css("display","none");
   });
 
-/******Modification ou suprression d'itinéraires dans profil************/
+/******Modification ou suppression d'itinéraires dans profil************/
 
 $(".edit_itineraries").click(function(){
 	$(".itinerary :nth-child(1)").removeClass('saved').addClass('trash');
@@ -322,7 +413,7 @@ $("#edit_password img").click(function(){
 	  $("#save_password").css("display","block");
 	  //$("#popup_right form input[type=text]").css('background-color','grey');
   });
-
+  
 
 $("#edit img").click(function(){
 	  $("#update_info input").removeAttr('disabled');
