@@ -7,5 +7,10 @@
 		$reqDelete = $dbh->prepare("DELETE FROM users WHERE id LIKE :id");
 			$reqDelete->bindValue("id", $id, PDO::PARAM_INT);
 		$reqDelete->execute();
+		
+		echo 0;
+	}
+	else {
+		echo 1;
 	}
 ?>

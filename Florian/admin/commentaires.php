@@ -1,3 +1,7 @@
+<?php
+	require_once('../config/config.php');
+	require_once('includes/functions.inc.php');
+?>
 <html>
 <head>
 	<title>Panneau d'administration - Les commentaires</title>
@@ -56,33 +60,9 @@
           <h3 class="com-signales">Commentaires signalés</h3>
         </div>
 
-        <div class="span4 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname-signale">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-          <button class="btn btn-lg btn-danger" type="button">Supprimer</button>
-        </div>
-      
-        <div class="span4 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname-signale">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-          <button class="btn btn-lg btn-danger" type="button">Supprimer</button>
-        </div>
-
-        <div class="span4 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname-signale">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-          <button class="btn btn-lg btn-danger" type="button">Supprimer</button>
-        </div>
-
-        <div class="span4 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname-signale">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-          <button class="btn btn-lg btn-danger" type="button">Supprimer</button>
-        </div>
+        <?php
+        	displayComments($dbh);
+        ?>
 
       </div><!-- div#bloc-com-signales -->
 
@@ -94,29 +74,9 @@
           <h3>Tous les commentaires</h3>
         </div>
 
-         <div class="span3 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-        </div>
-
-        <div class="span3 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-        </div>
-
-        <div class="span3 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-        </div>
-
-        <div class="span3 margin-top">
-          <h4>Commentaire n°1 par <span class="nickname">Florian</span></h4>
-          Ceci est mon commentaire et je fais ce que j'en veux ! J'ai rien à dire et tant pis !<br/>
-          <strong>Date :</strong> 2013-11-10 14:52:14<br/>
-        </div>
+         <?php
+         	displayAllComments($dbh);
+         ?>
 
       </div><!-- div.span7 -->
 
