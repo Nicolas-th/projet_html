@@ -85,20 +85,22 @@ header div:nth-child(1){
 
 }
 
-#bouton{
+#bouton, #bouton2{
 	background:url('../img/menu.svg') no-repeat;
 }
 
 #bouton2{
-	background:url('../img/route.svg') no-repeat;
+	background:url('../img/menu.svg') no-repeat;
 }
 
 #bouton, #bouton2{
-  width:30px;
-  height:30px;
+  width:25px;
+  height:25px;
   background-size:cover;
   cursor:pointer;
   position:absolute;
+  top:7px;
+  left:7px;
   z-index:1200;
 }
 
@@ -117,10 +119,11 @@ header div:nth-child(1){
   background-color:white;
   outline:none;
   border:none;
-  width:215px;
+  width:200px;
   height:30px;
   line-height:30px;
   padding-left:15px;
+  padding-right:15px;
   position:relative;
   left:25px;
 
@@ -136,7 +139,7 @@ header div:nth-child(1){
   cursor:pointer;
   width:150px;
   height:30px;
-  margin: 10px 0px 8px 108px;
+  margin: 0px 0px 8px 108px;
 }
 
 
@@ -159,6 +162,8 @@ header div:nth-child(1){
 	height:25px;
 	background-size:cover;
 	margin-right:5px;
+	margin-top:15px;
+	margin-bottom:10px;
 }
 
 #position{
@@ -199,7 +204,6 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	border-radius:9px;
 	position:relative;
 	left:-15px;
-	margin-bottom:25px;
 }
 
 #popup ul li label{
@@ -269,16 +273,21 @@ margin-right:4px;
 	width:120px;
 	height:120px;
 	border-radius: 60px;
-	margin:0 auto;
+	margin:5px auto;
 }
 
 #popup_right p{
 	font-size:15px;
-	margin:0 auto;
+	padding:0;
+	margin:0;
 }
 
-#popup_right h3{
+#popup_right h3, #popup_right h4{
 	text-align:center;
+}
+
+#popup_right h4 {
+	margin-top: -20px;
 }
 
 #popup_right > p:not(#profile_picture){
@@ -393,6 +402,19 @@ hr{
 	display:none;
 }
 
+#popup_right #changeAvatar input[type=submit] {
+	display: block;
+	position: absolute;
+	margin-top: -45px;
+	width: 38px;
+	height: 31px;
+	margin-left: 185px;
+	background-color: #49C495;
+	border-radius: 0px 6px 6px 0px;
+	
+}
+
+
 /************* profile settings ************/
 
 #popup_right:first-child{
@@ -410,13 +432,13 @@ hr{
 	overflow:visible;
 }
 
-div.upload {
+/*div.upload {
     width: 160px;
     height: 30px;
     background:url('../img/edit_avatar.svg') no-repeat;
     border-radius:7px;
     overflow: hidden;
-    margin:0 auto;
+    margin:0px 25px;
 
 }
 
@@ -428,6 +450,59 @@ div.upload input {
     opacity: 0 !important;
     overflow: hidden !important;
     cursor: pointer !important;
+}*/
+
+
+#avatar::-webkit-file-upload-button {
+  visibility: hidden;
+}
+#avatar:before {
+	content: 'Changer de photo';
+	display: inline-block;
+	background-color: #4ece9d;
+	border-radius: 6px 0px 0px 6px;
+	width: 145px;
+	padding: 7px 0px;
+	outline: none;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	cursor: pointer;
+	margin: 0px 25px;
+	font-size: 13px;
+	padding-left: 15px;
+}
+#avatar:hover:before {
+ background-color: #4ece9d;
+}
+#avatar:active:before {
+  background-color: #4ece9d;
+}
+
+.conteneur_progress_bar {
+	padding: 1px; 
+	position:relative;
+	width:145px;
+	border-radius: 3px;
+	margin: 10px;
+	display:none;
+	text-align:left;
+	margin: 0px 25px;
+}
+.progress_bar {
+	height:5px;
+	background-color: #FFF;
+	width:1%;
+}
+.progress_value {
+	margin: 0px auto;
+	position:absolute;
+	display:inline-block;
+	color: #FFF;
+	
+	margin-top: -14px;
+	width: 38px;
+	height: 31px;
+	margin-left: 160px;
 }
 
 #edit p, #edit_password p{
@@ -438,6 +513,12 @@ div.upload input {
 	padding-right:40px;
 	padding-bottom:15px;
 	
+}
+
+.response {
+	margin: 0 auto; 
+	color: #FFF; 
+	font-weight: 200;
 }
 
 p + img{
@@ -461,6 +542,7 @@ p + img{
 	position:relative;
 	left:20px;
 	width:240px;
+	
 }
 
 

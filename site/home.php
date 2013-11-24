@@ -54,10 +54,11 @@ function getPlaces($str) {
 	  
   </header>
   
+ <div id="bouton"></div> 
  <div id="bouton2"></div>
   
  <section id="popup"> <!-- début barre latérale gauche -->
-	  <div id="bouton"></div>
+	  
 	  
 	  <p>Définissez votre trajet:</p>
 	  
@@ -113,7 +114,11 @@ function getPlaces($str) {
 			 	<a href="#" class="ajouter_lieu"><div id="see_place"></div></a>
 		 	</div>
 	  	</li>
-	  </ul>  
+	  </ul> 
+	  
+	  <form method="post" action="#">
+			<input type="submit" value="Faites un détour!"/>
+	  </form> 
 	   
    </div>
 	  
@@ -137,6 +142,7 @@ function getPlaces($str) {
 	
 		  
 	<h3><span class="prenom"><?= $profile['name']?></span> <span id="nom"><?= $profile['surname']?></span></h3>
+	<h4><?= $profile['nickname']?></h4>
 	
 	<hr>
 	  
@@ -159,7 +165,7 @@ function getPlaces($str) {
 	  		<a class="edit_added_places" href="#">modifier</a>
 	  	
 	  		<form method="post" action="#">
-	  	<input type="submit" value="enregistrer">	 
+	  	<input  type="submit" value="enregistrer">	 
 	  	</form> 	
 	  </ul> 
 	  <?php } ?>
@@ -236,14 +242,22 @@ if($user) { ?>
 
 	  
 <h3><span class="prenom"><?= $profile['name']?></span> <span id="nom"><?= $profile['surname']?></span></h3>
+<h4><?= $profile['nickname']?></h4>
 <?php if(!$user) { ?>
-<form id="changeAvatar" action="includes/edit-profile.inc.php?id=<?=$profile['id'] ?>" method="post" enctype="multipart/form-data">
-    <div class="upload">
-        <input type="file" name="avatar" id="avatar" value="">	
-    </div>
-    <input name="submit_user_avatar" type="submit" value="Enregister"/>
-</form>
-
+	<div id="changeAvatar">
+		<form  action="includes/edit-profile.inc.php?id=<?=$profile['id'] ?>" method="post" enctype="multipart/form-data">
+		    <div class="upload">
+		        <input type="file" name="avatar" id="avatar" value="">
+		    </div>
+		    <span><input id="submit_photo" name="submit_user_avatar" type="submit" value="OK"/></span>
+		    
+		</form>
+		<div class="conteneur_progress_bar">
+				<div class="progress_bar"></div>
+				<div class="progress_value">0%</div >
+		</div>
+		<p class="response"></p>
+	</div>
 <hr>
 
 <div id="edit"><p>Informations du compte</p><img src="assets/img/rouage.svg"/></div>
@@ -255,9 +269,6 @@ if($user) { ?>
 		
 		<p><label for="full_name">Prénom</label>
 		<input type="text" value="<?= $profile['name'] ?>" name="name" id="name" disabled/></p>
-		
-		<p><label for="full_name">Pseudo</label>
-		<input type="text"  name="pseudo" value="JudyMoon" disabled/> </p>
 		
 		<p><label for="full_name">Mail</label>
 		<input type="email" value="<?= $profile['email'] ?>" name="email" id="email" disabled/> </p>
@@ -304,6 +315,7 @@ if($user) { ?>
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
   <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
+    <script type="text/javascript" src="js/jquery.form.js"></script>
   <script type="text/javascript" src="js/functions.js"></script>
   <script type="text/javascript" src="js/classes.js"></script>
   <script type="text/javascript" src="js/navigation-ajax.js"></script>
@@ -311,7 +323,6 @@ if($user) { ?>
   <script type="text/javascript" src="js/home.js"></script>
   <script type="text/javascript" src="js/sidebar.js"></script>
   <script type="text/javascript" src="js/edit-profile.js"></script>
-  <script type="text/javascript" src="js/jquery.form.js"></script>
   </body>  
 </html>
 

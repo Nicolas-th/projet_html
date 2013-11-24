@@ -1,0 +1,71 @@
+/*------------ Toutes les pages ------------*/
+
+.logout{
+	color:blue !important;
+}
+
+.logout:hover{
+	color:lightblue !important;
+}
+
+
+h1 {
+	margin: 30px 0;
+	color:#3399CC;
+}
+
+.margin-top{
+	margin-top:20px;
+}
+
+h4{
+	color:grey;
+}
+
+img{
+    border-radius: 25px;
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+.btn-danger{
+	margin-top:5px;
+}
+
+/*------------ Page 'lieux' ------------*/
+
+.span4{
+	line-height: 1.4;
+}
+
+
+/*------------ Page 'commentaires' ------------*/
+
+#bloc-com-signales{
+	border-right:1px solid #ccc;
+}
+
+
+h3.com-signales{
+	color:#B22222;
+}
+
+.nickname-signale{
+	color:#B22222;
+}
+
+.nickname{
+	color:#000000;
+}
+
+@media screen and (max-width: 768px){
+
+	#bloc-com-signales{
+		border-right:none;
+		border-bottom:1px solid #ccc;
+		padding-bottom:20px;
+	}
+
+}
