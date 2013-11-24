@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="40px" height="40px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+<g>
+	<defs>
+		<path id="XMLID_1_" d="M20.003,0.088c-6.362,0-11.519,5.157-11.519,11.519c0,0-0.68,8.053,11.519,28.305
+			C30.298,22.801,31.41,14.399,31.507,12.204c0.002-0.03,0.002-0.06,0.004-0.09c0-0.006,0.001-0.013,0.001-0.019
+			c0.007-0.162,0.011-0.324,0.011-0.488C31.522,5.245,26.365,0.088,20.003,0.088z M20,17.282c-3.284,0-5.946-2.662-5.946-5.946
+			S16.716,5.389,20,5.389s5.946,2.662,5.946,5.946S23.284,17.282,20,17.282z"/>
+	</defs>
+	<use xlink:href="#XMLID_1_"  style="overflow:visible;fill:#4ECE9D;"/>
+	<clipPath id="XMLID_3_">
+		<use xlink:href="#XMLID_1_"  style="overflow:visible;"/>
+	</clipPath>
+	<rect x="20.064" y="-2.018" style="clip-path:url(#XMLID_3_);fill:#4BC493;" width="13.259" height="46.212"/>
+</g>
+</svg>

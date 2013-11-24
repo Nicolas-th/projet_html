@@ -149,7 +149,7 @@ h1#intro{
 	margin-right: 30px;
 	text-align:left;
 	font-family: OpenSansRegular;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 #creer-mon-compte{
@@ -377,13 +377,14 @@ li img{
 }
 
 
-/* Effect 1: Fade in and scale up */
+/*----------------- MODAL ---------------*/
 
 .md-modal {
+	display: none;
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	width: 50%;
+	/*width: 50%;*/
 	max-width: 630px;
 	min-width: 320px;
 	height: auto;
@@ -396,14 +397,32 @@ li img{
 	-moz-transform: translateX(-50%) translateY(-50%);
 	-ms-transform: translateX(-50%) translateY(-50%);
 	transform: translateX(-50%) translateY(-50%);
-		font-size:14px;
+	font-size:14px;
 	font-family : OpenSansSemibold;
+}
+
+.md-modal.load{
+	display: block;
 }
 
 .md-show {
 	visibility: visible;
 }
 
+.md-overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+	opacity: 0;
+	background: rgba(0,0,0,0.8);
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+}
 
 .md-show ~ .md-overlay {
 	opacity: 1;
@@ -412,33 +431,19 @@ li img{
 
 /* Content styles */
 .md-content {
-	color: #fff;
-	background: #e74c3c;
-	position: relative;
-	border-radius: 3px;
-	margin: 0 auto;
-}
-
-
-.md-content > div {
-	padding: 15px 40px 30px;
-	margin: 0;
-	font-weight: 300;
-	font-size: 1.15em;
-}
-
-.md-content > div p {
-	margin: 0;
-	padding: 10px 0;
-}
-
-.md-content > div ul {
-	margin: 0;
-	padding: 0 0 30px 20px;
-}
-
-.md-content > div ul li {
-	padding: 5px 0;
+	position: relative;		
+	width: 320px;
+	left: 50%;
+	margin-left: -160px;
+	border: solid 1px #e4e4e4;
+	text-align: center;
+	font-size: 14px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	-webkit-box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	background-color: white;
+	border-radius:6px;
 }
 
 .md-content button {
@@ -446,6 +451,95 @@ li img{
 	margin: 0 auto;
 	font-size: 0.8em;
 }
+
+.md-content p {
+	font-size: 25px;
+	margin-bottom:14px;
+}
+	
+.md-content input{
+  margin-bottom:14px;
+  font-size:14px;
+}
+.md-content input{
+  height:36px;
+  width:202px;
+  border:solid 1px #e4e4e4;
+  border-radius:6px;
+  text-align:center;
+}
+
+#btn-connexion{
+  position:relative;
+  left:50%;
+  margin-left:-101px;
+  line-height:36px;
+  color:white;
+}
+
+.md-content input[type=submit]{
+	background-color:#4ece9c;
+	display:block;
+	color:white;
+	text-decoration:none;
+	border: none;
+	border-radius:6px;
+	cursor:pointer
+}
+
+#btn-facebook {
+	height:36px;
+	width:202px;
+	text-align:center;
+	position:relative;
+	left:50%;
+	margin-left:-101px;
+	line-height:36px;
+	color:white;
+	background-color:#46629e;
+	margin-top: 15px;
+	margin-bottom:18px;
+	display:block;
+	color:white;
+	text-decoration:none;
+	border-radius:6px;
+}
+
+#sep{
+  border-top:solid 1px #e4e4e4;
+  margin-top:14px;
+  width:202px;
+  position:relative;
+  left:50%;
+  margin-left:-101px;
+  height:0px;
+  margin-bottom:14px;
+}
+
+#sep p {
+  width:32px;
+  background:white;
+  margin-top:-12px;
+  position:relative;
+  left:50%;
+  margin-left:-15px;  
+  color:#6e6b6b;
+  font-size: 16px;
+  
+}
+
+.md-close{
+	position:absolute;
+	right:14px;
+	top:18px;
+}
+
+.messageError {
+	color : #ff0000;
+	padding-bottom:14px;
+	
+}
+
 
 /* Individual modal styles with animations/transitions */
 
@@ -468,23 +562,3 @@ li img{
 	transform: scale(1);
 	opacity: 1;
 }
-
-
-
-
-  input, label{padding:0 .5em;line-height:2em;}
-  input {
-  	font-family: 'Montserrat Alternates', serif;
-  	width:70%;
-  	border:1px solid #ccc;
-  	margin:0 0 15px 0;
-  	box-sizing:border-box;
-  	border-radius:5px;
-  }
-
-  input:valid + label{opacity:0;-webkit-transform: translate(200px, 0px);color:#2DAA29;}
-  label{opacity:.5;font-size:1em;position:absolute;background-color:#fff;color:#999;border-top-left-radius:5px;border-bottom-left-radius:5px;-webkit-transition:all 1s ease .2s;}
-
-  label:nth-of-type(1){margin-left:-10px;}
-  label:nth-of-type(2){margin-left:-18px;}
-  label:nth-of-type(3){margin-left:-80px;}

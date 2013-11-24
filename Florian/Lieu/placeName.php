@@ -27,11 +27,35 @@
 	<script src="../AJAX.js"></script>
 	
 	<style>
-		canvas{
+		canvas
+		{
 		}
-		body {
-			background-color: A8A8A8;
+
+		body
+		{
+			background-color: #A8A8A8;
 		}
+
+		.commentaire{
+			margin-top:10px;
+		}
+
+		.commentaire-nickname{
+			font-size:14px;
+			font-family:OpenSansRegular;
+		}
+
+		.commentaire-content{
+			margin-top:5px;
+			font-size:12px;
+			font-family:LatoLight;
+		}
+
+		.signaler{
+			font-size:12px;
+			color:#FF850B;
+		}
+
 	</style>
 </head>
 <body>
@@ -159,17 +183,21 @@
 		$reqDisplay->execute();
 		
 		$has_res = false;
+		echo('<div class="grid grid-pad"><div class="col-1-1">');
 		while($result = $reqDisplay->fetch()){
-			echo($result['nickname'].' : ');	
-			echo($result['content'] . ' ');
-			echo('<a href="../Comments/signaler.php?id=' . $result['id'] . '">Signaler</a>');
-			echo('<br/>');
+			echo('<div class="commentaire">');
+			echo('Par <span class="commentaire-nickname">'.$result['nickname'].'</span><br/> ');	
+			echo('<span class="commentaire-content">'.$result['content'].'</span>');
+			echo('<a class="signaler" href="../Comments/signaler.php?id=' . $result['id'] . '">Signaler</a>');
+			echo('</div><br/>');
 			$has_res = true;		
 		}
+
 		if(!$has_res){
 			echo 'il n\'y a pas de commentaires sur ce lieu';
 		}
 		$reqDisplay->closeCursor();
+		echo('</div></div>');
 	}
 	
 	displayComments($dbh, $id_lieu);

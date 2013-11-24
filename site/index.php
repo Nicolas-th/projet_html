@@ -7,7 +7,6 @@ require_once('config/config.php');
 /*----------------------ACCÈS À FACEBOOK---------------------*/
 require_once('config/fb_config.php'); 
 
-
 if (isset($_SESSION["nickname"]) || $user):
 	header('Location: home.php');
 else: 
@@ -22,12 +21,11 @@ else:
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 	</head>
 	<body>
-		<!-- All modals added here for the demo. You would of course just have one, dynamically created -->
 		<div class="md-modal md-effect-1" id="connexion-modal">
 			<div class="md-content">
 				<p>Connexion</p>
 		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
-		 		 	<form method='post' action='login.php' id="loginForm">
+		 		 	<form method="post" action="login.php" id="loginForm">
 		 		 		<div id="messageLogin"></div>
 			 		 	<input type="text" name="nickname" placeholder="Pseudo" id="nickname" required/>
 			 		 	<input type="password" name="password" placeholder="Mot de passe" id="password" required/>
@@ -35,9 +33,8 @@ else:
 			 		 	<div id="sep">
 			 		 		<p>ou</p>
 			 		 	</div>
-			 		 	<a id="btn-facebook" onclick="popup('<?php echo $loginUrl; ?>')" href="#">Connexion avec <strong>Facebook</strong></a>
-			 		 		 
-			 		 </form>
+						<a id="btn-facebook" onclick="popup('<?php echo $loginUrl; ?>')" href="#">Connexion avec <strong>Facebook</strong></a>
+			 		</form>
 			</div>
 		</div>
 		
@@ -45,16 +42,16 @@ else:
 			<div class="md-content">
 				<p>Inscription</p>
 		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
-		 		 	<form method="post" action="signin.php" id="signinForm">
-		 		 			<div id="messageSignin"></div>
-			 		 		<input type="text" name="nom" placeholder="Nom" id="name" /><br>
-			 		 		<input type="text"name="prenom" placeholder="Prénom" id="surname" /><br>
-			 		 		<input type="text" name="pseudo" placeholder="Pseudo" id="pseudo" required /><br>
-			 		 		<input type="email" name="mail" id="mail" placeholder="email" required /><br>
-			 		 		<input type="password" name="password1" id="pass1" placeholder="Mot de passe" required /><br>
-			 		 		<input type="password" name="password2" id="pass2" placeholder="Retapez votre mot de passe" required /><br>
-			 		 		<div id="btn-connexion"> <input type="submit"  name="submit_signin" value="Valider l'inscription" /></div>
-			 		 </form>
+		 		 <form method="post" action="signin.php" id="signinForm">
+	 		 		<div id="messageSignin"></div>
+		 		 	<input type="text" name="nom" placeholder="Nom" id="name" /><br>
+		 		 	<input type="text" name="prenom" placeholder="Prénom" id="surname" /><br>
+		 		 	<input type="text" name="pseudo" placeholder="Pseudo" id="pseudo" required /><br>
+		 		 	<input type="email" name="mail" id="mail" placeholder="email" required /><br>
+		 		 	<input type="password" name="password1" id="pass1" placeholder="Mot de passe" required /><br>
+		 		 	<input type="password" name="password2" id="pass2" placeholder="Retapez votre mot de passe" required /><br>
+		 		 	<div id="btn-connexion"> <input type="submit"  name="submit_signin" value="Valider l'inscription" /></div>
+			 	</form>
 			</div>
 		</div>
 
@@ -66,7 +63,7 @@ else:
 				</div>
 	
 				<div class="col-2-12 center push-right">
-					<a href="#" class="md-trigger bouton-connexion" data-modal="connexion-modal">Se connecter</a>
+					<a href="#" class="bouton-connexion modal-connexion">Se connecter</a>
 				</div>
 			</div>
 	
@@ -81,7 +78,7 @@ else:
 				
 				<div class="grid">
 					<div class="col-1-1">
-						<p id="connexion">Vous avez déjà un compte ?<a href="#" class="md-trigger" data-modal="connexion-modal"> Se connecter</a></p>
+						<p id="connexion">Vous avez déjà un compte ?<a href="#" class="modal-connexion"> Se connecter</a></p>
 					</div>
 				</div>
 	
@@ -91,7 +88,7 @@ else:
 							<a href="<?php echo $loginUrl; ?>">Connexion avec <strong>Facebook</strong></a>
 						</div> 
 						<div id="creer-mon-compte">
-							<a href="#" class="md-trigger" data-modal="inscription-modal">Créer mon compte</a>
+							<a href="#" class="modal-inscription">Créer mon compte</a>
 						</div>
 					</div>
 				</div>
@@ -236,20 +233,13 @@ else:
 				©HETIC - P2016 - Tous droits réservés
 			</div>
 		</div><!-- /container -->
-		<div class="md-overlay"></div><!-- the overlay element -->
+		<div class="md-overlay"></div>
 
-
-
-
-
-
-		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script src="assets/js/classes.js"></script>
-		<script src="assets/js/login.js"></script> 
-		<script src="assets/js/classie.js"></script>
-		<script src="assets/js/modalEffects.js"></script>
-		<script type="text/javascript" src="assets/js/firstpage.js"></script>
+		<script type="text/javascript" src="js/classes.js"></script> 
+		<script type="text/javascript" src="js/login.js"></script> 
+		<script type="text/javascript" src="js/firstpage.js"></script>
 		<script>
 		  window.fbAsyncInit = function() {
 		    // init the FB JS SDK
@@ -273,6 +263,5 @@ else:
 		   }(document, 'script', 'facebook-jssdk'));
 	   </script>
 	</body>
-	
 </html>
 <?php endif ?>

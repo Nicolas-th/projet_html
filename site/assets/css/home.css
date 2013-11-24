@@ -27,7 +27,17 @@
 
 
 html { height: 100% }
-body { height: 100%; margin: 0; padding: 0; font-family: 'LatoLight'; font-size:18px; color:white;}
+body { height: 100%;
+margin: 0;
+padding: 0;
+font-family: 'LatoLight',Verdana,Arial;
+font-size:18px;
+color:white; 
+	-webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	overflow: hidden;
+}
 #map-canvas { display:block; height: 100%; z-index:1; }
       
 body > :first-child{
@@ -45,11 +55,12 @@ header .icon{
   width:25px;
   height:25px;
   display:inline-block;
+  cursor:pointer;
 }
       
 header div:nth-child(3){
-  background:url('../img/personne.svg') no-repeat; 
-  background-size:cover;   
+  background:url('../img/personne.svg') no-repeat;
+  background-size:cover; 
 }
 
 header div:nth-child(2){
@@ -59,8 +70,8 @@ header div:nth-child(2){
 }
 
 header div:nth-child(1){
-  background:url('../img/menu.svg') no-repeat;
-  background-size:cover; 
+  background:url('../img/logout.svg') no-repeat; 
+  background-size:cover;   
 }
 
 #popup{
@@ -69,52 +80,116 @@ header div:nth-child(1){
   background-color:rgba(151,151,151,0.9);
   z-index:1000;
   position:absolute;
+  overflow:auto;
   max-width:280px;
 
+}
+
+#bouton{
+	background:url('../img/menu.svg') no-repeat;
+}
+
+#bouton2{
+	background:url('../img/route.svg') no-repeat;
 }
 
 #bouton, #bouton2{
   width:30px;
   height:30px;
-  background:url('../img/menu.svg') no-repeat;
   background-size:cover;
   cursor:pointer;
   position:absolute;
   z-index:1200;
 }
 
+#popup > p:nth-child(2){
+	padding:0;
+	margin:40px 0px 10px 20px;
+	width:200px;
+}
 
-input[type=text]{
+#popup:nth-child(2){
+	margin:0 auto;
+}
+
+#popup input[type=text]{
   border-radius: 9px;
   background-color:white;
   outline:none;
   border:none;
-  width:230px;
+  width:215px;
   height:30px;
   line-height:30px;
-  padding:0px;
+  padding-left:15px;
   position:relative;
   left:25px;
 
 }
 
-input[type=submit]{
-  border-radius:9px;
+#popup input[type=submit]{
+  border-radius:7px;
   background-color:#4ece9d;
   border:none;
   color:white;
-  font-size:16px;
+  font-size:15px;
   font-family:'OpenSansRegular';
   cursor:pointer;
-  width:140px;
+  width:150px;
   height:30px;
+  margin: 10px 0px 8px 108px;
+}
+
+
+#marche{
+	background:url('../img/feet.svg') no-repeat;
+	margin-left:160px;
+}
+
+#velo{
+	background:url('../img/velo.svg') no-repeat;
+}
+
+#metro{
+	background:url('../img/subway.svg') no-repeat;
+}
+
+#marche,#velo,#metro{
+	display:inline-block;
+	width:25px;
+	height:25px;
+	background-size:cover;
+	margin-right:5px;
+}
+
+#position{
+	background:url('../img/marker.png') no-repeat;
+	background-size:cover;
+	display:block;
+	border:none;
+	font-size:14px;
+	cursor:pointer;
+	color:#FFF;
+	background:none;
+	margin-left:20px;
+	margin-bottom:10px;
+	
+}
+
+#position:hover{
+	color:orange;
 }
       
-input::-webkit-input-placeholder {font-family: 'LatoLight';font-size:14px; color:#808184; position:relative; left:15px;}
+input::-webkit-input-placeholder {font-family: 'LatoLight';font-size:14px; color:#808184;}
 input::-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 
+#resultats_lieux_depart li, #resultats_lieux_arrive li{
+	list-style: none;
+	font-family:'OpenSansSemibold';
+	font-size:13px;
+	margin-left:-15px;
+}
 
 #resultat_lieux ul li{
 	background-color:white;
@@ -127,16 +202,15 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	margin-bottom:25px;
 }
 
-ul li label{
+#popup ul li label{
 	color:#4c4c4c;
 	font-size:14px;
-	margin-left:10px;
 }
 
 ul li img{
 	position:relative;
 	top:5px;
-	left:5px;
+	left:8px;
 	
 	
 }
@@ -148,9 +222,10 @@ margin-right:4px;
 
 #add_place, #see_place{
 	position:relative;
-	top:4px;
-	width:22px;
-	height:22px;
+	top:6px;
+	left:-1px;
+	width:18px;
+	height:18px;
 	display:inline-block;
 }
 
@@ -174,9 +249,13 @@ margin-right:4px;
 }
 
 
+
+/************* profil ************/
+
 #popup_right{
 	width:100%;
     height:100%;
+    overflow:auto;
     background-color:rgba(151,151,151,0.9);
 	z-index:1000;
 	position:absolute;
@@ -184,67 +263,90 @@ margin-right:4px;
 	max-width:280px;
 }
 
-#bouton_right{
-	width:30px;
-	height:30px;
-	background-color:blue;
-	cursor:pointer;
-}
 
-/* profil */
 
-#popup_right > :nth-child(2){
-	text-align:center;
+.mask{
+	width:120px;
+	height:120px;
+	border-radius: 60px;
+	margin:0 auto;
 }
 
 #popup_right p{
-	font-family: 'OpenSansSemibold';
-	margin:0;
+	font-size:15px;
+	margin:0 auto;
 }
 
+#popup_right h3{
+	text-align:center;
+}
+
+#popup_right > p:not(#profile_picture){
+	font-family: 'OpenSansSemibold',Verdana,Arial;
+	padding-left:20px;
+}
+
+#popup_right ul{
+	margin-left:10px;
+	padding:0;
+}
 #popup_right ul li{
 	list-style:none;
 	font-family: 'OpenSansRegular';
+	
 }
 
-#popup_right label{
+label.place{ 
 	color:white;
+	margin-left:10px;
+	
 }
 
 .itinerary{
 	margin-bottom: 15px;
+	
 }
 
-/*
-.itinerary :first-child{
-	float:left;
-	display:none;
-	width:30px;
-	height:30px;
-	background: url('../img/trash.svg') no-repeat;
-	background-size:cover;
+.itinerary p{
+	font-family:'LatoLight';
 }
-*/
 
-.itinerary :nth-child(1){
+.saved{
 	float:left;
-	width:30px;
-	height:30px;
+	width:20px;
+	height:20px;
 	background:url('../img/itinerary.svg') no-repeat;
 	background-size:cover;
 	position:relative;
 	top:10px;
 }
 
-.pictures{
+.trash{
+	float:left;
+	width:20px;
+	height:20px;
+	background:url('../img/trash.svg') no-repeat;
+	background-size:cover;
+	position:relative;
+	top:10px;
+	
+}
+
+#pictures{
+	width:85%;
+	margin:15px auto 15px auto;
+}
+
+#pictures div{
 	width:40px;
 	height:40px;
+	margin:2px;
 	background-color:blue;
 	border-radius:20px;
 	display:inline-block;
 }
 
-.pictures{
+#pictures div{
 	overflow:hidden;
 }
 
@@ -252,5 +354,117 @@ margin-right:4px;
 	width:40px;
 	height:40px;
 	display:inline-block;
+	margin-left:4px;
+	margin-bottom:3px;
 	background:url('../img/other_pictures.svg') no-repeat;
 }
+
+hr{
+	width:85%;
+	margin-bottom: 15px;
+	opacity:0.5;
+	
+}
+
+#popup_right form input[type=submit], .edit_itineraries, .edit_added_places{
+    border-radius:6px;
+    background-color:#4ece9d;
+    border:none;
+    color:white;
+    font-size:14px;
+    line-height:14px;
+    font-family:'OpenSansRegular';
+    cursor:pointer;
+    width:95px;
+    height:20px;
+    margin-left:153px;
+    margin-top:10px;
+}
+
+.edit_itineraries, .edit_added_places{
+	display:block;
+	text-decoration:none;
+	text-align:center;
+	padding-top:3px;
+    
+}
+
+#popup_right form input[type=submit],#save_infos,#save_password{
+	display:none;
+}
+
+/************* profile settings ************/
+
+#popup_right:first-child{
+	border:1px solid red;
+}
+
+#popup_right form input[type=text],#popup_right form input[type=email],#hidden_password input[type=password]{
+	width:160px;
+	border-radius:6px;
+	background:none;
+	border:none;
+	color:white;
+	font-size:14px;
+	margin-left:20px;
+	overflow:visible;
+}
+
+div.upload {
+    width: 160px;
+    height: 30px;
+    background:url('../img/edit_avatar.svg') no-repeat;
+    border-radius:7px;
+    overflow: hidden;
+    margin:0 auto;
+
+}
+
+
+div.upload input {
+    display: block !important;
+    width: 157px !important;
+    height: 57px !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+}
+
+#edit p, #edit_password p{
+	display:inline-block;
+	font-size:15px;
+	font-family:"OpenSansSemibold",Verdana,Arial;
+	padding-left:20px;
+	padding-right:40px;
+	padding-bottom:15px;
+	
+}
+
+p + img{
+	width:18px;
+	height:18px;
+	position:relative;
+	cursor:pointer;
+	top:4px;
+}
+
+#popup_right label{
+	font-size:15px;
+}
+
+.col{
+	float:left;
+}
+
+/*A revoir*/
+#hidden_password, #update_info{
+	position:relative;
+	left:20px;
+	width:240px;
+}
+
+
+#hidden_password{
+	display:none;
+}
+
