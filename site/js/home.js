@@ -43,8 +43,8 @@ $(function () {
         }]
     });
 
+    // Dimensionnement de la map + lorsque la fenetre change de taille (ex: mobile que l'on pivote)
     redimentionnerMap();
-
     $(window).on('resize', function () {
         redimentionnerMap();
     });
@@ -82,7 +82,7 @@ $(function () {
                        rankBy : 'distance'
                 });
 
-
+                // On initialise la carte sur la position en cours (et on ajoute un marker)
                 var initialPosition = {
                     latitude: positionGeoc.coords.latitude,
                     longitude: positionGeoc.coords.longitude
@@ -94,7 +94,9 @@ $(function () {
                     position: initialPosition,
                     nom: 'Votre position'
                 });
-               carte.itineraire.rechercherLieux({
+
+                // On cherche des éventuels lieux autour de la position actuelle et on ajoute des markers
+                carte.itineraire.rechercherLieux({
                     points: [initialPosition],
                     success: function (data, textStatus, jqXHR) {
                         if (data.code == '200') {
@@ -140,6 +142,7 @@ $(function () {
             }
         );
 
+        // Bouton pour partir depuis sa position de départ
         $('#position').on('click', function (evt) {
             evt.preventDefault();
             $('#resultats_lieux_depart').empty();
@@ -151,6 +154,7 @@ $(function () {
             });
         });
 
+    // Si la géolocalisation est désactivée on centre la map sur le châtelet 
     } else {
         $('#position').remove();
         carte.map.setCenter({
@@ -169,7 +173,8 @@ $(function () {
         });
     }
 
-    $('#lieux_depart').on('keyup', function (evt) {
+    // On test si la touche tab est appuyé (uniquement en keydown) pour compléter le lieu automatiquement avec le premier de la liste
+    $('#lieux_depart').on('keydown', function (evt) {
         var keyCode = evt.keyCode || evt.which;
         if (keyCode == 9) { // Touche Tab
             if ($('#ref_lieux_depart').val() == '') {
@@ -178,8 +183,13 @@ $(function () {
                 $('#lieux_depart').val($('#resultats_lieux_depart li').first().html());
                 $('#resultats_lieux_depart').empty();
             }
+        }
+    });
 
-        } else if (keyCode != 13) { // Touche entrée
+    // Autocomplétion des lieux puis affichage des lieux correspondants sous forme d'une liste
+    $('#lieux_depart').on('keyup', function (evt) {
+        var keyCode = evt.keyCode || evt.which;
+        if (keyCode != 13 && keyCode != 9) { // Touche entrée & touche tab
             $('input[name="latitude_position"]', 'input[name="longitude_position"]').val('');
             $('#ref_lieux_depart').val('');
             carte.autocompletion.rechercher({
@@ -203,7 +213,8 @@ $(function () {
         }
     });
 
-    $('#lieux_arrive').on('keyup', function (evt) {
+    // On test si la touche tab est appuyé (uniquement en keydown) pour compléter le lieu automatiquement avec le premier de la liste
+    $('#lieux_arrive').on('keydown', function (evt) {
         var keyCode = evt.keyCode || evt.which;
         if (keyCode == 9) {
             if ($('#ref_lieux_arrive').val() == '') {
@@ -212,8 +223,13 @@ $(function () {
                 $('#lieux_arrive').val($('#resultats_lieux_arrive li').first().html());
                 $('#resultats_lieux_arrive').empty();
             }
+        }
+    });
 
-        } else if (keyCode != 13) { // Touche entrée
+    // Autocomplétion des lieux puis affichage des lieux correspondants sous forme d'une liste
+    $('#lieux_arrive').on('keyup', function (evt) {
+        var keyCode = evt.keyCode || evt.which;
+        if (keyCode != 13) { // Touche entrée
             $('#ref_lieux_arrive').val('');
             carte.autocompletion.rechercher({
                 value: $('#lieux_arrive').val(),
@@ -252,7 +268,7 @@ $(function () {
         }
     });
 
-    /* Gestion du formulaire */
+    // Envoi du formulaire de lieu de départ / arrivée
     $('#formulaire_itineraire').on('submit', function (evt) {
         evt.preventDefault();
 
@@ -260,29 +276,36 @@ $(function () {
         $('#guidage_itineraire').empty();
         carte.map.nettoyer('all');
 
+        // On récupère les référence des lieux qui ont été ajoutés avec l'autocomplétion
         var ref_lieux_depart = $('#ref_lieux_depart').val();
         var ref_lieux_arrive = $('#ref_lieux_arrive').val();
         if (ref_lieux_depart != '') {
             if (ref_lieux_arrive != '' || (ref_lieux_arrive == '' && $('#resultats_lieux_arrive li').length > 0)) {
 
-                 lancerLoader();
+                lancerLoader();
 
+                // S'il n'y a pas de référence choisie mais qu'une liste de lieux est affichée, on choisit le premier lieu de la liste
                 if (ref_lieux_arrive == '' && $('#resultats_lieux_arrive li').length > 0) {
                     ref_lieux_arrive = $('#resultats_lieux_arrive li').first().attr('id');
                     $('#lieux_arrive').val($('#resultats_lieux_arrive li').first().html());
                     $('#resultats_lieux_arrive').empty();
                 }
 
+                // Dans le cas où l'utilisateur n'a pas choisi sa position comme lieu de départ
                 if ($('#ref_lieux_depart').val() != 'position') {
-                   carte.autocompletion.getPosition({
+
+                    // On récupère les informations du lieu de départ
+                    carte.autocompletion.getPosition({
                         reference : ref_lieux_depart,
                         success : function(place_depart,status){
                             carte.points.depart = place_depart;
+                            // On récupère les informations du lieu d'arrivée
                             carte.autocompletion.getPosition({
                                 reference : ref_lieux_arrive,
                                 success : function(place_arrivee,status){
                                     carte.points.arrivee = place_arrivee;
 
+                                    // On trace l'itinéraire entre le lieu de départ et d'arrivée
                                     carte.map.traceItineraire({
                                         points: {
                                             depart:  carte.points.depart.position,
@@ -290,12 +313,15 @@ $(function () {
                                         },
                                         type: 'itineraires_lieux',
                                         finished: function (params) {
+
+                                            // On affiche la durée estimée de l'itinéraire
                                             var duree = secondesToDuree(params.duree);
                                             if ($('.duree_itineraires').length == 0) {
                                                 $('.choix_transport').after('<p class="duree_itineraires"></p>');
                                             }
                                             $('.duree_itineraires').html('Durée estimée : ' + duree);
 
+                                            // On récupère les potentiels lieux insolites choisis
                                             var points = carte.map.getPointsItineraire(params);
                                             lancerRechercheLieux({
                                                 points : points,
@@ -326,6 +352,7 @@ $(function () {
                             alert('Lieu de départ inconnu.');
                         }
                     });
+                // Si c'est la position qui sert de point de départ
                 } else {
                     var positionDepart = {
                         position : {
@@ -336,6 +363,7 @@ $(function () {
                         ville : ''
                     }
                     carte.points.depart = positionDepart;
+                    // On récupère les informations du lieu d'arrivée
                     carte.autocompletion.getPosition({
                         reference : ref_lieux_arrive,
                         success : function(place_arrivee,status){
@@ -348,12 +376,14 @@ $(function () {
                                 },
                                 type: 'itineraires_lieux',
                                 finished: function (params) {
+                                    // On affiche la durée estimée de l'itinéraire
                                     var duree = secondesToDuree(carte.map.getDureeItineraire(params));
                                     if ($('.duree_itineraires').length == 0) {
                                         $('.choix_transport').after('<p class="duree_itineraires"></p>');
                                     }
                                     $('.duree_itineraires').html('Durée estimée : ' + duree);
 
+                                    // On récupère les potentiels lieux insolites choisis
                                     var points = carte.map.getPointsItineraire(params);
                                     lancerRechercheLieux({
                                         points : points,
@@ -390,6 +420,7 @@ $(function () {
 
 });
 
+// Redimentionne la carte en plein écran
 function redimentionnerMap() {
     $('#map-canvas').css({
         width: window.innerWidth,
@@ -397,6 +428,7 @@ function redimentionnerMap() {
     });
 }
 
+// Retourne les lieux insolites selectionnés
 function getLieuxChoisis(){
     var lieux_choisis = [];
      $('#resultat_lieux .ajouter_lieu.actif').each(function() {
@@ -405,6 +437,7 @@ function getLieuxChoisis(){
      return lieux_choisis;
 }
 
+// Lance une recherche de lieux insolites sur l'itinéraire indiqué par l'utilisateur
 function lancerRechercheLieux(params){
     carte.itineraire.rechercherLieux({
         points : params.points,
@@ -464,7 +497,6 @@ function lancerRechercheLieux(params){
             });
 
             /* Choix des lieux */
-
             $('#resultat_lieux li').on('click',function(evt){
                 evt.preventDefault();
                 var href = $(this).find('.voir_lieu').first().attr('href');
@@ -537,10 +569,10 @@ function lancerRechercheLieux(params){
                                                     position: points.depart
                                                 });
 
+                                                // On affiche les instructions concernant l'itinéraire en cours
                                                 var instructions = carte.map.getInstructionsItineraire(returns);
 
                                                 var htmlInstructions = '<ul>';
-
                                                 for(i in instructions){
                                                      htmlInstructions+='<li class="'+instructions[i].type+'">'+instructions[i].texte;
                                                      if(instructions[i].sousInstructions.length>0){
@@ -557,7 +589,7 @@ function lancerRechercheLieux(params){
                                                 $('#resultat_lieux').hide();
                                                 $('#guidage_itineraire').empty();
 
-
+                                                // On affiche la durée estimée pour l'itinéraire en cours
                                                 var duree = secondesToDuree(carte.map.getDureeItineraire(returns));
                                                 if($('.duree_itineraires').length>0){
                                                     $('.duree_itineraires').remove();
@@ -597,21 +629,26 @@ function lancerRechercheLieux(params){
                 });
             });
 
+            // Enregistrement d'un itinéraire
             $('#enregistrer_itineraire').on('click',function(evt){
                 evt.preventDefault();
 
+                // On créé le formulaire d'ajout de lieu
                 $('#save-itineraire-modal .md-content').empty().append('<p>Enregistrement de l\'itinéraire</p>');
                 $('#save-itineraire-modal .md-content').append('<a href="#" class="md-close"><img src="assets/img/close.png" alt="close"></a>');
                 $('#save-itineraire-modal .md-content').append($('<form method="post" action=""></form>').append('<input type="text" name="name" placeholder="Nom de l\'itinéraire" id="name" required><br>').append('<input type="submit" name="submit_signin" value="Enregistrer">'));
 
+                // On affiche le formulaire
                 $('#save-itineraire-modal').addClass('md-show');
                 $('.md-overlay').addClass('show');
 
+                // On gère la fermeture du formulaire
                 $('.md-overlay, #save-itineraire-modal .md-close').on('click',function(){
                      $('#save-itineraire-modal').removeClass('md-show');
                     $('.md-overlay').removeClass('show');
                 });
 
+                // Envoi du formulaire en ajax
                 $('#save-itineraire-modal form').on('submit',function(evt){
                     evt.preventDefault();
                     if($('#save-itineraire-modal form input[name=name]').val().length>0){
@@ -652,6 +689,7 @@ function lancerRechercheLieux(params){
     });
 }
 
+// Fonction permettant de tracer les différents itinéraires entre le lieu de départ et d'arrivée + les lieux choisis entre les 2
 function tracerItineraires(params){
     var lieux_choisis = getLieuxChoisis();
 
@@ -661,11 +699,14 @@ function tracerItineraires(params){
         type : 'all',
         finished : function(){
 
-             carte.itineraires = []; // On supprime les itinéraires en mémoire
-             for(var i=0; i<=lieux_choisis.length;i++){
+            // Suppression des différents itinéraires en mémmoire
+            carte.itineraires = [];
+
+            // Pour chaque lieu choisi on créé un itinéraire avec le lieu précedent
+            for(var i=0; i<=lieux_choisis.length;i++){
 
 
-                /* Ici créer les différents trajets */
+                // Création des différents trajets
                 if(i==0){
                     depart = {
                                 adresse : carte.points.depart.adresse,
@@ -711,6 +752,7 @@ function tracerItineraires(params){
                 carte.itineraires.push({depart : depart, arrivee : arrivee});
                 depart = arrivee;
              }
+             // On trace l'itinéraire
              carte.map.tracerItineraires({
                 trajets : carte.itineraires,
                 key : 0,

@@ -1,5 +1,3 @@
-
-/**** Carte ****/
 var Carte = function() {
 
 	var _this = this;

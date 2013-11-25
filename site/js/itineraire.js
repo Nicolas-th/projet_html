@@ -1,4 +1,3 @@
-/**** Carte ****/
 var Itineraire = function() {
 
 	var _this = this;
@@ -18,12 +17,7 @@ var Itineraire = function() {
 		}
 	}
 
-
-	_this.init = function(){
-
-	}
-
-
+	// Fonction recherchant des lieux insolites autour d'un point donné
 	_this.rechercherLieux = function(params){
 		params = $.extend({}, _this.defaults.rechercherLieux, params);
 		var str_points = "";
