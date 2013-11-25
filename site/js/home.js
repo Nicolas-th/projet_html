@@ -120,6 +120,7 @@ $(function () {
 
         $('#position').on('click', function (evt) {
             evt.preventDefault();
+            $('#resultats_lieux_depart').empty();
             navigator.geolocation.getCurrentPosition(function (currentPosition) {
                 $('input[name="latitude_position"]').val(currentPosition.coords.latitude);
                 $('input[name="longitude_position"]').val(currentPosition.coords.longitude);
@@ -272,6 +273,15 @@ $(function () {
                                                     arreterLoader();
                                                 }
                                             });
+                                        },
+                                        noResults : function(){
+                                            arreterLoader();
+                                            alert('Pas de résultats');
+                                            arreterLoader();
+                                        },
+                                        error : function(){
+                                            arreterLoader();
+                                            alert('Une erreur s\'est produite...');
                                         }
                                     });
                                 },
@@ -321,6 +331,15 @@ $(function () {
                                             arreterLoader();
                                         }
                                     });
+                                },
+                                noResults : function(){
+                                    arreterLoader();
+                                    alert('Pas de résultats');
+                                    arreterLoader();
+                                },
+                                error : function(){
+                                    arreterLoader();
+                                    alert('Une erreur s\'est produite...');
                                 }
                             });
                         },
@@ -545,26 +564,50 @@ function lancerRechercheLieux(params){
 
             $('#enregistrer_itineraire').on('click',function(evt){
                 evt.preventDefault();
-                var lieux_choisis = JSON.stringify(getLieuxChoisis());
-                var depart = JSON.stringify(carte.points.depart);
-                var arrivee = JSON.stringify(carte.points.arrivee);
-                $.ajax({
-                  type: "POST",
-                  url: 'ajax/save_itineraire.xhr.php',
-                  dataType: 'json',
-                  data: { 
-                    'depart' : depart,
-                    'arrivee' : arrivee,
-                    'lieux' : lieux_choisis
-                  },
-                  async:false, // Important car bloque le script
-                  success: function(data, textStatus, jqXHR){
-                    if(data.code==200){
-                        alert('itinéraire enregistré');
-                    }else if(data.code==403){
-                        alert('Vous devez être connecté.');
+
+                $('#save-itineraire-modal .md-content').empty().append('<p>Enregistrement de l\'itinéraire</p>');
+                $('#save-itineraire-modal .md-content').append('<a href="#" class="md-close"><img src="assets/img/close.png" alt="close"></a>');
+                $('#save-itineraire-modal .md-content').append($('<form method="post" action=""></form>').append('<input type="text" name="name" placeholder="Nom de l\'itinéraire" id="name" required><br>').append('<input type="submit" name="submit_signin" value="Enregistrer">'));
+
+                $('#save-itineraire-modal').addClass('md-show');
+                $('.md-overlay').addClass('show');
+
+                $('.md-overlay, #save-itineraire-modal .md-close').on('click',function(){
+                     $('#save-itineraire-modal').removeClass('md-show');
+                    $('.md-overlay').removeClass('show');
+                });
+
+                $('#save-itineraire-modal form').on('submit',function(evt){
+                    evt.preventDefault();
+                    if($('#save-itineraire-modal form input[name=name]').val().length>0){
+                        var lieux_choisis = JSON.stringify(getLieuxChoisis());
+                        var depart = JSON.stringify(carte.points.depart);
+                        var arrivee = JSON.stringify(carte.points.arrivee);
+                        var name = $('#save-itineraire-modal form input[name=name]').val();
+                        $.ajax({
+                          type: "POST",
+                          url: 'ajax/save_itineraire.xhr.php',
+                          dataType: 'json',
+                          data: { 
+                            'depart' : depart,
+                            'arrivee' : arrivee,
+                            'lieux' : lieux_choisis,
+                            'name' : name
+                          },
+                          async:false, // Important car bloque le script
+                          success: function(data, textStatus, jqXHR){
+                            if(data.code==200){
+                                $('#save-itineraire-modal form').replaceWith($('<p></p>').addClass('confirmation').html('L\'itinéraire a bien été enregistré.'));
+                            }else if(data.code==403){
+                                $('#save-itineraire-modal form').prepend($('<p></p>').addClass('error').html('Vous devez être connecté.'));
+                            }else{
+                                $('#save-itineraire-modal form').prepend($('<p></p>').addClass('error').html('Une erreur s\'est produite... Veuillez recommencer.'));
+                            }
+                          }
+                        });
+                    }else{
+                        $('#save-itineraire-modal form').prepend($('<p></p>').addClass('error').html('Vous devez indiquer un nom pour cet itinéraire'));
                     }
-                  }
                 });
             });
         },
@@ -637,7 +680,9 @@ function tracerItineraires(params){
                 trajets : carte.itineraires,
                 key : 0,
                 finished : function(returns){
-                    params.itinerairesTraces.call(this,returns);
+                    if(typeof(params)!='undefined' && typeof(params.itinerairesTraces)=='function'){
+                        params.itinerairesTraces.call(this,returns);
+                    }
                 }
             });
         }

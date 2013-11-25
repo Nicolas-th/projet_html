@@ -39,6 +39,7 @@ function getPlaces($str) {
   	<meta charset="UTF-8">
   	
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="assets/css/global.css">
     <link rel="stylesheet" type="text/css" href="assets/css/home.css">
     <link rel="stylesheet" type="text/css" href="assets/css/modals.css">
     
@@ -281,28 +282,32 @@ if($user) { ?>
 </section>  <!-- ******Fin de la sidebar****** -->	
  
 
-  <div id="map-canvas"></div>
-  <div id="navigation-ajax"></div>
-  <div class="md-overlay"></div>
-  <div class="loader">
+  	<div id="map-canvas"></div>
+  	<div id="navigation-ajax"></div>
+  	<div class="md-modal md-effect-1 little-modal" id="save-itineraire-modal">
+		<div class="md-content">
+		</div>
+	</div>
+  	<div class="md-overlay"></div>
+  	<div class="loader">
 	  <canvas id="canvas" width="250" height="250"></canvas>
 	  <p>Chargement en cours...</p>
-  </div>
-  <div id="hidden"></div>
+  	</div>
+  	<div id="hidden"></div>
 
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
-  <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
-    <script type="text/javascript" src="js/jquery.form.js"></script>
-  <script type="text/javascript" src="js/functions.js"></script>
-  <script type="text/javascript" src="js/autocompletion.js"></script>
-  <script type="text/javascript" src="js/carte.js"></script>
-  <script type="text/javascript" src="js/navigation-ajax.js"></script>
-  <script type="text/javascript" src="js/itineraire.js"></script>
-  <script type="text/javascript" src="js/loader.js"></script>
-  <script type="text/javascript" src="js/home.js"></script>
-  <script type="text/javascript" src="js/sidebar.js"></script>
-  <script type="text/javascript" src="js/edit-profile.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&key=AIzaSyD2GbjbQbMiZrFHJN5b2L09ZenuQ8IzJUc&v=3.exp"></script>
+	<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
+	<script type="text/javascript" src="js/jquery.form.js"></script>
+	<script type="text/javascript" src="js/functions.js"></script>
+	<script type="text/javascript" src="js/autocompletion.js"></script>
+	<script type="text/javascript" src="js/carte.js"></script>
+	<script type="text/javascript" src="js/navigation-ajax.js"></script>
+	<script type="text/javascript" src="js/itineraire.js"></script>
+	<script type="text/javascript" src="js/loader.js"></script>
+	<script type="text/javascript" src="js/home.js"></script>
+	<script type="text/javascript" src="js/sidebar.js"></script>
+	<script type="text/javascript" src="js/edit-profile.js"></script>
   </body>  
 </html>
 

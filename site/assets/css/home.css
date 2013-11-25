@@ -103,7 +103,7 @@ header div:nth-child(1){
   position:absolute;
   top:7px;
   left:7px;
-  z-index:1200;
+  z-index: 120;
 }
 
 #popup > p:nth-child(2){
@@ -577,6 +577,54 @@ p + img{
 	padding:0;
 }
 
+/* Modal enregistrement lieu */
+.md-modal.little-modal{
+	width: 400px;
+	left: 50%;
+	color: #656665;
+}
+
+.little-modal .md-content{
+	position: relative;
+	border: solid 1px #e4e4e4;
+	text-align: center;
+	font-size: 14px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	-webkit-box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	background-color: white;
+	border-radius: 6px;
+}
+
+.little-modal .md-content p{
+	font-family: LatoLight;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	margin: 15px 0;
+}
+
+.little-modal .md-content input{
+	margin: 10px auto;
+	height: 36px;
+	width: 202px;
+	border: solid 1px #e4e4e4;
+	border-radius: 6px;
+	text-align: center;
+}
+
+.little-modal .md-content input[type=submit] {
+	padding: 5px 0;
+	background-color: #4ece9c;
+	display: block;
+	color: white;
+	text-decoration: none;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+}
 
 /* Loader */
 .loader{
