@@ -1,7 +1,13 @@
 <?php
 	session_start();
+
+	require_once('config/config.php'); 
+	require_once('includes/functions.inc.php');
 	
-	$id_user = 6;
+	$id_user = $_SESSION['id'];
+	$address = "Place du Trocadéro";
+	$postCode = 95000;
+	$city = "Paris";
 	$lat = 48.8582285;
 	$long = 2.2943877;
 ?>
@@ -15,6 +21,7 @@
 		<meta name="description" content="">
 		
 		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/global.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/place.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
@@ -33,12 +40,6 @@
 						<input type="text" id="namePlace" name="namePlace" required/><br/><br/>
 						<label for="description" >Description*</label>
 						<textarea name="description" required></textarea><br/><br/>
-						<label for="address">Adresse</label>
-						<input type="text" id="address" name="address" /><br/><br/>
-						<label for="postCode">Code postal</label>
-						<input type="number" id="postCode" name="postCode" /><br/><br/>
-						<label for="city">Ville*</label>
-						<input type="text" id="city" name="city" required/><br/><br/>
 						
 						<div id="fields-select-submit">
 							<select name="inOut">
@@ -52,7 +53,10 @@
 								<option value="3">Catégorie 3</option>
 								<option value="4">Catégorie 4</option>
 							</select>
-
+							
+							<input type="hidden" name="address" value="<?php echo $address; ?>" />
+							<input type="hidden" name="postCode" value="<?php echo $postCode; ?>" />
+							<input type="hidden" name="city" value="<?php echo $city; ?>" />
 							<input type="hidden" name="latitude" value="<?php echo $lat; ?>" />
 							<input type="hidden" name="longitude" value="<?php echo $long; ?>" />
 							<input type="hidden" name="valid" value="0" />
@@ -64,5 +68,15 @@
 			</div>
 
 		</div><!-- #container -->
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-46020182-1', 'find-it-out.fr');
+		  ga('send', 'pageview');
+
+	</script>
 	</body>
 </html>
