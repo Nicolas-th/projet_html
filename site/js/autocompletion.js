@@ -6,6 +6,10 @@ var Autocompletion = function(){
 	_this.defaults = {
 		rechercher : {
 			value : '',
+			restrictions : {},
+			location : null,
+			rankBy : 'pertinence',
+			radius : 50000,
 			finished : function(){}
 		},
 		getPosition : {
@@ -13,6 +17,10 @@ var Autocompletion = function(){
 			success : function(){},
 			error : function(){}
 		}
+	}
+
+	_this.init = function(params){
+		_this.defaults.rechercher = $.extend(true,{}, _this.defaults.rechercher, params);
 	}
 
 	/*
@@ -23,7 +31,25 @@ var Autocompletion = function(){
 		params = $.extend(true, {},_this.defaults.rechercher, params);
 
 		var service = new google.maps.places.AutocompleteService();
-	    service.getQueryPredictions({ input: params.value }, function(reponse, status){
+
+		var options = {
+			input: params.value,
+			componentRestrictions: params.restrictions
+		};
+
+		if(params.location!=null){
+			var locationLatLng = new google.maps.LatLng(params.location.latitude,params.location.longitude);
+			options['location'] = locationLatLng;
+			options['radius'] = params.radius;
+		}
+
+		if(params.rankBy!=='pertinence'){
+			options['rankBy'] = google.maps.places.RankBy.PROMINENCE;
+		}else{
+			options['rankBy'] = google.maps.places.RankBy.DISTANCE;
+		}
+
+	    service.getQueryPredictions(options, function(reponse, status){
 	      if(status == google.maps.places.PlacesServiceStatus.OK) {
 	        params.finished.call(this,{resultats : reponse});
 	      }

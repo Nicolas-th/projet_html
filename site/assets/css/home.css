@@ -215,6 +215,10 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	left:-15px;
 }
 
+#resultat_lieux ul li, #resultat_lieux ul li label{
+	cursor: pointer;
+}
+
 #guidage_itineraire{
 	display: none;
 }

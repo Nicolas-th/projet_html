@@ -2,6 +2,7 @@ var carte = {
     map : null, // classe
     itineraire : null,  // classe
     autocompletion : null,  // classe
+    transition : null,  // classe
     itineraires : [],
     points : {
         depart : null,
@@ -30,8 +31,8 @@ var carte = {
 $(function () {
 
     // Initialisation des transition
-    var transition = new Transition();
-    transition.init({
+    carte.transition = new Transition();
+    carte.transition.init({
         conteneur: 'body',
         pages: [{
             element: '#navigation-ajax',
@@ -70,6 +71,18 @@ $(function () {
 
         navigator.geolocation.getCurrentPosition(
             function (positionGeoc) { // success
+
+
+                carte.autocompletion.init({
+                       location : {
+                            latitude: positionGeoc.coords.latitude,
+                            longitude: positionGeoc.coords.longitude
+                       },
+                       retriction : {country: 'fr'},
+                       rankBy : 'distance'
+                });
+
+
                 var initialPosition = {
                     latitude: positionGeoc.coords.latitude,
                     longitude: positionGeoc.coords.longitude
@@ -97,7 +110,7 @@ $(function () {
                                     nom: current.name,
                                     href: current.href,
                                     click : function(params){
-                                    	transition.open({
+                                    	carte.transition.open({
                                         	element: '#navigation-ajax'
                                       },params.href);
                                     }
@@ -114,6 +127,15 @@ $(function () {
                         latitude: 48.857713,
                         longitude: 2.347271,
                     }
+                });
+
+                carte.autocompletion.init({
+                       location : {
+                            latitude: positionGeoc.coords.latitude,
+                            longitude: positionGeoc.coords.longitude
+                       },
+                       retriction : {country: 'fr'},
+                       rankBy : 'distance'
                 });
             }
         );
@@ -137,9 +159,17 @@ $(function () {
                 longitude: 2.347271,
             }
         });
+        carte.autocompletion.init({
+               location : {
+                    latitude: positionGeoc.coords.latitude,
+                    longitude: positionGeoc.coords.longitude
+               },
+               retriction : {country: 'fr'},
+               rankBy : 'distance'
+        });
     }
 
-    $('#lieux_depart').on('keydown', function (evt) {
+    $('#lieux_depart').on('keyup', function (evt) {
         var keyCode = evt.keyCode || evt.which;
         if (keyCode == 9) { // Touche Tab
             if ($('#ref_lieux_depart').val() == '') {
@@ -173,7 +203,7 @@ $(function () {
         }
     });
 
-    $('#lieux_arrive').on('keydown', function (evt) {
+    $('#lieux_arrive').on('keyup', function (evt) {
         var keyCode = evt.keyCode || evt.which;
         if (keyCode == 9) {
             if ($('#ref_lieux_arrive').val() == '') {
@@ -434,14 +464,19 @@ function lancerRechercheLieux(params){
             });
 
             /* Choix des lieux */
+
+            $('#resultat_lieux li').on('click',function(evt){
+                evt.preventDefault();
+                var href = $(this).find('.voir_lieu').first().attr('href');
+                carte.transition.open({
+                    element: '#navigation-ajax'
+                },href);
+            });
+
             $('.ajouter_lieu').on('click',function(evt){
                 evt.preventDefault();
-
                 $(this).toggleClass('actif');
-
                 tracerItineraires();
-
-                return false;
             });
 
             /* On démarrer le guidage et l'itineraire */
