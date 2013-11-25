@@ -1,3 +1,32 @@
+var carte = {
+    map : null, // classe
+    itineraire : null,  // classe
+    autocompletion : null,  // classe
+    itineraires : [],
+    points : {
+        depart : null,
+        arrivee : null,
+        position : null
+    },
+    suivi : {
+        position : null
+    },
+    infoWindow : {
+        style : {
+            background : '#FFF',
+            width : '200px',
+            padding : '5px',
+            color: '#000'
+        }
+    },
+    markers : {
+        iconsRepertory : 'assets/img/maps_icons/',
+        iconsFilePrefix : 'icon_',
+        iconsExtension : '.svg',
+        iconDefault : 'icon_depart'
+    }
+};
+
 $(function () {
 
     // Initialisation des transition
@@ -19,6 +48,8 @@ $(function () {
         redimentionnerMap();
     });
 
+
+    /* Instantiation de la classe Carte */
     carte.map = new Carte();
     carte.map.init({
         element: document.getElementById('map-canvas'),
@@ -28,6 +59,12 @@ $(function () {
         url: 'js/config.json',
         key: 'mapStyle'
     });
+
+    /* Instantiation de la classe Itineraire */
+    carte.itineraire = new Itineraire();
+
+    /* Instantiation de la classe Autocompletion */
+    carte.autocompletion = new Autocompletion();
 
     if (navigator.geolocation) {
 
@@ -44,7 +81,7 @@ $(function () {
                     position: initialPosition,
                     nom: 'Votre position'
                 });
-                carte.rechercherLieux({
+               carte.itineraire.rechercherLieux({
                     points: [initialPosition],
                     success: function (data, textStatus, jqXHR) {
                         if (data.code == '200') {
@@ -54,33 +91,15 @@ $(function () {
                                     latitude: current.latitude,
                                     longitude: current.longitude
                                 };
-                                var infoWindowContent = $('<div></div>').append($('<p></p>').text(current.name)).html();
                                 carte.map.ajouterMarker({
                                     position: currentPosition,
                                     categorie: current.categories_id,
                                     nom: current.name,
-                                    infoWindow: {
-                                        content: infoWindowContent,
-                                        style: carte.infoWindow.style,
-                                        position: currentPosition,
-                                        click: function (params) {
-                                            if (carte.map.infoWindow.open != null) {
-                                                carte.map.infoWindow.open.close();
-                                            }
-                                            carte.map.infoWindow.open = params.infoWindow.open; // On enregistre l'infowindow ouverte pour pouvoir la fermer plsu tard
-                                            carte.map.nettoyer({
-                                                type: 'itineraire_initial',
-                                                finished: function () {
-                                                    carte.map.traceItineraire({
-                                                        type: 'itineraire_initial',
-                                                        points: {
-                                                            depart: initialPosition,
-                                                            arrivee: params.infoWindow.position
-                                                        }
-                                                    })
-                                                }
-                                            });
-                                        }
+                                    href: current.href,
+                                    click : function(params){
+                                    	transition.open({
+                                        	element: '#navigation-ajax'
+                                      },params.href);
                                     }
                                 });
                             }
@@ -132,8 +151,7 @@ $(function () {
         } else if (keyCode != 13) { // Touche entrée
             $('input[name="latitude_position"]', 'input[name="longitude_position"]').val('');
             $('#ref_lieux_depart').val('');
-            var autocomplete = new Autocompletion();
-            autocomplete.init({
+            carte.autocompletion.rechercher({
                 value: $('#lieux_depart').val(),
                 finished: function (params) {
                     var divResultats = $('#resultats_lieux_depart');
@@ -151,7 +169,6 @@ $(function () {
                     });
                 }
             });
-            autocomplete.rechercher();
         }
     });
 
@@ -167,8 +184,7 @@ $(function () {
 
         } else if (keyCode != 13) { // Touche entrée
             $('#ref_lieux_arrive').val('');
-            var autocomplete = new Autocompletion();
-            autocomplete.init({
+            carte.autocompletion.rechercher({
                 value: $('#lieux_arrive').val(),
                 finished: function (params) {
                     var divResultats = $('#resultats_lieux_arrive');
@@ -186,7 +202,6 @@ $(function () {
                     });
                 }
             });
-            autocomplete.rechercher();
         } else {
             $('#formulaire_itineraire').submit();
         }
@@ -219,72 +234,101 @@ $(function () {
         if (ref_lieux_depart != '') {
             if (ref_lieux_arrive != '' || (ref_lieux_arrive == '' && $('#resultats_lieux_arrive li').length > 0)) {
 
+                 lancerLoader();
+
                 if (ref_lieux_arrive == '' && $('#resultats_lieux_arrive li').length > 0) {
                     ref_lieux_arrive = $('#resultats_lieux_arrive li').first().attr('id');
                     $('#lieux_arrive').val($('#resultats_lieux_arrive li').first().html());
                     $('#resultats_lieux_arrive').empty();
                 }
 
-                var service = new google.maps.places.PlacesService(document.getElementById('hidden'));
+                if ($('#ref_lieux_depart').val() != 'position') {
+                   carte.autocompletion.getPosition({
+                        reference : ref_lieux_depart,
+                        success : function(place_depart,status){
+                            carte.points.depart = place_depart;
+                            carte.autocompletion.getPosition({
+                                reference : ref_lieux_arrive,
+                                success : function(place_arrivee,status){
+                                    carte.points.arrivee = place_arrivee;
 
-                var getPositionArrivee = function (lieu_depart, status) {
-                    carte.points.depart = lieu_depart;
-                    if (status == google.maps.places.PlacesServiceStatus.OK || status == 'OK') {
-                        service.getDetails({
-                            reference: ref_lieux_arrive
-                        }, function (lieu_arrivee, status) {
-                            carte.points.arrivee = lieu_arrivee;
-                            if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                carte.map.traceItineraire({
-                                    points: {
-                                        depart: {
-                                        	latitude : carte.points.depart.geometry.location.lat(),
-                                        	longitude : carte.points.depart.geometry.location.lng()
+                                    carte.map.traceItineraire({
+                                        points: {
+                                            depart:  carte.points.depart.position,
+                                            arrivee: carte.points.arrivee.position
                                         },
-                                        arrivee: {
-                                        	latitude : carte.points.arrivee.geometry.location.lat(),
-                                        	longitude : carte.points.arrivee.geometry.location.lng()
-                                        },
-                                    },
-                                    type: 'itineraires_lieux',
-                                    finished: function (params) {
-                                        params.itinerairesTraces = function (returns) {
-                                            var duree = secondesToDuree(returns.duree);
+                                        type: 'itineraires_lieux',
+                                        finished: function (params) {
+                                            var duree = secondesToDuree(params.duree);
                                             if ($('.duree_itineraires').length == 0) {
                                                 $('.choix_transport').after('<p class="duree_itineraires"></p>');
                                             }
                                             $('.duree_itineraires').html('Durée estimée : ' + duree);
-                                            alert('Chargement terminé !');
-                                        };
-                                        carte.lancerRechercheLieux(params);
-                                    }
-                                });
 
-                            } else {
-                                alert('Lieu d\'arrivée inconnu.');
-                            }
-                        });
-                    } else {
-                        alert('Lieu de départ inconnu.');
-                    }
-                };
-
-                if ($('#ref_lieux_depart').val() != 'position') {
-                    service.getDetails({
-                        reference: ref_lieux_depart
-                    }, getPositionArrivee);
+                                            var points = carte.map.getPointsItineraire(params);
+                                            lancerRechercheLieux({
+                                                points : points,
+                                                finished : function(){
+                                                    arreterLoader();
+                                                }
+                                            });
+                                        }
+                                    });
+                                },
+                                error : function(){
+                                    arreterLoader();
+                                    alert('Lieu d\'arrivée inconnu.');
+                                }
+                            });
+                        },
+                        error : function(){
+                            arreterLoader();
+                            alert('Lieu de départ inconnu.');
+                        }
+                    });
                 } else {
                     var positionDepart = {
-                        address_components: [{
-                            long_name: 'Votre position'
-                        }, {
-                            long_name: ''
-                        }],
-                        geometry: {
-                            location: new google.maps.LatLng($('input[name="latitude_position"]').val(), $('input[name="longitude_position"]').val())
-                        }
+                        position : {
+                            latitude : $('input[name="latitude_position"]').val(),
+                            longitude : $('input[name="longitude_position"]').val()
+                        },
+                        adresse : 'Votre position',
+                        ville : ''
                     }
-                    getPositionArrivee.call(this, positionDepart, 'OK');
+                    carte.points.depart = positionDepart;
+                    carte.autocompletion.getPosition({
+                        reference : ref_lieux_arrive,
+                        success : function(place_arrivee,status){
+                            carte.points.arrivee = place_arrivee;
+
+                            carte.map.traceItineraire({
+                                points: {
+                                    depart:  carte.points.depart.position,
+                                    arrivee: carte.points.arrivee.position
+                                },
+                                type: 'itineraires_lieux',
+                                finished: function (params) {
+                                    var duree = secondesToDuree(carte.map.getDureeItineraire(params));
+                                    if ($('.duree_itineraires').length == 0) {
+                                        $('.choix_transport').after('<p class="duree_itineraires"></p>');
+                                    }
+                                    $('.duree_itineraires').html('Durée estimée : ' + duree);
+
+                                    var points = carte.map.getPointsItineraire(params);
+                                    lancerRechercheLieux({
+                                        points : points,
+                                        finished : function(){
+                                            arreterLoader();
+                                        }
+                                    });
+                                }
+                            });
+                        },
+                        error : function(){
+                            arreterLoader();
+                            alert('Lieu d\'arrivée inconnu.');
+                        }
+                    });
                 }
             } else {
                 alert('Vous devez choisir un lieu de destination');
@@ -302,4 +346,310 @@ function redimentionnerMap() {
         width: window.innerWidth,
         height: window.innerHeight,
     });
+}
+
+function getLieuxChoisis(){
+    var lieux_choisis = [];
+     $('#resultat_lieux .ajouter_lieu.actif').each(function() {
+        lieux_choisis.push($(this).parents('li').first().attr('id'));
+     });
+     return lieux_choisis;
+}
+
+function lancerRechercheLieux(params){
+    carte.itineraire.rechercherLieux({
+        points : params.points,
+        success: function(data, textStatus, jqXHR){
+            if(data.code=='200'){
+
+                var liste_lieux = '<p>Selectionner les lieux que vous souhaitez visiter :</p>';
+                liste_lieux += '<ul>';
+
+                for(key in data.lieux) {
+                    lieu = data.lieux[key];
+
+                    var image = carte.markers.iconsRepertory+carte.markers.iconsFilePrefix+lieu.categories_id+carte.markers.iconsExtension;
+
+                    liste_lieux+='<li id="'+lieu.id+'">';
+                    liste_lieux+=  '<img src="'+image+'" width="20" height="20">';
+                    liste_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
+                    liste_lieux+=  '<div class="icons">';
+                    liste_lieux+=  '    <a href="#" class="ajouter_lieu">+</a>';
+                    liste_lieux+=  '    <a href="'+lieu.href+'" class="voir_lieu ajax-link">Voir</a>';
+                    liste_lieux+='  </div>';
+                    liste_lieux+='</li>';
+
+                }
+
+                liste_lieux+='</ul>';
+
+                $('#resultat_lieux').html(liste_lieux);
+                $('#resultat_lieux').append('<button id="demarrer_itineraire">Démarrer</button>');
+                $('#resultat_lieux').append('<button id="enregistrer_itineraire">Enregistrer</button>');
+            }else if(data.code=='404'){
+                var message = '<p>Aucun lieu n\'a été trouvé sur votre itinéraire. </p>';
+                message += '<a href="#">Vous en connaissez un ? Partagez-le !</a>';
+                $('#resultat_lieux').html(message);
+            }else{
+                console.log('Erreur '+data.code);
+            }
+
+            if(typeof(params.finished)=='function'){
+                tracerItineraires({
+                    itinerairesTraces : params.finished
+                });
+            }
+
+            /* Choix du mode de transport */
+            $('.choix_transport a').off('click').on('click',function(){
+                if(!$(this).hasClass('actif')){
+
+                    carte.map.setMoyenTransport({
+                        moyenTransport : $(this).attr('id')
+                    });
+
+                    $('.choix_transport a').removeClass('actif');
+                    $(this).addClass('actif');
+                    tracerItineraires();
+                }
+            });
+
+            /* Choix des lieux */
+            $('.ajouter_lieu').on('click',function(evt){
+                evt.preventDefault();
+
+                $(this).toggleClass('actif');
+
+                tracerItineraires();
+
+                return false;
+            });
+
+            /* On démarrer le guidage et l'itineraire */
+            $('#demarrer_itineraire').on('click',function(evt){
+                evt.preventDefault();
+
+                lancerLoader();
+
+                carte.map.nettoyer({ 
+                    type :'all',
+                    finished : function(){
+
+                        if(carte.suivi.position!=null){
+                            carte.points.position = null;
+                            navigator.geolocation.clearWatch(carte.suivi.position);
+                        }
+                        carte.suivi.position = navigator.geolocation.watchPosition(function(position) {
+
+                            var current_itineraire = carte.itineraires[0];
+                            var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+                            // Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
+                            if(typeof(carte.points.position)==undefined || carte.points.position==null || (calculerDistancePoints(carte.points.position.coords.latitude,carte.points.position.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
+
+                                carte.points.position = position; // On met à jour la position
+
+                                carte.map.nettoyer({ 
+                                    type : 'all',
+                                    finished : function(){
+                                        if(distance_arrivee<=0.1){
+                                            carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
+                                            current_itineraire = carte.itineraires[0];  // On met à jour l'itinéraire courant
+                                        }
+           
+                                        var points = {
+                                            depart : {
+                                                latitude : position.coords.latitude,
+                                                longitude : position.coords.longitude
+                                            },
+                                            arrivee : {
+                                                latitude : current_itineraire.arrivee.latitude,
+                                                longitude : current_itineraire.arrivee.longitude
+                                            }
+                                        }
+
+                                        carte.map.traceItineraire({
+                                            points : {
+                                                depart : points.depart,
+                                                arrivee : points.arrivee
+                                            },
+                                            type : 'current_itineraire',
+                                            finished : function(returns){
+
+                                                // On centre sur la position de l'utilisateur
+                                                carte.map.setZoom({
+                                                    zoom : 15
+                                                });
+                                                carte.map.setCenter({
+                                                    position: points.depart
+                                                });
+
+                                                var instructions = carte.map.getInstructionsItineraire(returns);
+
+                                                var htmlInstructions = '<ul>';
+
+                                                for(i in instructions){
+                                                     htmlInstructions+='<li class="'+instructions[i].type+'">'+instructions[i].texte;
+                                                     if(instructions[i].sousInstructions.length>0){
+                                                        htmlInstructions += '<ul>';
+                                                        for(j in instructions[i].sousInstructions){
+                                                            htmlInstructions+='<li class="'+instructions[i].sousInstructions[j].type+'">'+instructions[i].sousInstructions[j].texte+'</li>';
+                                                        }
+                                                        htmlInstructions += '</ul>';
+                                                     }
+                                                     htmlInstructions += '</li>';
+                                                }
+                                                htmlInstructions += '</ul>';
+
+                                                $('#resultat_lieux').hide();
+                                                $('#guidage_itineraire').empty();
+
+
+                                                var duree = secondesToDuree(carte.map.getDureeItineraire(returns));
+                                                if($('.duree_itineraires').length>0){
+                                                    $('.duree_itineraires').remove();
+                                                }
+                                                $('#guidage_itineraire').append('<button id="modifier_itineraire">Modifier</button>');
+                                                $('#guidage_itineraire').append($('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree));
+
+                                                $('#guidage_itineraire').append($('<div class="instructions_itineraire"></div>').append(htmlInstructions));
+                                                $('#guidage_itineraire').show();
+
+                                                $('#modifier_itineraire').on('click',function(){
+                                                    $('#resultat_lieux').show();
+                                                    $('#guidage_itineraire').hide();
+                                                });
+
+                                                arreterLoader();
+                                            }   
+                                        });
+
+                                        carte.map.ajouterMarker({
+                                            position : points.depart,
+                                            nom : 'Votre position',
+                                            type : 'current_itineraire'
+                                        });
+                                        
+                                        carte.map.ajouterMarker({
+                                            position : points.arrivee,
+                                            nom : current_itineraire.arrivee.name,
+                                            categorie : current_itineraire.arrivee.categorie,
+                                            type : 'current_itineraire'
+                                        });
+                                    }
+                                }); 
+                            }
+                        }); 
+                    }
+                });
+            });
+
+            $('#enregistrer_itineraire').on('click',function(evt){
+                evt.preventDefault();
+                var lieux_choisis = JSON.stringify(getLieuxChoisis());
+                var depart = JSON.stringify(carte.points.depart);
+                var arrivee = JSON.stringify(carte.points.arrivee);
+                $.ajax({
+                  type: "POST",
+                  url: 'ajax/save_itineraire.xhr.php',
+                  dataType: 'json',
+                  data: { 
+                    'depart' : depart,
+                    'arrivee' : arrivee,
+                    'lieux' : lieux_choisis
+                  },
+                  async:false, // Important car bloque le script
+                  success: function(data, textStatus, jqXHR){
+                    if(data.code==200){
+                        alert('itinéraire enregistré');
+                    }else if(data.code==403){
+                        alert('Vous devez être connecté.');
+                    }
+                  }
+                });
+            });
+        },
+        error :function(){
+            alert('Erreur interne. Veuillez recommencer.');
+        }
+    });
+}
+
+function tracerItineraires(params){
+    var lieux_choisis = getLieuxChoisis();
+
+    $('#guidage_itineraire').empty();
+
+    carte.map.nettoyer({
+        type : 'all',
+        finished : function(){
+
+             carte.itineraires = []; // On supprime les itinéraires en mémoire
+             for(var i=0; i<=lieux_choisis.length;i++){
+
+
+                /* Ici créer les différents trajets */
+                if(i==0){
+                    depart = {
+                                adresse : carte.points.depart.adresse,
+                                ville : carte.points.depart.ville,
+                                latitude : carte.points.depart.position.latitude,
+                                longitude : carte.points.depart.position.longitude,
+                                nom : carte.points.depart.adresse+', '+carte.points.depart.ville,
+                                categorie : 'depart',
+                                type : 'borne'
+                              }
+                }
+                if(i>=lieux_choisis.length){;
+                    arrivee = {
+                                adresse : carte.points.arrivee.adresse,
+                                ville : carte.points.arrivee.ville,
+                                latitude : carte.points.arrivee.position.latitude,
+                                longitude : carte.points.arrivee.position.longitude,
+                                nom : carte.points.arrivee.adresse+', '+carte.points.arrivee.ville,
+                                categorie : 'arrivee',
+                                type : 'borne'
+                              }
+                }else{
+                    var infos_lieu = null;
+                    $.ajax({
+                      type: "POST",
+                      url: 'ajax/get_lieu_by_id.xhr.php',
+                      data: { 'id_lieu': lieux_choisis[i] },
+                      dataType: 'json',
+                      async:false, // Important car bloque le script
+                      success: function(data, textStatus, jqXHR){
+                        if(data.code=='200'){
+                            infos_lieu = data.infos;
+                            infos_lieu['categorie'] = infos_lieu['categories_id'];
+                            infos_lieu['adresse'] = infos_lieu['adress'];
+                            infos_lieu['ville'] = infos_lieu['city'];
+                            infos_lieu['type'] = 'lieu';
+                        }
+                      }
+                    });
+                    arrivee = infos_lieu;
+                }
+
+                carte.itineraires.push({depart : depart, arrivee : arrivee});
+                depart = arrivee;
+             }
+             carte.map.tracerItineraires({
+                trajets : carte.itineraires,
+                key : 0,
+                finished : function(returns){
+                    params.itinerairesTraces.call(this,returns);
+                }
+            });
+        }
+    });
+}
+
+function lancerLoader(){
+    $('.md-overlay,.loader').addClass('show');
+    var loader = new canvasLoader();
+    loader.init();
+}
+
+function arreterLoader(){
+    $('.md-overlay,.loader').removeClass('show');
 }

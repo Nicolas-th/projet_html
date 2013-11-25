@@ -38,7 +38,7 @@
 	transition: all 0.3s;
 }
 
-.md-show ~ .md-overlay {
+.md-show ~ .md-overlay, .md-overlay.show{
 	opacity: 1;
 	visibility: visible;
 }

@@ -284,6 +284,10 @@ if($user) { ?>
   <div id="map-canvas"></div>
   <div id="navigation-ajax"></div>
   <div class="md-overlay"></div>
+  <div class="loader">
+	  <canvas id="canvas" width="250" height="250"></canvas>
+	  <p>Chargement en cours...</p>
+  </div>
   <div id="hidden"></div>
 
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -294,7 +298,8 @@ if($user) { ?>
   <script type="text/javascript" src="js/autocompletion.js"></script>
   <script type="text/javascript" src="js/carte.js"></script>
   <script type="text/javascript" src="js/navigation-ajax.js"></script>
-  <script type="text/javascript" src="js/itineraires.js"></script>
+  <script type="text/javascript" src="js/itineraire.js"></script>
+  <script type="text/javascript" src="js/loader.js"></script>
   <script type="text/javascript" src="js/home.js"></script>
   <script type="text/javascript" src="js/sidebar.js"></script>
   <script type="text/javascript" src="js/edit-profile.js"></script>

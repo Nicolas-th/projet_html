@@ -577,6 +577,30 @@ p + img{
 	padding:0;
 }
 
+
+/* Loader */
+.loader{
+	position: absolute;
+	z-index: 99999;
+	top: 50%;
+	left: 50%;
+	margin: -125px 0 0 -125px;
+	visibility: hidden;
+	opacity: 0;
+}
+.loader.show{
+	visibility: visible;
+	opacity: 1;
+}
+.loader p{
+	color:#FFF;
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	font-size: 1em;
+}
+
 /*A revoir*/
 #hidden_password, #update_info{
 	position:relative;

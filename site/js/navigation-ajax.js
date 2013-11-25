@@ -21,7 +21,7 @@ var Transition = function(){
 			(function(page) {
 				$(_this.params.conteneur).on('click',page.links.open,function(evt){
 					evt.preventDefault();
-					_this.open(page,$(this));
+					_this.open(page,$(this).attr('href'));
 				});
 
 				$(_this.params.conteneur).on('click',page.links.close,function(evt){
@@ -38,8 +38,7 @@ var Transition = function(){
 		});
 	};
 
-	_this.open = function(page,clicked){
-		var href = clicked.attr('href');
+	_this.open = function(page,href){
 		$.ajax({
 			url : href,
 			success : function(data){
