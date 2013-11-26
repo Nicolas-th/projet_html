@@ -5,16 +5,12 @@
 
   	if($("header div:nth-child(3)").hasClass('actif')){
 
-  		console.log('test1');
-
   		$("#sidebar_profile").hide(0);
 	  	$("#sidebar_edit").show(0);
 		$("header div:nth-child(2)").addClass('actif');
 		$("header div:nth-child(3)").removeClass('actif');
 
   	}else{
-
-  		console.log('test2');
 
 	  	$("#sidebar_edit").show(400);
   
@@ -50,16 +46,12 @@
 
   	if($("header div:nth-child(2)").hasClass('actif')){
 
-  		console.log('test3');
-
 	  	$("#sidebar_edit").hide(0);
 		$("#sidebar_profile").show(0);
 		$("header div:nth-child(3)").addClass('actif');
 		$("header div:nth-child(2)").removeClass('actif');
 
 	}else{
-
-		console.log('test4');
 
 		$("#sidebar_edit").css("display","none");
 	 	$("#sidebar_profile").css("display","block");

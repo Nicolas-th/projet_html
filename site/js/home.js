@@ -315,12 +315,9 @@ $(function () {
                                         finished: function (params) {
 
                                             // On affiche la durée estimée de l'itinéraire
-                                            var duree = secondesToDuree(carte.map.getDureeItineraire(params));
-                                            if ($('.duree_itineraires').length == 0) {
-                                                $('#resultat_lieux').before('<p class="titre_parcours">Votre parcours</p>');
-                                                $('#resultat_lieux').before('<p class="duree_itineraires"></p>');
-                                            }
-                                            $('.duree_itineraires').html('Durée estimée : ' + duree);
+                                            ajoutDuree({
+                                                duree : carte.map.getDureeItineraire(params)
+                                            });
 
                                             // On récupère les potentiels lieux insolites choisis
                                             var points = carte.map.getPointsItineraire(params);
@@ -378,12 +375,9 @@ $(function () {
                                 type: 'itineraires_lieux',
                                 finished: function (params) {
                                     // On affiche la durée estimée de l'itinéraire
-                                    var duree = secondesToDuree(carte.map.getDureeItineraire(params));
-                                    if ($('.duree_itineraires').length == 0) {
-                                        $('#resultat_lieux').before('<p class="titre_parcours">Votre parcours</p>');
-                                        $('#resultat_lieux').before('<p class="duree_itineraires"></p>');
-                                    }
-                                    $('.duree_itineraires').html('Durée estimée : ' + duree);
+                                    ajoutDuree({
+                                        duree : carte.map.getDureeItineraire(params)
+                                    });
 
                                     // On récupère les potentiels lieux insolites choisis
                                     var points = carte.map.getPointsItineraire(params);
@@ -762,6 +756,11 @@ function tracerItineraires(params){
                 trajets : carte.itineraires,
                 key : 0,
                 finished : function(returns){
+                    if(typeof(returns.duree)!='undefined'){
+                       ajoutDuree({
+                        duree : returns.duree
+                    });
+                    }
                     if(typeof(params)!='undefined' && typeof(params.itinerairesTraces)=='function'){
                         params.itinerairesTraces.call(this,returns);
                     }
@@ -779,4 +778,13 @@ function lancerLoader(){
 
 function arreterLoader(){
     $('.md-overlay,.loader').removeClass('show');
+}
+
+function ajoutDuree(params){
+    var duree = secondesToDuree(params.duree);
+    if ($('.duree_itineraires').length == 0) {
+        $('#resultat_lieux').before('<p class="titre_parcours">Votre parcours</p>');
+        $('#resultat_lieux').before('<p class="duree_itineraires"></p>');
+    }
+    $('.duree_itineraires').html('Durée estimée : ' + duree);
 }
