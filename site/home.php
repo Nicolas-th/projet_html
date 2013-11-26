@@ -38,7 +38,7 @@ function getPlaces($str) {
   <head>
   	<meta charset="UTF-8">
   	
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="assets/css/global.css">
     <link rel="stylesheet" type="text/css" href="assets/css/home.css">
     <link rel="stylesheet" type="text/css" href="assets/css/modals.css">
@@ -66,28 +66,29 @@ function getPlaces($str) {
 	<form id="formulaire_itineraire" method="post" action="#">
 		 
 	    <input type="text" name="lieux_depart" id="lieux_depart" autocomplete="off" placeholder="Point de départ"  />
-	    <button id="position">Partir de ma position</button>
+	    <a href="#" id="position">Position</a>
 	    <input type="hidden" name="latitude_position" />
 	    <input type="hidden" name="longitude_position" />
 	    <input type="hidden" name="ref_lieux_depart" id="ref_lieux_depart" class="ref_lieu" />
-	    <ul id="resultats_lieux_depart"></ul>
+	    <ul id="resultats_lieux_depart" class="autocomplete"></ul>
 
 
 	    <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
 	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
-	    <ul id="resultats_lieux_arrive"></ul>
+	    <ul id="resultats_lieux_arrive" class="autocomplete"></ul>
     
 	        
-	    
-	    <div class="choix_transport">
-		    <a href="#" id="marche" class="actif" alt="a pied"></a>
-		    <a href="#" id="velo" alt="velo"></a>
-		    <a href="#" id="metro" alt="metro"></a>
+	    <div class="ligne">
+		    <div class="choix_transport">
+			    <a href="#" id="marche" class="actif" alt="a pied"></a>
+			    <a href="#" id="velo" alt="velo"></a>
+			    <a href="#" id="metro" alt="metro"></a>
+			</div>
+			
+			<form method="post" action="#">
+				<input type="submit" value="Rechercher"/>
+			</form>
 		</div>
-		
-		<form method="post" action="#">
-			<input type="submit" value="Calculer l'itinéraire"/>
-		</form>
 		
    </form>
    
@@ -171,7 +172,7 @@ function getPlaces($str) {
 			 <?php } ?>
 	  	<a class="edit_itineraries" href="#">modifier</a>
 	  	<form method="post" action="#">
-	  	<input id="save_itineraries" type="submit" value="enregistrer">
+	  	<input id="submit_delete_password" name="submit_delete_itinerary" type="submit" value="enregistrer">
 	  	</form>	 
 	  	
 	  	<?php } ?> 
@@ -190,7 +191,7 @@ function getPlaces($str) {
 					$profile_media_image_id=$profile_media_image['id'];
 					$src_place = $dbh -> query("SELECT places_id FROM media WHERE id LIKE '$profile_media_image_id'")->fetch(0);
 	?>	
-					<div><img src="<?= $src_media.$src_place['places_id']."/".$profile_media_image['url_file']?>"</div> <!-- Fermer balise image ? --> 
+					<div><img src="<?= $src_media.$src_place['places_id']."/".$profile_media_image['url_file']?>"></div> <!-- Fermer balise image ? --> 
 		  <?php } ?>
 	<?php } ?>
 

@@ -66,13 +66,23 @@ var Autocompletion = function(){
         },
         function(place, status){
         	if (status == google.maps.places.PlacesServiceStatus.OK || status == 'OK') {
+        		if(typeof(place.address_components[0])=='undefined'){
+        			var adresse = place.name;
+        		}else{
+        			var adresse = place.address_components[0].long_name;
+        		}
+        		if(typeof(place.address_components[1])=='undefined'){
+        			var ville = '';
+        		}else{
+        			var ville = place.address_components[1].long_name;
+        		}
 	        	var infos  ={
 	        		position : {
 	        			latitude : place.geometry.location.lat(),
 	        			longitude : place.geometry.location.lng()
 	        		},
-	        		adresse : place.address_components[0].long_name,
-	        		ville : place.address_components[1].long_name
+	        		adresse : adresse,
+	        		ville : ville
 	        	}
 	        	params.success.call(this,infos, status);
 	        }else{

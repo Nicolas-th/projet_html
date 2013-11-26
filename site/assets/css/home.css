@@ -26,18 +26,24 @@
 }
 
 
-html { height: 100% }
-body { height: 100%;
-margin: 0;
-padding: 0;
-font-family: 'LatoLight',Verdana,Arial;
-font-size:18px;
-color:white; 
+html { 
+	width: 100%;
+	height: 100%;
+}
+body { 
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'LatoLight',Verdana,Arial;
+	font-size:18px;
+	color:white; 
 	-webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	overflow: hidden;
 }
+
 #map-canvas { display:block; height: 100%; z-index:1; }
       
 body > :first-child{
@@ -106,6 +112,12 @@ header div:nth-child(1){
   z-index: 120;
 }
 
+#popup p{
+	display: block;
+	width: 230px;
+	margin: 10px auto;
+}
+
 #popup > p:nth-child(2){
 	padding:0;
 	margin:40px 0px 10px 20px;
@@ -126,9 +138,8 @@ header div:nth-child(1){
   line-height:30px;
   padding-left:15px;
   padding-right:15px;
-  position:relative;
-  left:25px;
-
+  margin: 0 auto;
+  display: block;
 }
 
 #popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire, #modifier_itineraire{
@@ -139,15 +150,36 @@ header div:nth-child(1){
   font-size:15px;
   font-family:'OpenSansRegular';
   cursor:pointer;
-  width:150px;
+  min-width:100px;
   height:30px;
-  margin: 0px 0px 8px 108px;
 }
 
+#formulaire_itineraire .ligne, .actions_itineraire{
+	width: 230px;
+	position: relative;
+	margin: 0 auto;
+}
+
+.actions_itineraire #demarrer_itineraire{
+	position: absolute;
+	right: 0;
+}
+
+#formulaire_itineraire input[type=submit]{
+	display: inline-block;
+	width:100px;
+	position: absolute;
+	right: 0;
+	vertical-align: middle;
+}
+
+.choix_transport{
+	display: inline-block;
+	vertical-align: middle;
+}
 
 #marche{
 	background:url('../img/feet.svg') no-repeat;
-	margin-left:160px;
 }
 
 #velo{
@@ -162,23 +194,25 @@ header div:nth-child(1){
 	display:inline-block;
 	width:25px;
 	height:25px;
-	background-size:cover;
+	background-size:100% 100%;
 	margin-right:5px;
-	margin-top:15px;
-	margin-bottom:10px;
 }
 
 #position{
-	padding-left:25px;
-	margin-right : 20px;
-	margin-top : 5px;
-	background:url('../img/mark_start.svg') no-repeat center left;
+	display: block;
+	width: 15px;
+	height: 15px;
+	text-indent: -999999px;
+	position: absolute;
+	right: 30px;
+	margin-top : -23px;
+	background:url('../img/icone-gps.png') no-repeat center left;
 	background-size:auto 100%;
 	display:block;
 	border:none;
 	font-size:12px;
 	cursor:pointer;
-	color:#FFF;
+	color:#474747;
 	margin-left:20px;
 	margin-bottom:10px;
 	float: right;
@@ -193,15 +227,62 @@ input::-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 
-#resultats_lieux_depart li, #resultats_lieux_arrive li{
+#formulaire_itineraire #lieux_depart{
+	padding-right: 25px;
+	width: 190px;
+}
+
+#resultats_lieux_arrive{
+	margin-bottom: 20px;
+}
+
+.autocomplete{
+	width: 230px;
+	margin: 10px auto;
+	padding : 0;
+	border-radius: .6em;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+	box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.autocomplete li{
+	display: block;
+	padding: 0 10px;
+	height: 32px;
+	line-height: 32px;
+	overflow:hidden;
+	border: 1px solid #ccc;
+	font-weight: 700;
+	color: #222;
+	text-shadow: 0 1px 0 #fff;
 	list-style: none;
 	font-family:'OpenSansSemibold';
 	font-size:13px;
-	margin-left:-15px;
+	background: #eee;
+	cursor: pointer;
 }
 
+.autocomplete li:hover{
+	background: #E0E0E0;
+}
+
+.autocomplete li:first-child{
+	border-top-left-radius: .6em;
+	border-top-right-radius: .6em;
+}
+
+.autocomplete li:last-child{
+	border-bottom-left-radius: .6em;
+	border-bottom-right-radius: .6em;
+}
+
+
 #resultat_lieux ul{
+	padding: 0;
 	margin: 0 auto;
+	display: block;
+	width: 230px;
 }
 
 #resultat_lieux ul li{
@@ -211,8 +292,6 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	height:30px;
 	margin:10px 0;
 	border-radius:9px;
-	position:relative;
-	left:-15px;
 }
 
 #resultat_lieux ul li, #resultat_lieux ul li label{
@@ -272,13 +351,15 @@ margin-right:4px;
 /************* profil ************/
 
 #popup_right{
+	display: none;
 	width:100%;
     height:100%;
     overflow:auto;
     background-color:rgba(151,151,151,0.9);
 	z-index:1000;
 	position:absolute;
-	right:0px; /* - 280 pour la masquer */
+	/*right:0px; /* - 280 pour la masquer */
+	right: -280px;
 	max-width:280px;
 }
 
