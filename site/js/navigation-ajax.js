@@ -5,18 +5,26 @@ var Transition = function(){
 		conteneur : '#conteneur',
 		overlay : '.md-overlay',
 		pages : [],
-		opened : null
+		opened : null,
+		styles : {
+			classShow : 'md-show',
+			classContent : 'md-content',
+			classContent : 'md-content',
+			classPage : 'md-modal md-effect-1'
+		}
 	}
 
 	_this.init = function(params){
-		_this.params = $.extend(defaults, params);
+		_this.params = $.extend(true, {}, defaults, params);
 
 		_this.params.historyAPI = ((window.history.pushState && window.history.back)?true:false);
+
+		_this.params.url = window.location;
 
 		for(var key=0; key<_this.params.pages.length; key++){
 			var page = _this.params.pages[key];
 
-			$(page.element).addClass('md-modal md-effect-1');
+			$(page.element).addClass(_this.params.styles.classPage);
 
 			(function(page) {
 				$(_this.params.conteneur).on('click',page.links.open,function(evt){
@@ -31,9 +39,19 @@ var Transition = function(){
 			})(page);
 		}
 
+		// Fermeture de la navigation Ajax
 		$(_this.params.overlay).on('click',function(){
 			if(_this.params.opened!=null){
 				_this.close(_this.params.opened);
+			}
+		});
+
+		// On détécte le retour en arrière
+		$(window).on('popstate', function() {
+			if(window.location==_this.params.url){
+				if(_this.params.opened!=null){
+					_this.close(_this.params.opened,false);
+				}
 			}
 		});
 	};
@@ -42,27 +60,32 @@ var Transition = function(){
 		$.ajax({
 			url : href,
 			success : function(data){
-	      		$(page.element).html($('<div></div>').addClass('md-content').html(data));
+
+				var title = data.match("<title>(.*?)</title>")[1];
+                document.title = title;
+
+	      		$(page.element).html($('<div></div>').addClass(_this.params.styles.classContent).html(data));
 	      		if(href!=window.location){
 	      			if(_this.params.historyAPI){
-			    		window.history.pushState({path:href},'',href);
+			    		window.history.pushState({path:href},title,href);
 			    	}
 			    }
 			    if(_this.params.opened!=null){
 			    	_this.close(_this.params.opened);
 			    }
 			    _this.params.opened = page;
+
 			    window.setTimeout(function(){ 
-			    	$(page.element).addClass('md-show');
+			    	$(page.element).addClass(_this.params.styles.classShow);
 			    },200); // Délai d'attente avant la transition pour que le css soit appliqué
 	   		}
 		});
 	};
 
-	_this.close = function(page){
+	_this.close = function(page,backHistory){
 		$(page.element).html('');
-		$(page.element).removeClass('md-show');
-		if(_this.params.historyAPI){
+		$(page.element).removeClass(_this.params.styles.classShow);
+		if(_this.params.historyAPI && backHistory!==false){
 	    	window.history.back();
 	    }
 	    _this.params.opened = null;
