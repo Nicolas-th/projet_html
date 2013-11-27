@@ -461,7 +461,7 @@ function lancerRechercheLieux(params){
                 liste_lieux+='</ul>';
 
                 $('#resultat_lieux').html(liste_lieux);
-                if($('.titre_parcours').length==0){
+                if($('#enregistrer_itineraire').length==0){
                     $('.titre_parcours').after($('<div class="actions_itineraire"></div>')
                         .append('<button id="enregistrer_itineraire">Enregistrer</button>')
                         .append('<button id="demarrer_itineraire">Démarrer</button>')
