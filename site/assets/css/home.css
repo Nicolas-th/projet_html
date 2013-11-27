@@ -161,7 +161,14 @@ header .connexion{
   font-family:'OpenSansRegular';
   cursor:pointer;
   min-width:100px;
-  height:30px;
+}
+
+#popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire{
+	background-color:#4ece9d;
+}
+
+#modifier_itineraire{
+	background-color:#F39200;
 }
 
 #formulaire_itineraire .ligne, .actions_itineraire{
@@ -277,6 +284,10 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	background: #E0E0E0;
 }
 
+.autocomplete li.actif{
+	background: #E0E0E0;
+}
+
 .autocomplete li:first-child{
 	border-top-left-radius: .6em;
 	border-top-right-radius: .6em;
@@ -356,7 +367,15 @@ margin-right:4px;
 	background-size:cover;
 }
 
+/**********Instructions itinéraires*******/
 
+.instructions_itineraire ul li{
+	list-style: none;
+	margin-bottom:10px;
+	position:relative;
+	margin-left:-20px;
+	margin-right:10px;
+}
 
 /************* profil ************/
 
@@ -456,7 +475,7 @@ label.place{
 	display: inline-block;
 	height: 20px;
 	background: url('../img/trash.svg') no-repeat;
-	background-size: 20px 20px;
+	background-size: 18px 18px;
 	position: relative;
 	top: 5px;	
 }
@@ -642,7 +661,6 @@ div.upload input {
 	display:inline-block;
 	font-size:15px;
 	font-family:"OpenSansSemibold",Verdana,Arial;
-	padding-left:20px;
 	padding-right:40px;
 	padding-bottom:15px;
 	

@@ -173,23 +173,34 @@ $(function () {
         });
     }
 
-    // On test si la touche tab est appuyé (uniquement en keydown) pour compléter le lieu automatiquement avec le premier de la liste
+    // On test si la touche tab ou entré est appuyé et que le focus est sur un des élements de la liste d'autocomplétion pour valider le lieu en focus
     $('#lieux_depart').on('keydown', function (evt) {
         var keyCode = evt.keyCode || evt.which;
-        if (keyCode == 9) { // Touche Tab
-            if ($('#ref_lieux_depart').val() == '') {
-                evt.preventDefault();
-                $('#ref_lieux_depart').val($('#resultats_lieux_depart li').first().attr('id'));
-                $('#lieux_depart').val($('#resultats_lieux_depart li').first().html());
-                $('#resultats_lieux_depart').empty();
-            }
+         // On test si la touche tab est appuyé (uniquement en keydown) pour compléter le lieu automatiquement avec le premier de la liste
+        if((keyCode==13 || keyCode==9) && $('#resultats_lieux_depart li.actif').length>0){
+            evt.preventDefault();
+            $('#ref_lieux_depart').val($('#resultats_lieux_depart li.actif').first().attr('id'));
+            $('#lieux_depart').val($('#resultats_lieux_depart li.actif').first().html());
+            $('#resultats_lieux_depart').empty();
         }
     });
 
     // Autocomplétion des lieux puis affichage des lieux correspondants sous forme d'une liste
     $('#lieux_depart').on('keyup', function (evt) {
         var keyCode = evt.keyCode || evt.which;
-        if (keyCode != 13 && keyCode != 9) { // Touche entrée & touche tab
+        if(keyCode==38 || keyCode==40){
+            if($('#resultats_lieux_depart li').length>0){
+                if($('#resultats_lieux_depart li.actif').length>0){
+                    if(keyCode==38){
+                        $('#resultats_lieux_depart li.actif').removeClass('actif').prev().addClass('actif');
+                    }else{
+                        $('#resultats_lieux_depart li.actif').removeClass('actif').next().addClass('actif');
+                    }
+                }else{
+                    $('#resultats_lieux_depart li').first().addClass('actif');
+                }
+            }
+        }else if(keyCode != 13 && keyCode != 9) { // Touche entrée & touche tab
             $('input[name="latitude_position"]', 'input[name="longitude_position"]').val('');
             $('#ref_lieux_depart').val('');
             carte.autocompletion.rechercher({
@@ -213,23 +224,34 @@ $(function () {
         }
     });
 
-    // On test si la touche tab est appuyé (uniquement en keydown) pour compléter le lieu automatiquement avec le premier de la liste
+    // On test si la touche tab ou entré est appuyé et que le focus est sur un des élements de la liste d'autocomplétion pour valider le lieu en focus
     $('#lieux_arrive').on('keydown', function (evt) {
         var keyCode = evt.keyCode || evt.which;
-        if (keyCode == 9) {
-            if ($('#ref_lieux_arrive').val() == '') {
-                evt.preventDefault();
-                $('#ref_lieux_arrive').val($('#resultats_lieux_arrive li').first().attr('id'));
-                $('#lieux_arrive').val($('#resultats_lieux_arrive li').first().html());
-                $('#resultats_lieux_arrive').empty();
-            }
+        if((keyCode==13 || keyCode==9) && $('#resultats_lieux_arrive li.actif').length>0){
+            evt.preventDefault();
+            $('#ref_lieux_arrive').val($('#resultats_lieux_arrive li.actif').first().attr('id'));
+            $('#lieux_arrive').val($('#resultats_lieux_arrive li.actif').first().html());
+            $('#resultats_lieux_arrive').empty();
         }
     });
 
     // Autocomplétion des lieux puis affichage des lieux correspondants sous forme d'une liste
     $('#lieux_arrive').on('keyup', function (evt) {
         var keyCode = evt.keyCode || evt.which;
-        if (keyCode != 13 && keyCode != 9) { // Touche entrée
+        // On test si la touche tab est appuyé (uniquement en keydown) pour compléter le lieu automatiquement avec le premier de la liste
+        if(keyCode==38 || keyCode==40){
+            if($('#resultats_lieux_arrive li').length>0){
+                if($('#resultats_lieux_arrive li.actif').length>0){
+                    if(keyCode==38){
+                        $('#resultats_lieux_arrive li.actif').removeClass('actif').prev().addClass('actif');
+                    }else{
+                        $('#resultats_lieux_arrive li.actif').removeClass('actif').next().addClass('actif');
+                    }
+                }else{
+                    $('#resultats_lieux_arrive li').first().addClass('actif');
+                }
+            }
+        }else if (keyCode != 13 && keyCode != 9) { // Touche entrée
             $('#ref_lieux_arrive').val('');
             carte.autocompletion.rechercher({
                 value: $('#lieux_arrive').val(),
@@ -249,7 +271,7 @@ $(function () {
                     });
                 }
             });
-        } else {
+        } else if($('#ref_lieux_arrive').val()!=''){
             $('#formulaire_itineraire').submit();
         }
     });
@@ -514,7 +536,7 @@ function lancerRechercheLieux(params){
             });
 
             /* On démarrer le guidage et l'itineraire */
-            $('#demarrer_itineraire').on('click',function(evt){
+            $('#popup').on('click','#demarrer_itineraire',function(evt){
                 evt.preventDefault();
 
                 lancerLoader();
@@ -596,13 +618,16 @@ function lancerRechercheLieux(params){
                                                 if($('.duree_itineraires').length>0){
                                                     $('.duree_itineraires').remove();
                                                 }
-                                                $('#guidage_itineraire').append('<button id="modifier_itineraire">Modifier</button>');
+
+                                                // On remplace le bouton "démarrer" par un bouton "modifier"
+                                                $('#demarrer_itineraire').replaceWith('<button id="modifier_itineraire">Modifier</button>');
                                                 $('#guidage_itineraire').append($('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree));
 
                                                 $('#guidage_itineraire').append($('<div class="instructions_itineraire"></div>').append(htmlInstructions));
                                                 $('#guidage_itineraire').show();
 
                                                 $('#modifier_itineraire').on('click',function(){
+                                                    $('#modifier_itineraire').replaceWith('<button id="demarrer_itineraire">Démarrer</button>');
                                                     $('#resultat_lieux').show();
                                                     $('#guidage_itineraire').hide();
                                                 });
