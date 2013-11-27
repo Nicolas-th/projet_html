@@ -170,7 +170,7 @@ header .connexion{
 	margin: 0 auto;
 }
 
-.actions_itineraire #demarrer_itineraire{
+.actions_itineraire button+button{
 	position: absolute;
 	right: 0;
 }
@@ -402,7 +402,6 @@ margin-right:4px;
 }
 
 #popup_right ul{
-	margin-left:10px;
 	padding:0;
 }
 #popup_right ul li{
@@ -411,9 +410,11 @@ margin-right:4px;
 	
 }
 
+/*
 #sidebar_profile{
 	padding:20px;
 }
+*/
 
 #sidebar_profile ul li a{
 	text-decoration:none;
@@ -440,6 +441,7 @@ label.place{
 }
 
 .saved{
+	display:none;
 	float:left;
 	width:20px;
 	height:20px;
@@ -450,14 +452,20 @@ label.place{
 }
 
 .trash{
-	float:left;
-	width:20px;
-	height:20px;
-	background:url('../img/trash.svg') no-repeat;
-	background-size:cover;
-	position:relative;
-	top:10px;
-	
+	width: 20px;
+	display: inline-block;
+	height: 20px;
+	background: url('../img/trash.svg') no-repeat;
+	background-size: 20px 20px;
+	position: relative;
+	top: 5px;	
+}
+
+h5{
+	display: inline-block;
+	line-height: 20px;
+	-webkit-margin-before: 0;
+	-webkit-margin-after: 0;
 }
 
 #pictures{
@@ -494,9 +502,7 @@ label.place{
 }
 
 hr{
-	margin-bottom: 15px;
-	opacity:0.5;
-	
+	opacity:0.5;	
 }
 
 #popup_right form input[type=submit], .edit_itineraries, .edit_added_places{
@@ -510,7 +516,7 @@ hr{
     cursor:pointer;
     width:95px;
     height:20px;
-    margin-left:137px;
+    margin-left:147px;
     margin-top:10px;
 }
 

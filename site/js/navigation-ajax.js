@@ -61,8 +61,11 @@ var Transition = function(){
 			url : href,
 			success : function(data){
 
-				var title = data.match("<title>(.*?)</title>")[1];
-                document.title = title;
+				var titles = data.match("<title>(.*?)</title>"); 
+				if(titles.length>=2){
+                	var title = titles[1];
+                }
+                document.title = titles[1];
 
 	      		$(page.element).html($('<div></div>').addClass(_this.params.styles.classContent).html(data));
 	      		if(href!=window.location){

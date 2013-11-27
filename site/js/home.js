@@ -451,8 +451,8 @@ function lancerRechercheLieux(params){
                     liste_lieux+=  '<img src="'+image+'" width="20" height="20">';
                     liste_lieux+=  '<label for="'+lieu.id+'">'+lieu.name+'</label>';
                     liste_lieux+=  '<div class="icons">';
-                    liste_lieux+=  '    <a href="#" class="ajouter_lieu">+</a>';
-                    liste_lieux+=  '    <a href="'+lieu.href+'" class="voir_lieu ajax-link">Voir</a>';
+                    liste_lieux+=  '    <a href="'+lieu.href+'" class="ajouter_lieu">+</a>';
+                    //liste_lieux+=  '    <a href="'+lieu.href+'" class="voir_lieu ajax-link">Voir</a>';
                     liste_lieux+='  </div>';
                     liste_lieux+='</li>';
 
@@ -463,9 +463,11 @@ function lancerRechercheLieux(params){
                 $('#resultat_lieux').html(liste_lieux);
                 if($('#enregistrer_itineraire').length==0){
                     $('.titre_parcours').after($('<div class="actions_itineraire"></div>')
-                        .append('<button id="enregistrer_itineraire">Enregistrer</button>')
                         .append('<button id="demarrer_itineraire">Démarrer</button>')
                     );
+                    if($('header .icon').length>0){
+                         $('.actions_itineraire').prepend('<button id="enregistrer_itineraire">Enregistrer</button>');
+                    }
                 }
             }else if(data.code=='404'){
                 var message = '<p>Aucun lieu n\'a été trouvé sur votre itinéraire. </p>';
@@ -498,13 +500,14 @@ function lancerRechercheLieux(params){
             /* Choix des lieux */
             $('#resultat_lieux li').on('click',function(evt){
                 evt.preventDefault();
-                var href = $(this).find('.voir_lieu').first().attr('href');
+                var href = $(this).find('.ajouter_lieu').first().attr('href');
                 carte.transition.open({
                     element: '#navigation-ajax'
                 },href);
             });
 
             $('.ajouter_lieu').on('click',function(evt){
+                evt.stopPropagation();
                 evt.preventDefault();
                 $(this).toggleClass('actif');
                 tracerItineraires();
