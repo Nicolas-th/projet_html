@@ -112,6 +112,16 @@ header div:nth-child(1){
   z-index: 120;
 }
 
+header .connexion{
+	display: block;
+	float: right;
+	margin-right: 20px;
+	margin-top: 6px;
+	text-decoration: none;
+	font-weight: bold;
+	color:#FFF;
+}
+
 #popup p{
 	display: block;
 	width: 230px;

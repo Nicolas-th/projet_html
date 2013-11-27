@@ -8,7 +8,7 @@ require_once('config/fb_config.php');
 
 /*---------------------CONNEXION AU SITE---------------------*/
 if(!(isset($_SESSION["nickname"]) || isset($_SESSION["fb_id"]))){
-	header('Location: index.php');
+	//header('Location: index.php');
 }
 
 /*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
@@ -48,15 +48,18 @@ function getPlaces($str) {
   <body>
   
   <header>
-  	  <a href="logout.php"><div class="icon"></div></a>
-	  <div class="icon"></div>
-	  <div class="icon"></div>
-	  
-	  
+
+  	<?php if(isset($_SESSION["id"])){ ?>
+		<a href="logout.php"><div class="icon"></div></a>
+		<div class="icon"></div>
+		<div class="icon"></div>
+	<?php }else{ ?>
+		<a href="index.php" class="connexion">Connexion</a>
+	<?php } ?>
+
   </header>
   
- <div id="bouton"></div> 
- <div id="bouton2"></div>
+ <div id="bouton" class="actif"></div> 
   
  <section id="popup"> <!-- début barre latérale gauche -->
 	  
@@ -101,7 +104,9 @@ function getPlaces($str) {
   </section> <!-- fin barre latérale gauche -->
   
  
-  
+<?php 
+if(isset($_SESSION["id"])){
+?>
   
 <section id="popup_right">
 
@@ -281,7 +286,9 @@ if($user) { ?>
 <!-- ******************fin de la sidebar profile settings*********************** -->
 	   
 </section>  <!-- ******Fin de la sidebar****** -->	
- 
+<?php 
+}	// Fin de if(isset($_SESSION["nickname"])){
+?>
 
   	<div id="map-canvas"></div>
   	<div id="navigation-ajax"></div>

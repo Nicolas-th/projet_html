@@ -222,7 +222,7 @@ else:
 	
 			<div class="grid">
 				<div class="col-1-1">
-					<a id="essayer" href="#">Essayer !</a>
+					<a id="essayer" href="home.php">Essayer !</a>
 				</div>
 			</div>
 	

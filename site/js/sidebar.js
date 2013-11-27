@@ -38,6 +38,8 @@
 		  $("#popup").animate({
 		  	left:"-280px"
 		  },400); 
+
+		  $("#bouton").removeClass('actif');
 	}
 	  
   });
@@ -79,6 +81,8 @@
 		$("#popup").animate({
 			left:"-280px"
 		},400); 
+
+		$("#bouton").removeClass('actif');
 	}
 	  
   });
@@ -92,24 +96,33 @@
   
   
   $("#bouton").click(function(){
-  	$("#popup").animate({
-  	  left:"-280px"
-  	},400);
- 
-  	$("#bouton2").css("display","block");	   
-      
-  });
-  
-  $("#bouton2").click(function(){
-	  $("#popup").animate({
-	  left:"0px"
-	  },400);
+  	if(!$(this).hasClass('actif')){
+  		$('#popup').show(0,function(){
+		  	$("#popup").animate({
+			  left:"0px"
+		  },400);
+		});
 	  
-	  $("#popup_right").animate({
-	  right:"-280px"
-	  },400);
-	 
-  $("#bouton2").css("display","none");
+	    $("#popup_right").animate({
+	  	  	right:"-280px"
+	    },400,function(){
+	    	$("#popup_right").hide(0);
+	    });
+
+	    $("header div:nth-child(2)").removeClass('actif');
+		$("header div:nth-child(3)").removeClass('actif');
+
+	    $(this).addClass('actif')
+  	}else{
+  		$("#popup").animate({
+	  	  	left:"-280px"
+	    },400,function(){
+	    	$("#popup").hide(0);
+	    });
+
+	    $(this).removeClass('actif');
+  	}   
+      
   });
 
 /******Modification ou suppression d'itinéraires dans profil************/
