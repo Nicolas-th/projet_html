@@ -196,7 +196,7 @@ if(isset($_SESSION["id"])){
 					$profile_media_image_id=$profile_media_image['id'];
 					$src_place = $dbh -> query("SELECT places_id FROM media WHERE id LIKE '$profile_media_image_id'")->fetch(0);
 	?>	
-					<div><img src="<?= $src_media.$src_place['places_id']."/".$profile_media_image['url_file']?>"></div> <!-- Fermer balise image ? --> 
+					<div><img src="<?= getUrlMedia($profile_media_image['url_file'],$src_place['places_id'],'img')?>" /></div> 
 		  <?php } ?>
 	<?php } ?>
 
@@ -226,7 +226,7 @@ if($user) { ?>
 <h4><?= $profile['nickname']?></h4>
 <?php if(!$user) { ?>
 	<div id="changeAvatar">
-		<form  action="includes/edit-profile.inc.php?id=<?=$profile['id'] ?>" method="post" enctype="multipart/form-data">
+		<form  action="includes/edit-profile.inc.php" method="post" enctype="multipart/form-data">
 		    <div class="upload">
 		        <input type="file" name="avatar" id="avatar" value="">
 		    </div>
@@ -243,15 +243,15 @@ if($user) { ?>
 
 <div id="edit"><p>Informations du compte</p><img src="assets/img/rouage.svg"/></div>
 
-<form id="update_info" method="post" action="includes/edit-profile.inc.php?id=<?=$profile['id'] ?>">
+<form id="update_info" method="post" action="includes/edit-profile.inc.php">
 		
-		<p><label for="full_name">Nom</label>
+		<p><label for="surname">Nom</label>
 		<input type="text" value="<?= $profile['surname'] ?>" name="surname" id="surname" disabled/></p>
 		
-		<p><label for="full_name">Prénom</label>
+		<p><label for="name">Prénom</label>
 		<input type="text" value="<?= $profile['name'] ?>" name="name" id="name" disabled/></p>
 		
-		<p><label for="full_name">Mail</label>
+		<p><label for="save_infos">Mail</label>
 		<input type="email" value="<?= $profile['email'] ?>" name="email" id="email" disabled/> </p>
 		
 		<input id="save_infos" name="submit_modify_profile" type="submit" value="Enregistrer">			
@@ -262,22 +262,33 @@ if($user) { ?>
 
 <div id="edit_password"><p>Modifier le mot de passe</p><img src="assets/img/rouage.svg"/></div>
 
-<form id="hidden_password" method="post" action="includes/edit-profile.inc.php?id=<?=$profile['id'] ?>"  >
+<form id="hidden_password" method="post" action="includes/edit-profile.inc.php"  >
 
-		<p><label for="full_name">Mot de passe actuel</label></p>
+		<p><label for="old_password">Mot de passe actuel</label></p>
 		<input type="password"  name="old_password" size="50" id="old_password" disabled/> 
 				
-		<p><label for="full_name">Nouveau mot de passe</label></p>
+		<p><label for="password">Nouveau mot de passe</label></p>
 		</label><input type="password" name="password" size="50" id="password" disabled/> 
 		
-		<p><label for="full_name">Confirmez</label></p>
+		<p><label for="confirm_password">Confirmez</label></p>
 		<input type="password" name="confirm_password" size="50" id="confirm_password" disabled/> 
 		
 		<input id="save_password" name="submit_modify_password" type="submit" value="Enregistrer">
 								
 </form>
+
+<div id="partage_activite"><p>Partage d'activité</p></div>
+<a id="btn-facebook" href="<?php echo $loginUrl; ?>">Connexion avec <strong>Facebook</strong></a>
 <?php } else { ?>
 		<p> Vous ne pouvez pas modifier vos informations personnelles. Votre profil est rattaché à votre compte Facebook. </p>
+		<div id="partage_activite">
+			<p>Partage d'activité</p>
+			<form id="social_activity" method="post" action="includes/edit-profile.inc.php"  >
+				<input type="checkbox"  name="social_activity" id="social_activity" <?php if(intval($profile['facebook_post'])==1){ echo('checked'); } ?>/>
+				<label for="social_activity">Je souhaite partager mon activité</label>	
+				<input name="submit_social_activity" type="submit" value="Enregistrer">							
+			</form>
+		</div>
 <?php }  ?>
 
 

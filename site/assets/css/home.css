@@ -364,6 +364,8 @@ margin-right:4px;
 	display: none;
 	width:100%;
     height:100%;
+    padding:0 20px;
+    box-sizing : border-box;
     overflow:auto;
     background-color:rgba(151,151,151,0.9);
 	z-index:1000;
@@ -464,11 +466,18 @@ label.place{
 
 #pictures div{
 	width:40px;
+	line-height:40px;
 	height:40px;
 	margin:2px;
 	background-color:blue;
 	border-radius:20px;
 	display:inline-block;
+}
+
+#pictures div img{
+	width: 40px;
+	height: auto;
+	vertical-align: middle;
 }
 
 #pictures div{
@@ -623,7 +632,7 @@ div.upload input {
 	margin-left: 160px;
 }
 
-#edit p, #edit_password p{
+#edit p, #edit_password p, #partage_activite p{
 	display:inline-block;
 	font-size:15px;
 	font-family:"OpenSansSemibold",Verdana,Arial;
@@ -631,6 +640,14 @@ div.upload input {
 	padding-right:40px;
 	padding-bottom:15px;
 	
+}
+
+#partage_activite{
+	margin-top: 20px;
+}
+
+#partage_activite #social_activity input[type=submit]{
+	display: block;
 }
 
 .response {
@@ -653,6 +670,22 @@ p + img{
 
 .col{
 	float:left;
+}
+
+#btn-facebook{
+	display: block;
+	margin: 0 auto;
+	height: 36px;
+	width: 202px;
+	text-align: center;
+	line-height: 36px;
+	color: white;
+	background-color: #46629e;
+	margin-top: 5px;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-size: 14px;
 }
 
 /* Chargement des lieux en ajax */

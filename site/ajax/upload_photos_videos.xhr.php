@@ -143,6 +143,52 @@
 				$sql->bindValue('type',$facebook['type'],PDO::PARAM_STR);
 				$sql->bindValue('attachment',$facebook['attachment'],PDO::PARAM_STR);
 				$sql->execute();
+
+
+
+				/* Publication chez les membres */
+
+				$sql->prepare('SELECT * from users WHERE id=:id');
+				$sql->bindValue('id',$id_user,PDO::PARAM_INT);
+				$infos = $sql->execute(true);
+
+				$infos_profile = $infos[0];
+
+				if(is_array($infos_profile) && count($infos_profile)>0){
+
+					$message_personnel = 'Je viens de poster une nouvelle photo de '.$infos_lieu['name'].'. Découvrez ce lieu :'.$url_lieu;
+
+					/* Facebook */
+
+					if(intval($infos_profile['facebook_post'])==1){
+
+						$facebook = array(
+				    		'type' => '/'.$infos_profile['facebook_id'].'/feed/',
+				    		'attachment' => json_encode(array(
+				    			'access_token' => $infos_profile['facebook_key'],
+								'message' => $message_reseaux_sociaux,
+								'name' => $infos_lieu['name'],
+								'caption' => 'Photo partagée par '.$infos_profile['nickname'],
+								'link' => $url_lieu,
+								'description' => $infos_lieu['description'],
+								'picture' => $urlNewImage,
+								'actions' => array(
+									array('name' => 'Découvrir le lieu', 'link' => $url_lieu)
+								)
+				    		)),
+				    		'type_post' => 'user'
+				    	);
+
+
+						$sql->prepare('INSERT INTO api_facebook (type,attachment,type_post) VALUES (:type,:attachment,:type_post)');
+						$sql->bindValue('type',$facebook['type'],PDO::PARAM_STR);
+						$sql->bindValue('attachment',$facebook['attachment'],PDO::PARAM_STR);
+						$sql->bindValue('type_post',$facebook['type_post'],PDO::PARAM_STR);
+						$sql->execute();
+
+					}
+
+				}
 		    }
 		}
 
