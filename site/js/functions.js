@@ -31,3 +31,50 @@ function calculerDistancePoints(lat1,lon1,lat2,lon2){
 	dist = dist * 1.609344;
 	return Math.abs(dist);
 }
+
+function uploadFile(conteneurFormSelector,callback){
+
+	if(typeof(callback)!='fonction'){
+		console.log('test');
+		callback = function(){};
+	}
+
+    var form            = $(conteneurFormSelector).children('form').first();
+    var progressbox     = $(conteneurFormSelector).parent().children('.conteneur_progress_bar').first();
+    var progressbar     = progressbox.children('.progress_bar').first();
+    var statustxt       = progressbox.children('.progress_value').first();
+    var button    		= $(conteneurFormSelector).children('input[type="file"]').first();
+    var completed       = '0%';
+
+    $(form).ajaxSubmit({
+        beforeSend: function() {
+            $('.response').remove();
+            button.attr('disabled', '');
+            statustxt.empty();
+            progressbox.slideDown(); 
+            progressbar.width(completed);
+            statustxt.html(completed);
+            statustxt.css('color','#000');
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+        	console.log(event, position, total, percentComplete);
+            progressbar.width(percentComplete + '%')
+            statustxt.html(percentComplete + '%')
+            if(percentComplete>50){
+                    statustxt.css('color','#fff');
+            }
+        },
+        complete: function(response) {
+        	console.log(response);
+            if(response.status=='200'){
+                progressbox.after('<p class="response">'+response.responseText+'</p>');
+                form.resetForm();
+                button.removeAttr('disabled');
+                progressbox.slideUp();
+                callback.call(this);
+            }else{
+                progressbox.after('<p class="response">'+response.responseText+'</p>');
+            }
+        }
+    });
+}
