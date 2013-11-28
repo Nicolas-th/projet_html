@@ -26,7 +26,7 @@ if (isset($_POST['mail'])) {
 	        $reqPseudo->execute();
 	        
 	        if($reqPseudo->fetch() == 0){
-	                $reqInsertUser = $dbh->prepare("INSERT INTO users VALUES('','$avatar','$name','$surname','$pseudo','','$email','$password', NOW(),'','')");
+	                $reqInsertUser = $dbh->prepare("INSERT INTO users VALUES('','$avatar','$name','$surname','$pseudo','','$email','$password', NOW(),'','','','')");
 	                $reqInsertUser->execute();
 	                $id= $dbh->lastInsertId();
 					$reqUser = $dbh->query("SELECT * FROM users WHERE id ='$id'")->fetch();
