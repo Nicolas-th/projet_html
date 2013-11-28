@@ -22,7 +22,6 @@
 	$existPlace = $reqExistPlace->fetch();
 
 	if($existPlace==false){
-		header("HTTP/1.1 301 Moved Permanently");
    		header('Location : '.$chemin_relatif_site.'index.php');
 		exit;
 	}
@@ -76,6 +75,16 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body>
+		<?php if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) { ?>
+			<header>
+		  	<?php if(isset($_SESSION["id"])){ ?>
+				<a href="logout.php"><div class="icon"></div></a>
+			<?php }else{ ?>
+				<a href="index.php" class="connexion">Connexion</a>
+			<?php } ?>
+		  	</header>
+		  	<a href="index.php" id="bouton">Accueil</a> 
+		<?php } ?>
 		<div id="container-lieu" data-id="<?php echo $id_lieu; ?>">
 
 			<div class="grid cover">

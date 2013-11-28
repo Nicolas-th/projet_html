@@ -3,8 +3,12 @@
 
 	require_once('config/config.php'); 
 	require_once('includes/functions.inc.php');
+
+	if(!isset($_SESSION['id'])){
+   		header('Location : '.$chemin_relatif_site.'index.php');
+	}
 	
-	$id_user = $_SESSION['id'];
+	$id_user = intval($_SESSION['id']);
 	$address = "Place du Trocadéro";
 	$postCode = 95000;
 	$city = "Paris";
@@ -26,6 +30,16 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body>
+	<?php if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) { ?>
+		<header>
+	  	<?php if(isset($_SESSION["id"])){ ?>
+			<a href="logout.php"><div class="icon"></div></a>
+		<?php }else{ ?>
+			<a href="index.php" class="connexion">Connexion</a>
+		<?php } ?>
+	  	</header>
+	  	<a href="index.php" id="bouton">Accueil</a> 
+	<?php } ?>
 		<div id="container">
 			<div class="grid grid-pad">
 				<div class="col-1-1">
