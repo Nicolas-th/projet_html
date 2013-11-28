@@ -493,7 +493,7 @@ function lancerRechercheLieux(params){
                 }
             }else if(data.code=='404'){
                 var message = '<p>Aucun lieu n\'a été trouvé sur votre itinéraire. </p>';
-                message += '<a href="#">Vous en connaissez un ? Partagez-le !</a>';
+                message += '<a href="/create-place.php" id="aucun_lieu" class="ajax-link">Vous en connaissez un ? Partagez-le !</a>';
                 $('#resultat_lieux').html(message);
             }else{
                 console.log('Erreur '+data.code);

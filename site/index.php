@@ -19,7 +19,7 @@ else:
 		<meta name="viewport" content="initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="assets/css/global.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/simplegrid.css" />
-		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="assets/css/index.css" />
 	</head>
 	<body>
 		<div class="md-modal md-effect-1" id="connexion-modal">

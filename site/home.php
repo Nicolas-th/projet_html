@@ -233,13 +233,15 @@ if($user) { ?>
 <h4><?= $profile['nickname']?></h4>
 <?php if(!$user) { ?>
 	<div id="changeAvatar">
-		<form  action="includes/edit-profile.inc.php" method="post" enctype="multipart/form-data">
-		    <div class="upload">
-		        <input type="file" name="avatar" id="avatar" value="">
-		    </div>
-		    <span><input id="submit_photo" name="submit_user_avatar" type="submit" value="OK"/></span>
-		    
-		</form>
+		<div id="form_avatar">
+			<form enctype="multipart/form-data" action="<?php echo($chemin_relatif_site); ?>includes/edit-profile.inc.php" method="post">
+				<div>
+					<input type="file" name="avatar" accept="image/*">
+				</div>
+				<input type="hidden" name="id_lieu" value="<?php echo($id_lieu) ?>">
+				<input type="submit" value="Charger une photo">
+			</form>
+		</div>
 		<div class="conteneur_progress_bar">
 				<div class="progress_bar"></div>
 				<div class="progress_value">0%</div >
