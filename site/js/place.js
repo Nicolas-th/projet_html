@@ -45,7 +45,7 @@ $(function() {
 		var id_last = $('.commentaire').last().attr('id').replace('comment_','');
 		$.ajax({
 			type : "POST",
-			url : '/site/ajax/get_comments.xhr.php',
+			url : '/ajax/get_comments.xhr.php',
 			data : {
 				'id' : id_last,
 				'limit' : 5, 
@@ -69,15 +69,15 @@ $(function() {
 
 	$('#upload_medias form input[type=submit]').addClass('hide');	// On cache l'input submit
 
+	// Lorsque un fichier est selectionné (photo /vidéo) on charge celui-ci automatiquement
 	$('#upload_medias form input[type=file]').on('change',function(){
-		//$(this).parents('form').first().submit();
 		uploadFile('#'+$(this).parents('form').first().parent('div').attr('id'));
 	});
 
 	
 	$.ajax({
 		type : "POST",
-		url : '/site/ajax/displaydoughnut.xhr.php',
+		url : '/ajax/displaydoughnut.xhr.php',
 		data : {
 			'lieu' : lieu,
 		},
@@ -107,7 +107,7 @@ $(function() {
 function likeDislike(lieu,type) {
 	$.ajax({
 		type : "POST",
-		url : "/site/ajax/ajout_like_dislike.xhr.php",
+		url : "/ajax/ajout_like_dislike.xhr.php",
 		dataType : 'json',
 		data : {
 			'lieu' : lieu,
@@ -139,7 +139,7 @@ function likeDislike(lieu,type) {
 
 
 function signal(id,lien){
-	$.post("/site/ajax/signaler.xhr.php",{
+	$.post("/ajax/signaler.xhr.php",{
 		id : id
 	},
 	function(data){
@@ -149,7 +149,7 @@ function signal(id,lien){
 }
 
 function postCommentaire(lieu,commentaire,success){
-	$.post("/site/ajax/add_comment.xhr.php",{
+	$.post("/ajax/add_comment.xhr.php",{
 		'lieu' : lieu,
 		'message' : commentaire
 	}, 
@@ -159,45 +159,4 @@ function postCommentaire(lieu,commentaire,success){
 			success.call();
 		}
 	});	
-}
-
-function uploadFile(conteneurFormSelector){
-
-    var form            = $(conteneurFormSelector).children('form').first();
-    var progressbox     = $(conteneurFormSelector).parent().children('.conteneur_progress_bar').first();
-    var progressbar     = progressbox.children('.progress_bar').first();
-    var statustxt       = progressbox.children('.progress_value').first();
-    var button    		= $(conteneurFormSelector).children('input[type="file"]').first();
-    var completed       = '0%';
-
-    $(form).ajaxSubmit({
-        beforeSend: function() {
-            $('.response').remove();
-            button.attr('disabled', '');
-            statustxt.empty();
-            progressbox.slideDown(); 
-            progressbar.width(completed);
-            statustxt.html(completed);
-            statustxt.css('color','#000');
-        },
-        uploadProgress: function(event, position, total, percentComplete) {
-        	console.log(event, position, total, percentComplete);
-            progressbar.width(percentComplete + '%')
-            statustxt.html(percentComplete + '%')
-            if(percentComplete>50){
-                    statustxt.css('color','#fff');
-            }
-        },
-        complete: function(response) {
-        	console.log(response);
-            if(response.status=='200'){
-                progressbox.after('<p class="response">'+response.responseText+'</p>');
-                form.resetForm();
-                button.removeAttr('disabled');
-                progressbox.slideUp();
-            }else{
-                progressbox.after('<p class="response">'+response.responseText+'</p>');
-            }
-        }
-    });
 }
