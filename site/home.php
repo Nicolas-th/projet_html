@@ -18,6 +18,11 @@ require_once('includes/profile.inc.php');
 /*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
 require_once('includes/functions.inc.php');
 
+/*-------- DETECTION DES MOBILES -------*/
+require_once('classes/Mobile_Detect.class.php');
+
+$detectMobile = new Mobile_Detect();
+
 
 function getPlaces($str) {
 		$clean = explode(",",$str);
@@ -37,8 +42,11 @@ function getPlaces($str) {
 <html>
   <head>
   	<meta charset="UTF-8">
+
+  	<title>Find It Out - Redéfinissez le must-see.</title>
   	
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+   
     <link rel="stylesheet" type="text/css" href="assets/css/global.css">
     <link rel="stylesheet" type="text/css" href="assets/css/home.css">
     <link rel="stylesheet" type="text/css" href="assets/css/modals.css">
@@ -113,6 +121,9 @@ if(isset($_SESSION["id"])){
 <!-- ***************Début de la sidebar profil******************** -->
 
 <div id="sidebar_profile">
+	<?php if(isset($_SESSION['id']) && $detectMobile->isMobile()){ ?>
+		 <a href="create-place.php" class="ajax-link">créer un lieu</a>
+	<?php } ?>
 
 	<?php 
 	if($user) { ?>
@@ -165,14 +176,10 @@ if(isset($_SESSION["id"])){
 					$places = getPlaces($profile_route['places']);					
 			?>	
 			<li class="itinerary"> <!-- A comparer avec fichier local -->
+					<a href="#"></a>
 					<h5><?= $profile_route['name']?></h5>
 					<div class="saved"></div>	
-			<?php
-				foreach ($places as $place) {	
-					$place_name = $dbh -> query("SELECT * FROM places WHERE id LIKE '$place'")->fetch();
-				?>	
-					<p><?=  $place_name['name'] ?></p>		
-				<?php } ?> 
+					
 			</li>
 			 <?php } ?>
 	  	<a class="edit_itineraries" href="#">modifier</a>
