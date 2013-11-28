@@ -6,6 +6,10 @@ var Transition = function(){
 		overlay : '.md-overlay',
 		pages : [],
 		opened : null,
+		firstPage : {
+			title : '',
+			url : '/'
+		},
 		styles : {
 			classShow : 'md-show',
 			classContent : 'md-content',
@@ -19,7 +23,8 @@ var Transition = function(){
 
 		_this.params.historyAPI = ((window.history.pushState && window.history.back)?true:false);
 
-		_this.params.url = window.location;
+		_this.params.firstPage.url = window.location;
+		_this.params.firstPage.title = document.title;
 
 		for(var key=0; key<_this.params.pages.length; key++){
 			var page = _this.params.pages[key];
@@ -48,7 +53,7 @@ var Transition = function(){
 
 		// On détécte le retour en arrière
 		$(window).on('popstate', function() {
-			if(window.location==_this.params.url){
+			if(window.location==_this.params.firstPage.url){
 				if(_this.params.opened!=null){
 					_this.close(_this.params.opened,false);
 				}
@@ -91,6 +96,7 @@ var Transition = function(){
 		if(_this.params.historyAPI && backHistory!==false){
 	    	window.history.back();
 	    }
+	    document.title = _this.params.firstPage.title;
 	    _this.params.opened = null;
 	};
 };
