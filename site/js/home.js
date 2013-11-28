@@ -67,111 +67,86 @@ $(function () {
     /* Instantiation de la classe Autocompletion */
     carte.autocompletion = new Autocompletion();
 
-    if (navigator.geolocation) {
+    localize.getUserLocation({
+        localized : function(positionGeoc){
+         carte.autocompletion.init({
+                   location : {
+                        latitude: positionGeoc.latitude,
+                        longitude: positionGeoc.longitude
+                   },
+                   retriction : {country: 'fr'},
+                   rankBy : 'distance'
+            });
 
-        navigator.geolocation.getCurrentPosition(
-            function (positionGeoc) { // success
+            // On initialise la carte sur la position en cours (et on ajoute un marker)
+            var initialPosition = {
+                latitude: positionGeoc.latitude,
+                longitude: positionGeoc.longitude
+            };
+            carte.map.setCenter({
+                position: initialPosition
+            });
+            carte.map.ajouterMarker({
+                position: initialPosition,
+                nom: 'Votre position'
+            });
 
-
-                carte.autocompletion.init({
-                       location : {
-                            latitude: positionGeoc.coords.latitude,
-                            longitude: positionGeoc.coords.longitude
-                       },
-                       retriction : {country: 'fr'},
-                       rankBy : 'distance'
-                });
-
-                // On initialise la carte sur la position en cours (et on ajoute un marker)
-                var initialPosition = {
-                    latitude: positionGeoc.coords.latitude,
-                    longitude: positionGeoc.coords.longitude
-                };
-                carte.map.setCenter({
-                    position: initialPosition
-                });
-                carte.map.ajouterMarker({
-                    position: initialPosition,
-                    nom: 'Votre position'
-                });
-
-                // On cherche des éventuels lieux autour de la position actuelle et on ajoute des markers
-                carte.itineraire.rechercherLieux({
-                    points: [initialPosition],
-                    success: function (data, textStatus, jqXHR) {
-                        if (data.code == '200') {
-                            for (key in data.lieux) {
-                                var current = data.lieux[key];
-                                var currentPosition = {
-                                    latitude: current.latitude,
-                                    longitude: current.longitude
-                                };
-                                carte.map.ajouterMarker({
-                                    position: currentPosition,
-                                    categorie: current.categories_id,
-                                    nom: current.name,
-                                    href: current.href,
-                                    click : function(params){
-                                    	carte.transition.open({
-                                        	element: '#navigation-ajax'
-                                      },params.href);
-                                    }
-                                });
-                            }
+            // On cherche des éventuels lieux autour de la position actuelle et on ajoute des markers
+            carte.itineraire.rechercherLieux({
+                points: [initialPosition],
+                success: function (data, textStatus, jqXHR) {
+                    if (data.code == '200') {
+                        for (key in data.lieux) {
+                            var current = data.lieux[key];
+                            var currentPosition = {
+                                latitude: current.latitude,
+                                longitude: current.longitude
+                            };
+                            carte.map.ajouterMarker({
+                                position: currentPosition,
+                                categorie: current.categories_id,
+                                nom: current.name,
+                                href: current.href,
+                                click : function(params){
+                                    carte.transition.open({
+                                        element: '#navigation-ajax'
+                                  },params.href);
+                                }
+                            });
                         }
                     }
-                })
-            },
-            function () { // error
-                $('#position').remove();
-                carte.map.setCenter({
-                    position: {
-                        latitude: 48.857713,
-                        longitude: 2.347271,
-                    }
-                });
+                }
+            });
 
-                carte.autocompletion.init({
-                       location : {
-                            latitude: positionGeoc.coords.latitude,
-                            longitude: positionGeoc.coords.longitude
-                       },
-                       retriction : {country: 'fr'},
-                       rankBy : 'distance'
-                });
-            }
-        );
-
-        // Bouton pour partir depuis sa position de départ
-        $('#position').on('click', function (evt) {
-            evt.preventDefault();
-            $('#resultats_lieux_depart').empty();
-            navigator.geolocation.getCurrentPosition(function (currentPosition) {
-                $('input[name="latitude_position"]').val(currentPosition.coords.latitude);
-                $('input[name="longitude_position"]').val(currentPosition.coords.longitude);
+            // Bouton pour partir depuis sa position de départ
+            $('#position').on('click', function (evt) {
+                evt.preventDefault();
+                $('#resultats_lieux_depart').empty();
+                 $('input[name="latitude_position"]').val(positionGeoc.latitude);
+                $('input[name="longitude_position"]').val(positionGeoc.longitude);
                 $('#lieux_depart').val('Ma position');
                 $('#ref_lieux_depart').val('position');
             });
-        });
+        },
+        error : function(){
+            $('#position').remove();
+            carte.map.setCenter({
+                position: {
+                    latitude: 48.857713,
+                    longitude: 2.347271,
+                }
+            });
 
-    // Si la géolocalisation est désactivée on centre la map sur le châtelet 
-    } else {
-        $('#position').remove();
-        carte.map.setCenter({
-            position: {
-                latitude: 48.857713,
-                longitude: 2.347271,
-            }
-        });
-        carte.autocompletion.init({
-               location : {
-                    latitude: positionGeoc.coords.latitude,
-                    longitude: positionGeoc.coords.longitude
-               },
-               retriction : {country: 'fr'},
-               rankBy : 'distance'
-        });
-    }
+            carte.autocompletion.init({
+                   location : {
+                        latitude: positionGeoc.coords.latitude,
+                        longitude: positionGeoc.coords.longitude
+                   },
+                   retriction : {country: 'fr'},
+                   rankBy : 'distance'
+            });
+        }
+    });
 
     // On test si la touche tab ou entré est appuyé et que le focus est sur un des élements de la liste d'autocomplétion pour valider le lieu en focus
     $('#lieux_depart').on('keydown', function (evt) {
@@ -547,111 +522,115 @@ function lancerRechercheLieux(params){
 
                         if(carte.suivi.position!=null){
                             carte.points.position = null;
-                            navigator.geolocation.clearWatch(carte.suivi.position);
+                            localize.removeTrack({
+                                id : carte.suivi.position
+                            });
                         }
-                        carte.suivi.position = navigator.geolocation.watchPosition(function(position) {
+                        
+                        carte.suivi.position = localize.addTrack({
+                            added : function(position){
+                                var current_itineraire = carte.itineraires[0];
+                                var distance_arrivee = calculerDistancePoints(position.latitude,position.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
+                                // Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
+                                if(typeof(carte.points.position)==undefined || carte.points.position==null || (calculerDistancePoints(carte.points.position.coords.latitude,carte.points.position.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
 
-                            var current_itineraire = carte.itineraires[0];
-                            var distance_arrivee = calculerDistancePoints(position.coords.latitude,position.coords.longitude,current_itineraire.arrivee.latitude,current_itineraire.arrivee.longitude);
-                            // Si l'itinéraire vient de démarrer ou que l'utilisateur s'est déplacé de plus de 10 mètres ou que l'arrivée est à moins de 50 mètres
-                            if(typeof(carte.points.position)==undefined || carte.points.position==null || (calculerDistancePoints(carte.points.position.coords.latitude,carte.points.position.coords.longitude,position.coords.latitude,position.coords.longitude)>0.01) || distance_arrivee<=0.05){
+                                    carte.points.position = position; // On met à jour la position
 
-                                carte.points.position = position; // On met à jour la position
-
-                                carte.map.nettoyer({ 
-                                    type : 'all',
-                                    finished : function(){
-                                        if(distance_arrivee<=0.1){
-                                            carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
-                                            current_itineraire = carte.itineraires[0];  // On met à jour l'itinéraire courant
-                                        }
-           
-                                        var points = {
-                                            depart : {
-                                                latitude : position.coords.latitude,
-                                                longitude : position.coords.longitude
-                                            },
-                                            arrivee : {
-                                                latitude : current_itineraire.arrivee.latitude,
-                                                longitude : current_itineraire.arrivee.longitude
+                                    carte.map.nettoyer({ 
+                                        type : 'all',
+                                        finished : function(){
+                                            if(distance_arrivee<=0.1){
+                                                carte.itineraires = deleteValueFromArray(carte.itineraires,carte.itineraires[0]);
+                                                current_itineraire = carte.itineraires[0];  // On met à jour l'itinéraire courant
                                             }
+               
+                                            var points = {
+                                                depart : {
+                                                    latitude : position.latitude,
+                                                    longitude : position.longitude
+                                                },
+                                                arrivee : {
+                                                    latitude : current_itineraire.arrivee.latitude,
+                                                    longitude : current_itineraire.arrivee.longitude
+                                                }
+                                            }
+
+                                            carte.map.traceItineraire({
+                                                points : {
+                                                    depart : points.depart,
+                                                    arrivee : points.arrivee
+                                                },
+                                                type : 'current_itineraire',
+                                                finished : function(returns){
+
+                                                    // On centre sur la position de l'utilisateur
+                                                    carte.map.setZoom({
+                                                        zoom : 15
+                                                    });
+                                                    carte.map.setCenter({
+                                                        position: points.depart
+                                                    });
+
+                                                    // On affiche les instructions concernant l'itinéraire en cours
+                                                    var instructions = carte.map.getInstructionsItineraire(returns);
+
+                                                    var htmlInstructions = '<ul>';
+                                                    for(i in instructions){
+                                                         htmlInstructions+='<li class="'+instructions[i].type+'">'+instructions[i].texte;
+                                                         if(instructions[i].sousInstructions.length>0){
+                                                            htmlInstructions += '<ul>';
+                                                            for(j in instructions[i].sousInstructions){
+                                                                htmlInstructions+='<li class="'+instructions[i].sousInstructions[j].type+'">'+instructions[i].sousInstructions[j].texte+'</li>';
+                                                            }
+                                                            htmlInstructions += '</ul>';
+                                                         }
+                                                         htmlInstructions += '</li>';
+                                                    }
+                                                    htmlInstructions += '</ul>';
+
+                                                    $('#resultat_lieux').hide();
+                                                    $('#guidage_itineraire').empty();
+
+                                                    // On affiche la durée estimée pour l'itinéraire en cours
+                                                    var duree = secondesToDuree(carte.map.getDureeItineraire(returns));
+                                                    if($('.duree_itineraires').length>0){
+                                                        $('.duree_itineraires').remove();
+                                                    }
+
+                                                    // On remplace le bouton "démarrer" par un bouton "modifier"
+                                                    $('#demarrer_itineraire').replaceWith('<button id="modifier_itineraire">Modifier</button>');
+                                                    $('#guidage_itineraire').append($('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree));
+
+                                                    $('#guidage_itineraire').append($('<div class="instructions_itineraire"></div>').append(htmlInstructions));
+                                                    $('#guidage_itineraire').show();
+
+                                                    $('#modifier_itineraire').on('click',function(){
+                                                        $('#modifier_itineraire').replaceWith('<button id="demarrer_itineraire">Démarrer</button>');
+                                                        $('#resultat_lieux').show();
+                                                        $('#guidage_itineraire').hide();
+                                                    });
+
+                                                    arreterLoader();
+                                                }   
+                                            });
+
+                                            carte.map.ajouterMarker({
+                                                position : points.depart,
+                                                nom : 'Votre position',
+                                                type : 'current_itineraire'
+                                            });
+                                            
+                                            carte.map.ajouterMarker({
+                                                position : points.arrivee,
+                                                nom : current_itineraire.arrivee.name,
+                                                categorie : current_itineraire.arrivee.categorie,
+                                                type : 'current_itineraire'
+                                            });
                                         }
-
-                                        carte.map.traceItineraire({
-                                            points : {
-                                                depart : points.depart,
-                                                arrivee : points.arrivee
-                                            },
-                                            type : 'current_itineraire',
-                                            finished : function(returns){
-
-                                                // On centre sur la position de l'utilisateur
-                                                carte.map.setZoom({
-                                                    zoom : 15
-                                                });
-                                                carte.map.setCenter({
-                                                    position: points.depart
-                                                });
-
-                                                // On affiche les instructions concernant l'itinéraire en cours
-                                                var instructions = carte.map.getInstructionsItineraire(returns);
-
-                                                var htmlInstructions = '<ul>';
-                                                for(i in instructions){
-                                                     htmlInstructions+='<li class="'+instructions[i].type+'">'+instructions[i].texte;
-                                                     if(instructions[i].sousInstructions.length>0){
-                                                        htmlInstructions += '<ul>';
-                                                        for(j in instructions[i].sousInstructions){
-                                                            htmlInstructions+='<li class="'+instructions[i].sousInstructions[j].type+'">'+instructions[i].sousInstructions[j].texte+'</li>';
-                                                        }
-                                                        htmlInstructions += '</ul>';
-                                                     }
-                                                     htmlInstructions += '</li>';
-                                                }
-                                                htmlInstructions += '</ul>';
-
-                                                $('#resultat_lieux').hide();
-                                                $('#guidage_itineraire').empty();
-
-                                                // On affiche la durée estimée pour l'itinéraire en cours
-                                                var duree = secondesToDuree(carte.map.getDureeItineraire(returns));
-                                                if($('.duree_itineraires').length>0){
-                                                    $('.duree_itineraires').remove();
-                                                }
-
-                                                // On remplace le bouton "démarrer" par un bouton "modifier"
-                                                $('#demarrer_itineraire').replaceWith('<button id="modifier_itineraire">Modifier</button>');
-                                                $('#guidage_itineraire').append($('<p class="duree_itineraires"></p>').html('Durée estimée : '+duree));
-
-                                                $('#guidage_itineraire').append($('<div class="instructions_itineraire"></div>').append(htmlInstructions));
-                                                $('#guidage_itineraire').show();
-
-                                                $('#modifier_itineraire').on('click',function(){
-                                                    $('#modifier_itineraire').replaceWith('<button id="demarrer_itineraire">Démarrer</button>');
-                                                    $('#resultat_lieux').show();
-                                                    $('#guidage_itineraire').hide();
-                                                });
-
-                                                arreterLoader();
-                                            }   
-                                        });
-
-                                        carte.map.ajouterMarker({
-                                            position : points.depart,
-                                            nom : 'Votre position',
-                                            type : 'current_itineraire'
-                                        });
-                                        
-                                        carte.map.ajouterMarker({
-                                            position : points.arrivee,
-                                            nom : current_itineraire.arrivee.name,
-                                            categorie : current_itineraire.arrivee.categorie,
-                                            type : 'current_itineraire'
-                                        });
-                                    }
-                                }); 
+                                    }); 
+                                }
                             }
-                        }); 
+                        });
                     }
                 });
             });

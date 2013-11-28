@@ -333,6 +333,7 @@ if($user) { ?>
 	<script type="text/javascript" src="js/navigation-ajax.js"></script>
 	<script type="text/javascript" src="js/itineraire.js"></script>
 	<script type="text/javascript" src="js/loader.js"></script>
+	<script type="text/javascript" src="js/localize.js"></script>
 	<script type="text/javascript" src="js/home.js"></script>
 	<script type="text/javascript" src="js/sidebar.js"></script>
 	<script type="text/javascript" src="js/edit-profile.js"></script>
