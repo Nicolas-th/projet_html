@@ -3,6 +3,7 @@
 
 	require_once('config/config.php'); 
 	require_once('includes/functions.inc.php');
+	require_once('classes/sql.class.php');
 
 	if(!isset($_SESSION['id'])){
    		header('Location : '.$chemin_relatif_site.'index.php');
@@ -60,12 +61,19 @@
 								<option value="0">Intérieur</option>
 								<option value="1">Extérieur</option>
 							</select>
-							
-							<select name="categorie">
-								<option value="1">Catégorie 1</option>
-								<option value="2">Catégorie 2</option>
-								<option value="3">Catégorie 3</option>
-								<option value="4">Catégorie 4</option>
+
+							<select name="categorie">	
+								<?php
+								$sql = new SQL($dbh);
+								$sql->prepare("SELECT * FROM categories");
+								$categories = $sql->execute(true);
+
+								if(is_array($categories) && count($categories)>0){
+									foreach($categories as $cat){
+										echo('<option value="'.$cat['id'].'">'.$cat['name'].'</option>');
+									}
+								}
+								?>
 							</select>
 							
 							<input type="hidden" name="address" value="<?php echo $address; ?>" />
