@@ -15,7 +15,8 @@ var Transition = function(){
 			classContent : 'md-content',
 			classContent : 'md-content',
 			classPage : 'md-modal md-effect-1'
-		}
+		},
+		backHistory : -1
 	}
 
 	_this.init = function(params){
@@ -62,6 +63,16 @@ var Transition = function(){
 	};
 
 	_this.open = function(page,href){
+		if(_this.params.opened!=null){
+	    	_this.close(_this.params.opened,false,function(){
+	    		_this.load(page,href);
+	    	});
+	    }else{
+	    	_this.load(page,href);
+	    }
+	};
+
+	_this.load = function(page,href){
 		$.ajax({
 			url : href,
 			success : function(data){
@@ -78,9 +89,6 @@ var Transition = function(){
 			    		window.history.pushState({path:href},title,href);
 			    	}
 			    }
-			    if(_this.params.opened!=null){
-			    	_this.close(_this.params.opened);
-			    }
 			    _this.params.opened = page;
 
 			    window.setTimeout(function(){ 
@@ -88,15 +96,22 @@ var Transition = function(){
 			    },200); // Délai d'attente avant la transition pour que le css soit appliqué
 	   		}
 		});
-	};
+	}
 
-	_this.close = function(page,backHistory){
+	_this.close = function(page,backHistory,finished){
 		$(page.element).html('');
 		$(page.element).removeClass(_this.params.styles.classShow);
 		if(_this.params.historyAPI && backHistory!==false){
-	    	window.history.back();
+	    	window.history.go(_this.params.backHistory);
+	    	_this.params.backHistory = -1;
+	    }else if(backHistory==false){
+	    	_this.params.backHistory--;
 	    }
 	    document.title = _this.params.firstPage.title;
 	    _this.params.opened = null;
+
+	    if(typeof(finished)=='function'){
+	    	finished.call(this);
+	    }
 	};
 };
