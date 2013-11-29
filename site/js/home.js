@@ -175,6 +175,7 @@ $(function () {
                     $('#resultats_lieux_depart li').first().addClass('actif');
                 }
             }
+        // Affichage de l'autocompletion
         }else if(keyCode != 13 && keyCode != 9) { // Touche entrée & touche tab
             $('input[name="latitude_position"]', 'input[name="longitude_position"]').val('');
             $('#ref_lieux_depart').val('');
@@ -226,6 +227,7 @@ $(function () {
                     $('#resultats_lieux_arrive li').first().addClass('actif');
                 }
             }
+        // Affichage de l'autocompletion
         }else if (keyCode != 13 && keyCode != 9) { // Touche entrée
             $('#ref_lieux_arrive').val('');
             carte.autocompletion.rechercher({
@@ -437,6 +439,7 @@ function lancerRechercheLieux(params){
         success: function(data, textStatus, jqXHR){
             if(data.code=='200'){
 
+                // Affichage de la liste des lieux trouvés
                 var liste_lieux = '<ul>';
 
                 for(key in data.lieux) {
@@ -458,6 +461,8 @@ function lancerRechercheLieux(params){
                 liste_lieux+='</ul>';
 
                 $('#resultat_lieux').html(liste_lieux);
+
+                // On crée des boutons qui resteront ensuite visibles
                 if($('#enregistrer_itineraire').length==0){
                     $('.titre_parcours').after($('<div class="actions_itineraire"></div>')
                         .append('<button id="demarrer_itineraire">Démarrer</button>')
@@ -526,7 +531,7 @@ function lancerRechercheLieux(params){
                                 id : carte.suivi.position
                             });
                         }
-                        
+
                         carte.suivi.position = localize.addTrack({
                             added : function(position){
                                 var current_itineraire = carte.itineraires[0];

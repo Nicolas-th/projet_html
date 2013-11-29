@@ -23,10 +23,7 @@ var Autocompletion = function(){
 		_this.defaults.rechercher = $.extend(true,{}, _this.defaults.rechercher, params);
 	}
 
-	/*
-	## rechercher() ##
-			Paramètre attendu : aucun
-	*/
+	// Fonction permettant de rechercher une adresse / lieu depuis la BDD Google
 	_this.rechercher = function(params){
 		params = $.extend(true, {},_this.defaults.rechercher, params);
 
@@ -56,6 +53,7 @@ var Autocompletion = function(){
 	    });
 	}
 
+	// Retourne la position du lieu dont la référence (Google Place) est passée en paramètre : {reference : ref}
 	_this.getPosition = function(params){
 		params = $.extend(true, {},_this.defaults.getPosition, params);
 

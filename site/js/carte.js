@@ -318,7 +318,9 @@ var Carte = function() {
 	    	/* Lorsque le chargement des itinéraires est terminé on centre la carte sur l'itinéraire */
 	    	var bounds = new google.maps.LatLngBounds();
     		for(key in _this.markers){
-    			bounds.extend(_this.markers[key].marker.position);
+    			if(_this.markers[key].type=="itineraires_lieux"){
+    				bounds.extend(_this.markers[key].marker.position);
+    			}
     		}
     		_this.carte.fitBounds(bounds);
 	    	params.finished.call(this,{
