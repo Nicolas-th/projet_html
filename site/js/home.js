@@ -716,7 +716,7 @@ function lancerRechercheLieux(params){
 
                 // On créé le formulaire d'ajout de lieu
                 $('#save-itineraire-modal .md-content').empty().append('<p>Enregistrement de l\'itinéraire</p>');
-                $('#save-itineraire-modal .md-content').append('<a href="#" class="md-close"><img src="assets/img/close.png" alt="close"></a>');
+                $('#save-itineraire-modal .md-content').append('<a href="#" class="md-close"><img src="assets/img/close.png" alt="close" width="15" height="15"></a>');
                 $('#save-itineraire-modal .md-content').append($('<form method="post" action=""></form>').append('<input type="text" name="name" placeholder="Nom de l\'itinéraire" id="name" required><br>').append('<input type="submit" name="submit_signin" value="Enregistrer">'));
 
                 // On affiche le formulaire

@@ -58,6 +58,11 @@ body, p{
 	max-width:540px;
 	background-color:#a7a7a7;
 	margin:2px auto;
+	padding-bottom: 20px;
+}
+
+#container{
+	height: 100%;
 }
 
 .cover{
@@ -148,8 +153,8 @@ h2{
 	height:60px;
 	display:inline-block;
 	border-radius:30px;
-	border:1px solid #ffffff;
 	margin-right:14px;
+	border: 1px solid;
 }
 
 .photo-lieu:last-child{
@@ -340,14 +345,14 @@ form{
 	line-height: 0.6;
 }
 
-label{
+/*label{
     float: left;
     margin-right: 10px;
     text-align: right;
     width: 40%;
     vertical-align: top;
     line-height: 1.2;
-}
+}*/
 
 input:not(.submit), textarea{
 	width:40%;
@@ -359,6 +364,7 @@ input[type="submit"]{
     border-radius: 4px 4px 4px 4px;
     color: #FFFFFF;
     margin-top: 20px;
+    cursor:pointer;
 }
 
 div#fields-select-submit{

@@ -4,7 +4,7 @@
 	require_once('includes/functions.inc.php');
 	require_once('classes/Mobile_Detect.class.php');
 
-	/*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
+	/*-------- SÉLÉCTION DES INFORMATIONS DE L'UTILISATEUR -------*/
 	require_once('includes/profile.inc.php');
 
 	if(!isset($_GET['id'])){
@@ -68,22 +68,44 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title><?php echo $result['name'] ?></title>
 		<meta name="viewport" content="initial-scale=1.0">
+
+		<meta property="og:title" content="<?php echo $result['name'] ?>"/>
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="http://www.find-it-out.fr<?php echo $_SERVER['REQUEST_URI'];?>" />
+		<meta property="og:description" content="<?php echo $result['description']; ?>" />
+		<meta property="og:image" content="http://www.find-it-out.fr<?php echo $cover ?>" />
+		<meta property="og:site_name" content="Find It Out"/>
+
+		<title><?php echo $result['name'] ?> - Find It Out !</title>
+
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/global.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/place.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo($chemin_relatif_site); ?>assets/css/simplegrid-lieu.css" />
 	</head>
 	<body>
+
+		<div id="fb-root"></div>
+		<script>
+			//Script pour charger le SDK de Facebook
+			(function(d, s, id) {
+			  var js, fjs = d.getElementsByTagName(s)[0];
+			  if (d.getElementById(id)) return;
+			  js = d.createElement(s); js.id = id;
+			  js.src = "//connect.facebook.net/fr_FR/all.js#xfbml=1&appId=685019291528792";
+			  fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		</script>
+
 		<?php if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) { ?>
 			<header>
 		  	<?php if(isset($_SESSION["id"])){ ?>
-				<a href="logout.php"><div class="icon"></div></a>
+				<a href="../logout.php"><div class="icon"></div></a>
 			<?php }else{ ?>
 				<a href="index.php" class="connexion">Connexion</a>
 			<?php } ?>
 		  	</header>
-		  	<a href="index.php" id="bouton">Accueil</a> 
+		  	<a href="../index.php" id="bouton">Accueil</a> 
 		<?php } ?>
 		<div id="container-lieu" data-id="<?php echo $id_lieu; ?>">
 
@@ -186,12 +208,16 @@
 			<div class="grid grid-pad">
 				<div class="col-1-1">
 					<div id="photos-lieu">
-						<img class="photo-lieu" src="" alt="">
-						<img class="photo-lieu" src="" alt="">
-						<img class="photo-lieu" src="" alt="">
-						<img class="photo-lieu" src="" alt="">
-						<img class="photo-lieu" src="" alt="">
-						<img class="photo-lieu" src="" alt="">
+						<?php if($count_profile_media_images==0) { ?>
+								<p>Il n'y a aucune photo pour le moment</p>
+						<?php } else { 
+									foreach ($profile_media_image as $profile_media_image) {
+										$profile_media_image_id=$profile_media_image['id'];
+										$src_place = $dbh -> query("SELECT places_id FROM media WHERE id LIKE '$profile_media_image_id'")->fetch(0);
+						?>	
+										<img class="photo-lieu" src="<?php echo(getUrlMedia($profile_media_image['url_file'],$src_place['places_id'],'img'))?>" alt="">
+							<?php } ?>
+						<?php } ?>
 					</div>
 				</div>
 				<div class="col-1-1">
@@ -207,7 +233,7 @@
 						<div>
 							<input type="file" name="imageFile" accept="image/*">
 						</div>
-						<input type="hidden" name="id_lieu" value="<?php echo($id_lieu) ?>">
+						<input type="hidden" name="id_lieu" value="<?php echo($id_lieu); ?>">
 						<input type="submit" value="Charger une photo">
 					</form>
 				</div>
@@ -217,17 +243,40 @@
 						<div>
 					  		<input type="file" name="videoFile" accept="video/*" />
 					  	</div>
-					  	<input type="hidden" name="id_lieu" value="<?php echo($id_lieu) ?>">
+					  	<input type="hidden" name="id_lieu" value="<?php echo($id_lieu); ?>">
 					 	<input type="submit" value="Charger une vidéo">
 					</form>
 				</div>
 				<div class="conteneur_progress_bar">
+
 					<div class="progress_bar"></div>
 					<div class="progress_value">0%</div >
 				</div>
 			</div>
 
 			<?php } ?>
+			
+			<div class="grid grid-pad">
+				<div class="col-3-12">
+					<div class="fb-share-button" data-href="http://www.find-it-out.fr<?php echo $_SERVER['REQUEST_URI']; ?>" data-type="button_count"></div>
+				</div>
+				<div class="col-3-12">
+					<a href="https://twitter.com/share" class="twitter-share-button" data-via="Find_It_Out" data-lang="fr" data-hashtags="lieuinsolite">Tweeter</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+				</div>
+				<div class="col-3-12">
+					<div class="g-plusone"></div>
+					<script type="text/javascript">
+						  window.___gcfg = {lang: 'fr'};
+
+						  (function() {
+						    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+						    po.src = 'https://apis.google.com/js/platform.js';
+						    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+						  })();
+					</script>
+				</div>
+			</div>
 
 			<div class="grid grid-pad">
 
@@ -282,6 +331,7 @@
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/jquery.form.js"></script>
 		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/chart.js"></script>
+		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/functions.js"></script>
 		<script type="text/javascript" src="<?php echo($chemin_relatif_site); ?>js/place.js"></script>
 		<script>
 			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
