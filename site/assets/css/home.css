@@ -26,80 +26,54 @@
 }
 
 
-html { height: 100% }
-body { height: 100%;
-margin: 0;
-padding: 0;
-font-family: 'LatoLight',Verdana,Arial;
-font-size:18px;
-color:white; 
+html { 
+	width: 100%;
+	height: 100%;
+}
+body { 
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'LatoLight',Verdana,Arial;
+	font-size:18px;
+	color:white; 
 	-webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	overflow: hidden;
 }
-#map-canvas { display:block; height: 100%; z-index:1; }
-      
-body > :first-child{
-	   width:100%;
-	   height:40px;
-	   background-color:#4ece9d;
-	   box-shadow: 8px 8px 0px #aaa; 
-	   z-index:2000;
-      }
-      
-header .icon{
-  float:right;
-  margin-top:6px;
-  margin-right:20px;
-  width:25px;
-  height:25px;
-  display:inline-block;
-  cursor:pointer;
-}
-      
-header div:nth-child(3){
-  background:url('../img/personne.svg') no-repeat;
-  background-size:cover; 
-}
 
-header div:nth-child(2){
-  background:url('../img/rouage.svg') no-repeat;
-  background-size:cover; 
-  
-}
-
-header div:nth-child(1){
-  background:url('../img/logout.svg') no-repeat; 
-  background-size:cover;   
-}
+#map-canvas { display:block; height: 100%; z-index:1; }      
 
 #popup{
   width:100%;
   height:100%;
+  box-sizing : border-box;
+  padding-bottom:44px;
   background-color:rgba(151,151,151,0.9);
   z-index:1000;
   position:absolute;
   overflow:auto;
   max-width:280px;
-
-}
-
-#bouton{
-	background:url('../img/menu.svg') no-repeat;
-}
-
-#bouton2{
-	background:url('../img/route.svg') no-repeat;
+	
 }
 
 #bouton, #bouton2{
-  width:30px;
-  height:30px;
+  width:25px;
+  height:25px;
   background-size:cover;
   cursor:pointer;
   position:absolute;
-  z-index:1200;
+  top:7px;
+  left:7px;
+  z-index: 120;
+}
+
+#popup p{
+	display: block;
+	width: 230px;
+	margin: 10px auto;
 }
 
 #popup > p:nth-child(2){
@@ -117,16 +91,16 @@ header div:nth-child(1){
   background-color:white;
   outline:none;
   border:none;
-  width:215px;
+  width:200px;
   height:30px;
   line-height:30px;
   padding-left:15px;
-  position:relative;
-  left:25px;
-
+  padding-right:15px;
+  margin: 0 auto;
+  display: block;
 }
 
-#popup input[type=submit]{
+#popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire, #modifier_itineraire{
   border-radius:7px;
   background-color:#4ece9d;
   border:none;
@@ -134,15 +108,73 @@ header div:nth-child(1){
   font-size:15px;
   font-family:'OpenSansRegular';
   cursor:pointer;
-  width:150px;
-  height:30px;
-  margin: 10px 0px 8px 108px;
+  min-width:100px;
 }
 
+#popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire{
+	background-color:#4ece9d;
+}
+
+#changeAvatar form div{
+    width: 157px;
+    height: 57px;
+    margin: 0 auto;
+    background: url(https://lh6.googleusercontent.com/-dqTIJRTqEAQ/UJaofTQm3hI/AAAAAAAABHo/w7ruR1SOIsA/s157/upload.png);
+    overflow: hidden;
+    cursor : pointer;
+}
+
+#changeAvatar form div input[type=file]{
+    display: block !important;
+    width: 157px !important;
+    height: 57px !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    cursor : pointer;
+}
+
+#popup_right #changeAvatar form input[type=submit].hide{
+	display: none;
+}
+
+#modifier_itineraire{
+	background-color:#F39200;
+}
+
+#formulaire_itineraire .ligne, .actions_itineraire{
+	width: 230px;
+	position: relative;
+	margin: 0 auto;
+}
+
+.actions_itineraire button+button{
+	position: absolute;
+	right: 0;
+}
+
+#formulaire_itineraire input[type=submit]{
+	display: inline-block;
+	width:100px;
+	position: absolute;
+	right: 0;
+	vertical-align: middle;
+}
+
+#aucun_lieu{
+	display: block;
+	color:#4ece9d;
+	font-weight: bold;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.choix_transport{
+	display: inline-block;
+	vertical-align: middle;
+}
 
 #marche{
 	background:url('../img/feet.svg') no-repeat;
-	margin-left:160px;
 }
 
 #velo{
@@ -157,22 +189,28 @@ header div:nth-child(1){
 	display:inline-block;
 	width:25px;
 	height:25px;
-	background-size:cover;
+	background-size:100% 100%;
 	margin-right:5px;
 }
 
 #position{
-	background:url('../img/marker.png') no-repeat;
-	background-size:cover;
+	display: block;
+	width: 15px;
+	height: 15px;
+	text-indent: -999999px;
+	position: absolute;
+	right: 30px;
+	margin-top : -23px;
+	background:url('../img/icone-gps.png') no-repeat center left;
+	background-size:auto 100%;
 	display:block;
 	border:none;
-	font-size:14px;
+	font-size:12px;
 	cursor:pointer;
-	color:#FFF;
-	background:none;
+	color:#474747;
 	margin-left:20px;
 	margin-bottom:10px;
-	
+	float: right;
 }
 
 #position:hover{
@@ -184,11 +222,66 @@ input::-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-moz-placeholder {color: rgba(0,5,143,.5);}
 input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 
-#resultats_lieux_depart li, #resultats_lieux_arrive li{
+#formulaire_itineraire #lieux_depart{
+	padding-right: 25px;
+	width: 190px;
+}
+
+#resultats_lieux_arrive{
+	margin-bottom: 20px;
+}
+
+.autocomplete{
+	width: 230px;
+	margin: 10px auto;
+	padding : 0;
+	border-radius: .6em;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+	box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.autocomplete li{
+	display: block;
+	padding: 0 10px;
+	height: 32px;
+	line-height: 32px;
+	overflow:hidden;
+	border: 1px solid #ccc;
+	font-weight: 700;
+	color: #222;
+	text-shadow: 0 1px 0 #fff;
 	list-style: none;
 	font-family:'OpenSansSemibold';
 	font-size:13px;
-	margin-left:-15px;
+	background: #eee;
+	cursor: pointer;
+}
+
+.autocomplete li:hover{
+	background: #E0E0E0;
+}
+
+.autocomplete li.actif{
+	background: #E0E0E0;
+}
+
+.autocomplete li:first-child{
+	border-top-left-radius: .6em;
+	border-top-right-radius: .6em;
+}
+
+.autocomplete li:last-child{
+	border-bottom-left-radius: .6em;
+	border-bottom-right-radius: .6em;
+}
+
+
+#resultat_lieux ul{
+	padding: 0;
+	margin: 0 auto;
+	display: block;
+	width: 230px;
 }
 
 #resultat_lieux ul li{
@@ -196,10 +289,16 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 	list-style: none;
 	width:230px;
 	height:30px;
+	margin:10px 0;
 	border-radius:9px;
-	position:relative;
-	left:-15px;
-	margin-bottom:25px;
+}
+
+#resultat_lieux ul li, #resultat_lieux ul li label{
+	cursor: pointer;
+}
+
+#guidage_itineraire{
+	display: none;
 }
 
 #popup ul li label{
@@ -210,9 +309,6 @@ input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
 ul li img{
 	position:relative;
 	top:5px;
-	left:8px;
-	
-	
 }
 
 .icons{
@@ -220,22 +316,23 @@ float:right;
 margin-right:4px;
 }
 
-#add_place, #see_place{
+.ajouter_lieu, .voir_lieu{
 	position:relative;
 	top:6px;
 	left:-1px;
 	width:18px;
 	height:18px;
 	display:inline-block;
+	text-indent: -9999px;
 }
 
-#add_place{
+.ajouter_lieu{
 	background:url('../img/more.svg');
 	background-size:cover;
 	margin-right:2px;
 }
 
-#see_place{
+.voir_lieu{
 	background:url('../img/see.svg');
 	background-size:cover;
 	
@@ -243,42 +340,58 @@ margin-right:4px;
 }
 
 
-#see_place:active{
+.voir_lieu:active{
 	background:url('../img/see_active.svg');
 	background-size:cover;
 }
 
+/**********Instructions itinéraires*******/
 
+.instructions_itineraire ul li{
+	list-style: none;
+	margin-bottom:10px;
+	position:relative;
+	margin-left:-20px;
+	margin-right:10px;
+}
 
 /************* profil ************/
 
 #popup_right{
+	display: none;
 	width:100%;
     height:100%;
+    padding:0 20px;
+    box-sizing : border-box;
     overflow:auto;
     background-color:rgba(151,151,151,0.9);
 	z-index:1000;
 	position:absolute;
-	right:0px; /* - 280 pour la masquer */
+	/*right:0px; /* - 280 pour la masquer */
+	right: -280px;
 	max-width:280px;
 }
-
-
 
 .mask{
 	width:120px;
 	height:120px;
 	border-radius: 60px;
-	margin:0 auto;
+	margin:5px auto;
 }
 
 #popup_right p{
 	font-size:15px;
-	margin:0 auto;
+	padding:0;
+	margin:0;
 }
 
-#popup_right h3{
+#popup_right h3, #popup_right h4{
 	text-align:center;
+}
+
+#popup_right h4 {
+	margin-top: -20px;
+	font-family:'LatoLight';
 }
 
 #popup_right > p:not(#profile_picture){
@@ -287,13 +400,27 @@ margin-right:4px;
 }
 
 #popup_right ul{
-	margin-left:10px;
 	padding:0;
 }
 #popup_right ul li{
 	list-style:none;
 	font-family: 'OpenSansRegular';
 	
+}
+
+/*
+#sidebar_profile{
+	padding:20px;
+}
+*/
+
+#sidebar_profile ul li a{
+	text-decoration:none;
+	color:white;
+}
+
+hr + p{
+	font-family:'OpenSansRegular',Verdana,Arial;
 }
 
 label.place{ 
@@ -312,6 +439,7 @@ label.place{
 }
 
 .saved{
+	display:none;
 	float:left;
 	width:20px;
 	height:20px;
@@ -322,28 +450,38 @@ label.place{
 }
 
 .trash{
-	float:left;
-	width:20px;
-	height:20px;
-	background:url('../img/trash.svg') no-repeat;
-	background-size:cover;
-	position:relative;
-	top:10px;
-	
+	width: 20px;
+	display: inline-block;
+	height: 20px;
+	background: url('../img/trash.svg') no-repeat;
+	background-size: 18px 18px;
+	position: relative;
+	top: 5px;	
+}
+
+h5{
+	display: inline-block;
+	line-height: 20px;
+	-webkit-margin-before: 0;
+	-webkit-margin-after: 0;
 }
 
 #pictures{
-	width:85%;
 	margin:15px auto 15px auto;
 }
 
 #pictures div{
 	width:40px;
+	line-height:40px;
 	height:40px;
 	margin:2px;
-	background-color:blue;
 	border-radius:20px;
 	display:inline-block;
+}
+
+#pictures div img{
+	width: 60px;
+	height: auto;
 }
 
 #pictures div{
@@ -360,10 +498,8 @@ label.place{
 }
 
 hr{
-	width:85%;
-	margin-bottom: 15px;
 	opacity:0.5;
-	
+	clear:both;	
 }
 
 #popup_right form input[type=submit], .edit_itineraries, .edit_added_places{
@@ -377,7 +513,6 @@ hr{
     cursor:pointer;
     width:95px;
     height:20px;
-    margin-left:153px;
     margin-top:10px;
 }
 
@@ -393,6 +528,19 @@ hr{
 	display:none;
 }
 
+#popup_right #changeAvatar input[type=submit] {
+	display: block;
+	position: absolute;
+	margin-top: -51px;
+	width: 38px;
+	height: 31px;
+	margin-left: 200px;
+	background-color: #49C495;
+	border-radius: 0px 6px 6px 0px;
+	
+}
+
+
 /************* profile settings ************/
 
 #popup_right:first-child{
@@ -400,23 +548,24 @@ hr{
 }
 
 #popup_right form input[type=text],#popup_right form input[type=email],#hidden_password input[type=password]{
-	width:160px;
+	width:140px;
 	border-radius:6px;
-	background:none;
+	background:grey;
 	border:none;
-	color:white;
-	font-size:14px;
-	margin-left:20px;
-	overflow:visible;
+	margin-right: 20px;
+	color:#FFF;
+
 }
 
-div.upload {
+
+
+/*div.upload {
     width: 160px;
     height: 30px;
     background:url('../img/edit_avatar.svg') no-repeat;
     border-radius:7px;
     overflow: hidden;
-    margin:0 auto;
+    margin:0px 25px;
 
 }
 
@@ -428,16 +577,86 @@ div.upload input {
     opacity: 0 !important;
     overflow: hidden !important;
     cursor: pointer !important;
+}*/
+
+
+#avatar::-webkit-file-upload-button {
+  visibility: hidden;
+}
+#avatar:before {
+	content: 'Changer de photo';
+	display: inline-block;
+	background-color: #4ece9d;
+	border-radius: 6px 0px 0px 6px;
+	width: 155px;
+	padding: 7px 0px;
+	outline: none;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	cursor: pointer;
+	margin: 0px auto;
+	font-size: 13px;
+	padding-left: 26px;
+	margin-left: 25px;
+	height:17px;
+}
+#avatar:hover:before {
+ background-color: #4ece9d;
+}
+#avatar:active:before {
+  background-color: #4ece9d;
 }
 
-#edit p, #edit_password p{
+.conteneur_progress_bar {
+	padding: 1px; 
+	position:relative;
+	width:145px;
+	border-radius: 3px;
+	margin: 10px;
+	display:none;
+	text-align:left;
+	margin: 0px 25px;
+}
+
+.progress_bar {
+	height:5px;
+	background-color: #FFF;
+	width:1%;
+}
+
+.progress_value {
+	margin: 0px auto;
+	position:absolute;
+	display:inline-block;
+	color: #FFF;
+	
+	margin-top: -14px;
+	width: 38px;
+	height: 31px;
+	margin-left: 160px;
+}
+
+#edit p, #edit_password p, #partage_activite p{
 	display:inline-block;
 	font-size:15px;
 	font-family:"OpenSansSemibold",Verdana,Arial;
-	padding-left:20px;
 	padding-right:40px;
 	padding-bottom:15px;
 	
+}
+
+#partage_activite{
+	margin-top: 20px;
+}
+
+#partage_activite #social_activity input[type=submit]{
+	display: block;
+}
+
+.response {
+	color: #FFF; 
+	font-weight: 700;
+	text-align: center;
 }
 
 p + img{
@@ -448,12 +667,126 @@ p + img{
 	top:4px;
 }
 
-#popup_right label{
+#update_info label{
 	font-size:15px;
+	float:left;
+}
+
+input:-webkit-autofill{
+	background-color:grey !important;
 }
 
 .col{
 	float:left;
+}
+
+#btn-facebook{
+	display: block;
+	margin: 0 auto;
+	height: 36px;
+	width: 202px;
+	text-align: center;
+	line-height: 36px;
+	color: white;
+	background-color: #46629e;
+	margin-top: 5px;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+/* Chargement des lieux en ajax */
+
+#navigation-ajax body{
+	background: transparent;
+}
+
+#navigation-ajax{
+	height: 80%;
+	overflow-y:auto;
+}
+
+#navigation-ajax #container-lieu{
+	width: 100%;
+	max-width: 100%;
+	margin:0;
+}
+
+#navigation-ajax .md-content{
+	padding:0;
+}
+
+/* Modal enregistrement lieu */
+.md-modal.little-modal{
+	width: 400px;
+	left: 50%;
+	color: #656665;
+}
+
+.little-modal .md-content{
+	position: relative;
+	border: solid 1px #e4e4e4;
+	text-align: center;
+	font-size: 14px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	-webkit-box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	background-color: white;
+	border-radius: 6px;
+}
+
+.little-modal .md-content p{
+	font-family: LatoLight;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	margin: 15px 0;
+}
+
+.little-modal .md-content input{
+	margin: 10px auto;
+	height: 36px;
+	width: 202px;
+	border: solid 1px #e4e4e4;
+	border-radius: 6px;
+	text-align: center;
+}
+
+.little-modal .md-content input[type=submit] {
+	padding: 5px 0;
+	background-color: #4ece9c;
+	display: block;
+	color: white;
+	text-decoration: none;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+/* Loader */
+.loader{
+	position: absolute;
+	z-index: 99999;
+	top: 50%;
+	left: 50%;
+	margin: -125px 0 0 -125px;
+	visibility: hidden;
+	opacity: 0;
+}
+.loader.show{
+	visibility: visible;
+	opacity: 1;
+}
+.loader p{
+	color:#FFF;
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	font-size: 1em;
 }
 
 /*A revoir*/
@@ -461,6 +794,11 @@ p + img{
 	position:relative;
 	left:20px;
 	width:240px;
+	
+}
+
+#update_info input{
+	float:right;
 }
 
 

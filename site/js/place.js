@@ -21,15 +21,63 @@ $(function() {
 		event.preventDefault();
 		var commentaire = $('#leave-comment form textarea[name=message]').val();
 		if(commentaire.length>0){
-			postCommentaire(lieu,commentaire);
+			postCommentaire(
+				lieu,
+				commentaire,
+				function(){
+					$('#leave-comment form textarea[name=message]').val('');
+				}
+			);
 		}else{
-			console.log('test');
+			$('#leave-comment form')
+			.before(
+				$('<p class="error">Vous devez écrire un commentaire</p>')
+				.delay(3000)
+				.fadeOut(400,function() {
+			 		$(this).remove(); 
+				})
+			);
 		}
 	});
+
+	$('#voir-commentaires').on('click',function(evt){
+		evt.preventDefault();
+		var id_last = $('.commentaire').last().attr('id').replace('comment_','');
+		$.ajax({
+			type : "POST",
+			url : '/ajax/get_comments.xhr.php',
+			data : {
+				'id' : id_last,
+				'limit' : 5, 
+				'lieu' : lieu
+			},
+			dataType : 'json',
+			success: function(reponse, status) {
+				var hasNext = parseInt(reponse.hasNext);
+				if(hasNext==0){
+					$('#voir-commentaires').hide();
+				}
+				var commentaires = reponse.comments;
+				$('.commentaire').last().after($(commentaires).fadeIn(400));
+			}
+			
+		});	
+	});
+
+
+	/* Uploads */
+
+	$('#upload_medias form input[type=submit]').addClass('hide');	// On cache l'input submit
+
+	// Lorsque un fichier est selectionné (photo /vidéo) on charge celui-ci automatiquement
+	$('#upload_medias form input[type=file]').on('change',function(){
+		uploadFile('#'+$(this).parents('form').first().parent('div').attr('id'));
+	});
+
 	
 	$.ajax({
 		type : "POST",
-		url : '/site/ajax/displaydoughnut.xhr.php',
+		url : '/ajax/displaydoughnut.xhr.php',
 		data : {
 			'lieu' : lieu,
 		},
@@ -59,7 +107,7 @@ $(function() {
 function likeDislike(lieu,type) {
 	$.ajax({
 		type : "POST",
-		url : "/site/ajax/ajoutLikeDislike.xhr.php",
+		url : "/ajax/ajout_like_dislike.xhr.php",
 		dataType : 'json',
 		data : {
 			'lieu' : lieu,
@@ -91,20 +139,24 @@ function likeDislike(lieu,type) {
 
 
 function signal(id,lien){
-	$.post("/site/ajax/signaler.xhr.php",{
+	$.post("/ajax/signaler.xhr.php",{
 		id : id
 	},
-	function(){
-		lien.replaceWith('Vous avez signalé ce commentaire. Merci :)');
+	function(data){
+		console.log(data);
+		lien.replaceWith('<p class="signalement">Vous avez signalé ce commentaire. Un modérateur a été averti.</p>');
 	});
 }
 
-function postCommentaire(lieu,commentaire){
-	$.post("/site/ajax/addComments.xhr.php",{
+function postCommentaire(lieu,commentaire,success){
+	$.post("/ajax/add_comment.xhr.php",{
 		'lieu' : lieu,
 		'message' : commentaire
 	}, 
 	function(data){
-		$('.commentaire').last().after($(data).fadeIn());
+		$('.commentaire').first().before($(data).fadeIn());
+		if(typeof(success)=='function'){
+			success.call();
+		}
 	});	
 }

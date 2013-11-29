@@ -1,11 +1,11 @@
 <?php
-	require_once('../config.php');
+	require_once('../config/config.php');
 	
-	$id = $_GET['id'];
-	
-	$reqSignalComment = $dbh->prepare("UPDATE comments SET valid = 0 WHERE id LIKE :id");
+	if(isset($_POST['id'])){
+		$id = $_POST['id'];
+		
+		$reqSignalComment = $dbh->prepare("UPDATE comments SET valid = 1 WHERE id LIKE :id");
 		$reqSignalComment->bindValue('id',$id,PDO::PARAM_INT);
-	$reqSignalComment->execute();
-	
-	header("Location: ".$_SERVER["HTTP_REFERER"]);
+		$reqSignalComment->execute();
+	}
 ?>

@@ -31,7 +31,7 @@
 				if($lieux!=false){
 
 					/* API openweathermap -> permet de récupérer la méteo  */
-					/*$url_meteo = 'http://api.openweathermap.org/data/2.5/weather?lat='.$lat.'&lon='.$lng.'&mode=json';
+					$url_meteo = 'http://api.openweathermap.org/data/2.5/weather?lat='.$lat.'&lon='.$lng.'&mode=json';
 					$response_meteo = json_decode(file_get_contents($url_meteo),true);
 
 					if($response_meteo!=false && $response_meteo!=null && is_array($response_meteo) && isset($response_meteo['weather'])){
@@ -45,9 +45,9 @@
 						}else{
 							$meteo_lieux['type_lieu'] = 1; // Extérieur
 						}
-					}else{*/
+					}else{
 						$meteo_lieux = [];
-					//}
+					}
 
 
 					foreach($lieux as $l){

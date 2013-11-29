@@ -1,9 +1,10 @@
 <?php
 	session_start();
 	include_once('../config/config.php');
-	$user = 9;
 
-	if(isset($_POST['lieu']) && isset($_POST['type'])){
+	if(isset($_POST['lieu']) && isset($_POST['type']) && isset($_SESSION['id'])){
+
+		$user = $_SESSION['id'];
 
 		$retour = [];
 

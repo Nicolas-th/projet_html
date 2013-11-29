@@ -1,5 +1,8 @@
 $(document).ready(function() {
 
+    // On cache le bouton submit si je js est activé
+    $('#changeAvatar form input[type=submit]').addClass('hide');
+
 
     // lorsque je soumets le formulaire
     $('#update_info').on('submit', function() {
@@ -29,6 +32,7 @@ $(document).ready(function() {
     	             if(html=="successProfile") {
     	             	console.log(html);
     	             	$("#messageEdit").html("Vos informations ont été modifiées.");
+    	             	$(location).attr('href', 'home.php');
     	             } 
     	            
                 },
@@ -70,6 +74,7 @@ $(document).ready(function() {
                     
     	             if(html=="successPswd") {
     	             	$("#messageEdit").html("Votre mot de passe a bien été changé.");
+    	             	$(location).attr('href', 'home.php');
     	             } 
     	             
     	             if(html=="newPswdWrong") {
@@ -87,54 +92,10 @@ $(document).ready(function() {
         return false; // j'empêche le navigateur de soumettre lui-même le formulaire
     });
     
-    
-uploadFile('#changeAvatar');
+    $('#changeAvatar form input[type=file]').on('change',function(){
+        uploadFile('#form_avatar',function(){
+            $(".avatar").attr('src',$(".avatar").attr('src')+'?'+ Math.random());
+        });
+     });
 
-    
-function uploadFile(conteneurFormSelector){
-	
-	    var form            = $(conteneurFormSelector).children('form').first();
-	    var progressbox     = $(conteneurFormSelector).children('.conteneur_progress_bar').first();
-	    var progressbar     = progressbox.children('.progress_bar').first();
-	    var statustxt       = progressbox.children('.progress_value').first();
-	    var submitbutton    = $(conteneurFormSelector).children('input[type="submit"]').first();
-	    var completed       = '0%';
-	
-	    $(form).ajaxForm({
-	        beforeSend: function() {
-	            $('.response').remove();
-	            submitbutton.attr('disabled', '');
-	            statustxt.empty();
-	            progressbox.slideDown(); 
-	            progressbar.width(completed);
-	            statustxt.html(completed);
-	            statustxt.css('color','#000');
-	        },
-	        uploadProgress: function(event, position, total, percentComplete) {
-	            progressbar.width(percentComplete + '%')
-	            statustxt.html(percentComplete + '%')
-	            if(percentComplete>50){
-	                    statustxt.css('color','#fff');
-	            }
-	        },
-	        complete: function(response) {
-	        	
-	            if(response.status=='200'){
-	            	console.log(response);
-	                progressbox.after('<p class="response">'+response.responseText+'</p>');
-	                form.resetForm();
-	                submitbutton.removeAttr('disabled');
-	                progressbox.slideUp();
-	                $(".avatar").attr('src',$(".avatar").attr('src')+'?'+ Math.random());
-	               
-	            }else{
-	                progressbox.after('<p class="response">'+response.responseText+'</p>');
-	                console.log(response);
-	            }
-	            
-	        }
-	    });
-	    
-	}
-    
 });

@@ -1,5 +1,3 @@
-
-/**** Carte ****/
 var Carte = function() {
 
 	var _this = this;
@@ -65,7 +63,19 @@ var Carte = function() {
 			},
 			type : null,
 			preserveViewport : true,
-			finished : function(){}
+			finished : function(){},
+			noResults : function(){
+				alert('Pas de résultats');
+			},
+			error : function(){
+				alert('Une erreur s\'est produite...');
+			},
+			overQueryLimit : {
+				delay : 1000,
+				callback : function(){
+					console.log('OVER_QUERY_LIMIT');
+				}
+			}
 		},
 		supprimerItineraire : {
 			itineraire : null
@@ -75,13 +85,13 @@ var Carte = function() {
 			categorie : 'defaut',
 			nom : '',
 			infowindow : null,
-			markers : {
+			marker : {
 				iconsRepertory : 'assets/img/maps_icons/',
 				iconsFilePrefix : 'icon_',
 				iconsExtension : '.svg',
-				iconDefault : 'icon_depart'
+				iconDefault : 'icon_depart',
+				click	: function(){}
 			}
-			//iconDefault : 'http://maps.google.com/mapfiles/marker.png'
 		},
 		changePositionMarker : {
 			position : null
@@ -116,6 +126,12 @@ var Carte = function() {
 		nettoyer : {
 			 type : null,
              finished : function(){}
+		},
+		getPointsItineraire : {
+
+		},
+		getInstructionsItineraire : {
+
 		}
 
 	}
@@ -128,7 +144,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.init = function(params){
-		params = $.extend({},_this.defaults.init, params);
+		params = $.extend(true, {},_this.defaults.init, params);
 
 	    _this.carte = new google.maps.Map(
 	    	params.element,
@@ -155,7 +171,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.setStyleMap = function(params){
-		params = $.extend({},_this.defaults.setStyleMap, params);
+		params = $.extend(true, {},_this.defaults.setStyleMap, params);
 		if(params.url!=null && params.key!=null){
 			$.getJSON(params.url, function(datas) {
 				var styles = datas[params.key];
@@ -173,7 +189,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.setCenter = function(params){
-		params = $.extend({},_this.defaults.setCenter, params);
+		params = $.extend(true, {},_this.defaults.setCenter, params);
 		_this.carte.setCenter(new google.maps.LatLng(params.position.latitude,params.position.longitude));
 	};
 
@@ -185,7 +201,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.setZoom = function(params){
-		params = $.extend({},_this.defaults.setZoom, params);
+		params = $.extend(true, {},_this.defaults.setZoom, params);
 		_this.carte.setZoom(params.zoom);
 	};
 
@@ -197,7 +213,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.setMoyenTransport = function(params){
-		params = $.extend({},_this.defaults.setMoyenTransport, params);
+		params = $.extend(true, {},_this.defaults.setMoyenTransport, params);
 		switch(params.moyenTransport){
 			case 'marche':
 				var transport = google.maps.DirectionsTravelMode.WALKING;
@@ -224,23 +240,27 @@ var Carte = function() {
 							latitude : String,
 							longitude : String,
 							nom : String,
-							categorie : int
+							categorie : int,
+							marker : {
+								click : function (optionnelle)
+							}
 						},
 						arrivee : {
 							latitude : String,
 							longitude : String,
 							nom : String,
-							categorie : int
+							categorie : int,
+							marker : {
+								click : function (optionnelle)
+							}
 						}
 					],
 					key : int
 				 }
 	*/
 	_this.tracerItineraires = function(params){
-		params = $.extend({},_this.defaults.tracerItineraires, params);
+		params = $.extend(true, {},_this.defaults.tracerItineraires, params);
 		if(typeof(params.trajets[params.key])!='undefined'){
-	        var latLng_depart = new google.maps.LatLng(params.trajets[params.key].depart.latitude,params.trajets[params.key].depart.longitude);
-	        var latLng_arrivee = new google.maps.LatLng(params.trajets[params.key].arrivee.latitude,params.trajets[params.key].arrivee.longitude);
 
 	        var positions = {
 	        	depart :{
@@ -261,20 +281,20 @@ var Carte = function() {
 					var positionMarker = positions.arrivee;
 					var infos = params.trajets[params.key].arrivee;
 				}
+
+				if(typeof(infos.marker)=='undefined' || typeof(infos.marker.click)=='undefined'){
+					if(typeof(infos.marker)=='undefined'){
+						infos.marker = {};
+					}
+					infos.marker.click = function(){};
+				}
+
 		        _this.ajouterMarker({
 		        	position : positionMarker,
 		        	nom : infos.nom,
 		        	categorie : infos.categorie,
 		        	type : 'itineraires_lieux',
-		        	infoWindow : {
-		        		content: '<p class="nom_lieu">'+infos.name+'</p>',
-		        		click : function(params){
-		                    if(_this.infoWindow.open!=null){
-			                      _this.infoWindow.open.close();
-			                }
-			                _this.infoWindow.open = params.infoWindow.open; // On enregistre l'infowindow ouverte pour pouvoir la fermer plsu tard
-	                  	}
-		        	}
+		        	click : infos.marker.click
 		        });
 			}
 
@@ -282,8 +302,8 @@ var Carte = function() {
 
 	        _this.traceItineraire({
 	        	points : {
-	        		depart : latLng_depart,
-	        		arrivee : latLng_arrivee
+	        		depart : positions.depart,
+	        		arrivee : positions.arrivee
 	        	},
 	        	type : 'itineraires_lieux',
 	        	finished : function(returns){
@@ -295,10 +315,12 @@ var Carte = function() {
 	        	}
 	        });
 	    }else{
-	    	/* Lorsque le chargement des itinéraires est terminé */
+	    	/* Lorsque le chargement des itinéraires est terminé on centre la carte sur l'itinéraire */
 	    	var bounds = new google.maps.LatLngBounds();
     		for(key in _this.markers){
-    			bounds.extend(_this.markers[key].marker.position);
+    			if(_this.markers[key].type=="itineraires_lieux"){
+    				bounds.extend(_this.markers[key].marker.position);
+    			}
     		}
     		_this.carte.fitBounds(bounds);
 	    	params.finished.call(this,{
@@ -320,10 +342,10 @@ var Carte = function() {
 				 }
 	*/
 	_this.traceItineraire = function(params){
-		params = $.extend({},_this.defaults.traceItineraire, params);
+		params = $.extend(true, {},_this.defaults.traceItineraire, params);
 		var request = {
-	        origin      : params.points.depart,
-	        destination : params.points.arrivee,
+	        origin      : new google.maps.LatLng(params.points.depart.latitude,params.points.depart.longitude),
+	        destination : new google.maps.LatLng(params.points.arrivee.latitude,params.points.arrivee.longitude),
 	        travelMode  : _this.preferencesItineraire.moyenTransport
 	    }
 	    var directionsService = new google.maps.DirectionsService();
@@ -351,18 +373,18 @@ var Carte = function() {
 
             	return directionsRenderer;
 	        }else if (status == google.maps.DirectionsStatus.OVER_QUERY_LIMIT){
-	        	console.log('OVER_QUERY_LIMIT');
+	        	params.overQueryLimit.callback.call(this);
 	        	setTimeout(
 	        		function(){
 	        			var directionsRenderer = _this.traceItineraire(params);
 	        			return directionsRenderer;
 	        		},
-	        		1000
+	        		params.overQueryLimit.delay
 	        	);
 	        }else if(status == google.maps.DirectionsStatus.ZERO_RESULTS){
-	        	alert('Pas de résultats');	// Possibilité à améliorer
+	        	params.noResults.call(this);
 	        }else{
-	        	alert('Une erreur s\'est produite...');	// Possibilité à améliorer
+	        	params.error.call(this);
 	        }
 	    });
 	};
@@ -375,7 +397,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.supprimerItineraire = function(params){
-		params = $.extend({},_this.defaults.supprimerItineraire, params);
+		params = $.extend(true, {},_this.defaults.supprimerItineraire, params);
 		params.itineraire.setMap(null);
 		_this.itineraires = deleteValueFromArray(_this.itineraires,params.itineraire);
 	};
@@ -393,10 +415,10 @@ var Carte = function() {
 				 }
 	*/
 	_this.ajouterMarker = function(params){
-		params = $.extend({},_this.defaults.ajouterMarker, params);
-		var image = params.markers.iconsRepertory+params.markers.iconDefault+params.markers.iconsExtension;
+		params = $.extend(true, {},_this.defaults.ajouterMarker, params);
+		var image = params.marker.iconsRepertory+params.marker.iconDefault+params.marker.iconsExtension;
 		if(params.categorie!='defaut'){
-			image = params.markers.iconsRepertory+params.markers.iconsFilePrefix+params.categorie+params.markers.iconsExtension;
+			image = params.marker.iconsRepertory+params.marker.iconsFilePrefix+params.categorie+params.marker.iconsExtension;
 		}
 	    var marker = new google.maps.Marker({
 	        position: new google.maps.LatLng(params.position.latitude,params.position.longitude),
@@ -410,6 +432,16 @@ var Carte = function() {
 	    		marker : marker,
 	    		infoWindow : params.infoWindow
 	    	});
+	    	google.maps.event.addListener(marker, 'click', function() {
+				infowindow.open(_this.carte,marker);
+				params.infoWindow.open = infowindow;
+				params.marker.click.call(this,params);
+				params.infoWindow.click.call(this,params);
+			});
+		}else{
+			google.maps.event.addListener(marker, 'click', function() {
+				params.marker.click.call(this,params);
+			});
 		}
 
 	    _this.markers.push({
@@ -429,7 +461,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.changePositionMarker = function(params){
-		params = $.extend({},_this.defaults.changePositionMarker, params);
+		params = $.extend(true, {},_this.defaults.changePositionMarker, params);
 		params.marker.setPosition(params.position);
 	};
 
@@ -441,7 +473,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.supprimerMarker = function(params){
-		params = $.extend({},_this.defaults.supprimerMarker, params);
+		params = $.extend(true, {},_this.defaults.supprimerMarker, params);
 		params.marker.setMap(null);
 		_this.markers = deleteValueFromArray(_this.markers,params.marker);
 	};
@@ -457,7 +489,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.ajouterInfoWindow = function(params){
-		$.extend(params,_this.defaults.ajouterInfoWindow);
+		params = $.extend(true, {}, _this.defaults.ajouterInfoWindow, params);
 		var infowindow = new InfoBox({
 			content: params.infoWindow.content,
 			disableAutoPan: params.infoWindow.disableAutoPan,
@@ -469,12 +501,6 @@ var Carte = function() {
 			closeBoxURL: params.infoWindow.closeBoxURL,
 			infoBoxClearance: new google.maps.Size(params.infoWindow.infoBoxClearance.width, params.infoWindow.infoBoxClearance.height)
 	    });
-
-	    google.maps.event.addListener(params.marker, 'click', function() {
-			infowindow.open(_this.carte,params.marker);
-			params.infoWindow.open = infowindow;
-			params.infoWindow.click.call(this,params);
-		});
 
 		return infowindow;
 	};
@@ -488,7 +514,7 @@ var Carte = function() {
 				 }
 	*/
 	_this.nettoyer = function(params){
-		params = $.extend({},_this.defaults.nettoyer, params);
+		params = $.extend(true, {},_this.defaults.nettoyer, params);
 		for(key_m in _this.markers){
 			var current = _this.markers[key_m];
 			if((typeof(current.type)!='undefined' && current.type==params.type) || params.type==null || params.type=='all'){
@@ -506,73 +532,69 @@ var Carte = function() {
 		}
 		params.finished.call(this);
 	};
-};
 
+	_this.getPointsItineraire = function(params){
+		params = $.extend(true, {},_this.defaults.getPointsItineraire, params);
+		var points = params.directionsServiceResponse.routes[0].overview_path;
 
-/**** Autocomplétion ****/
-var Autocompletion = function(){
-
-	var _this = this;
-	var defauts = {
-		inputText : '#autocomplete',
-		divResultats : '#resultats_autocompletion'
-	}
-
-	/*
-	## init() ##
-	Paramètre attendu : objet
-		 {
-		 	inputText : String (selector)
-		 	divResultats : String (selector)
-		 }
-	*/	
-	_this.init = function(params){
-		params = $.extend({},defauts, params);
-
-		_this.inputText = $(params.inputText);
-		_this.divResultats = $(params.divResultats);
-		_this.defaults = {
-			afficherResultats : {
-				resultats : []
-			}
+		var tabPoints = [];
+		for(key in points){
+			tabPoints.push({
+				latitude : points[key].lat(), 
+				longitude : points[key].lng()
+			});
 		}
+		return tabPoints;
+	};
+
+	_this.getInstructionsItineraire = function(params){
+		params = $.extend(true, {},_this.defaults.getInstructionsItineraire, params);
+
+		var instructions = [];
+		if(typeof(params.directionsServiceResponse)!='undefined'){
+        	if(params.directionsServiceResponse.status=='OK'){
+        		if(params.directionsServiceResponse.routes.length>0){
+                    var legs = params.directionsServiceResponse.routes[0].legs;
+                    
+                    var cpt_instructions = 0;
+
+                    for(i in legs){
+                        var steps = legs[i].steps;
+                        for(j in steps){
+                            if(typeof(steps[j].instructions)!='undefined'){
+                            	instructions[cpt_instructions] = {
+                            		type : steps[j].maneuver,
+                            		texte : steps[j].instructions,
+                            		sousInstructions : []
+                            	}
+                                if(typeof(steps[j].steps)!='undefined'){
+                                	var cpt_sousInstructions = 0;
+                                    var sousSteps = steps[j].steps;
+                                    for(k in sousSteps){
+                                        if(typeof(sousSteps[k].instructions)!='undefined'){
+                                        	instructions[cpt_instructions].sousInstructions[cpt_sousInstructions] = {
+                                        		type : sousSteps[k].maneuver,
+                            					texte : sousSteps[k].instructions
+                                        	}
+                                        }
+                                        cpt_sousInstructions++;
+                                    }
+                                }
+                                cpt_instructions++;
+                            }
+                        }
+                    }
+                }
+        	}
+        }
+        return instructions;
 	}
 
-	/*
-	## rechercher() ##
-			Paramètre attendu : aucun
-	*/
-	_this.rechercher = function(){
-		var lieuRecherche = _this.inputText.val();
-		var service = new google.maps.places.AutocompleteService();
-	    service.getQueryPredictions({ input: lieuRecherche }, function(reponse, status){
-	      if(status == google.maps.places.PlacesServiceStatus.OK) {
-	        _this.afficherResultats({resultats : reponse});
-	      }
-	    });
-	},
-
-	/*
-	## afficherResultats() ##
-			Paramètre attendu : objet
-				 {
-				 	resultats : Array (résultatgoogle.maps.places.AutocompleteService)
-				 }
-	*/	
-	_this.afficherResultats = function(params){
-		params = $.extend({},_this.defaults.afficherResultats, params);
-		var htmlContent = '';
-		for (var i = 0; i<params.resultats.length; i++) {
-			htmlContent += '<li id="'+params.resultats[i].reference+'">' + params.resultats[i].description + '</li>';
+	_this.getDureeItineraire = function(params){
+		var retour = 0;
+		if(typeof(params.directionsServiceResponse)!='undefined'){
+			var retour = params.directionsServiceResponse.routes[0].legs[0].duration.value;
 		}
-		_this.divResultats.html(htmlContent);
-
-		_this.divResultats.find('li').on('click',function(){
-          _this.inputText.val($(this).html());
-          _this.inputText.nextAll('input[type="hidden"].ref_lieu').val($(this).attr('id'));
-          _this.divResultats.html(htmlContent);
-          _this.divResultats.empty();
-      	});
+		return retour;
 	}
-
 };

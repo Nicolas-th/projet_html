@@ -130,20 +130,106 @@
 		global $dir_lieux;
 		$title = str_replace(' ', "-", $title);
 		$title = strtolower($title);
+		$title = preg_replace(
+			array(
+			'/à/', '/â/', '/ä/', '/á/', '/ã/', '/å/',
+			'/î/', '/ï/', '/ì/', '/í/',
+			'/ô/', '/ö/', '/ò/', '/ó/', '/õ/', '/ø/',
+			'/ù/', '/û/', '/ü/', '/ú/',
+			'/é/', '/è/', '/ê/', '/ë/',
+			'/ç/', '/ÿ/', '/ñ/',
+			),
+			array(
+			'a', 'a', 'a', 'a', 'a', 'a',
+			'i', 'i', 'i', 'i',
+			'o', 'o', 'o', 'o', 'o', 'o',
+			'u', 'u', 'u', 'u',
+			'e', 'e', 'e', 'e',
+			'c', 'y', 'n',
+			),
+			$title
+			);
 		$title .='-'.$id.'.html';
 		$title = $dir_lieux.$title;
 		return $title;
 	}
+
+	function getUrlItineraire($name,$id){
+		global $chemin_relatif_site;
+		global $dir_itineraires;
+		$name = str_replace(' ', "-", $name);
+		$name = strtolower($name);
+		$name = preg_replace(
+			array(
+			'/à/', '/â/', '/ä/', '/á/', '/ã/', '/å/',
+			'/î/', '/ï/', '/ì/', '/í/',
+			'/ô/', '/ö/', '/ò/', '/ó/', '/õ/', '/ø/',
+			'/ù/', '/û/', '/ü/', '/ú/',
+			'/é/', '/è/', '/ê/', '/ë/',
+			'/ç/', '/ÿ/', '/ñ/',
+			),
+			array(
+			'a', 'a', 'a', 'a', 'a', 'a',
+			'i', 'i', 'i', 'i',
+			'o', 'o', 'o', 'o', 'o', 'o',
+			'u', 'u', 'u', 'u',
+			'e', 'e', 'e', 'e',
+			'c', 'y', 'n',
+			),
+			$name
+			);
+		$url = 'itineraire-'.$name.'-'.$id.'.html';
+		$url = $chemin_relatif_site.$url;
+		return $url;
+	}
+
+	function getUrlMedia($url_file,$id_lieu,$type='img'){
+		global $chemin_relatif_site;
+		global $src_media;
+		global $dir_images;
+		global $dir_videos;
+		if($type!='video')		$type='img';
+
+		$url = $chemin_relatif_site.$src_media.$id_lieu.'/'.(($type=='img')?$dir_images:$dir_videos).$url_file;
+		return $url;
+	}
+
+	// Fonction qui retourne l'url de l'avatar (Facebook ou local)
+	function getUrlAvatar($chemin){
+		global $src_avatar;
+		global $chemin_relatif_site;
+		$components = parse_url($chemin);
+		if(isset($components['host'])){
+			$url_complete = $chemin;
+		}else{
+			$url_complete = $chemin_relatif_site.$src_avatar.$chemin;
+		}
+		return $url_complete;
+	}
 	
 
 	//Fonction pour afficher les commentaires en fonction du lieu
-	function structureCommentaire($commentaire){
+	function structureCommentaire($commentaire,$user_connecte=true,$cpt=null){
 		global $chemin_relatif_site;
+
+		$avatar = getUrlAvatar($commentaire['avatar']);
+
 		$html = '';
-		$html.='<div class="commentaire">';
-		$html.='<span class="commentaire-nickname">Le '.date('d/m/Y', $commentaire['date_comment']).' à '.date('H\hi', $commentaire['date_comment']).' par '.$commentaire['nickname'].'</span><br/> ';	
-		$html.='<span class="commentaire-content">'.$commentaire['content'].'</span><br/>';
-		$html.='<a class="signaler" href="'.$chemin_relatif_site.'ajax/signaler.xhr.php?id=' . $commentaire['id'] . '" class="signaler" id="'.$commentaire['id'].'">Signaler</a>';
+		$html.='<div class="commentaire" '.(($cpt==null)?'':'id="comment_'.$cpt.'"').'>';
+		$html.='	<div>';
+		$html.='		<img src="'.$avatar.'" alt="Avatar de '.$commentaire['nickname'].'">';
+		$html.='	</div>';
+		$html.='	<div>';
+		$html.='		<div class="commentaire-header"><p>'.$commentaire['nickname'].'</p><p>Le '.date('d/m/Y', $commentaire['date_comment']).' à '.date('H\hi', $commentaire['date_comment']).'</p></div>';	
+		$html.='		<p class="commentaire-content">'.$commentaire['content'].'</p>';
+		if($user_connecte){
+			if($commentaire['valid']==0){
+				$html.='<a class="signaler" href="'.$chemin_relatif_site.'ajax/signaler.xhr.php?id=' . $commentaire['id'] . '" class="signaler" id="'.$commentaire['id'].'">Signaler</a>';
+			}else{
+				$html.='<p class="signalement">Ce commentaire a été signalé par un membre.</p>';
+			}
+		}
+		$html.='	</div>';
 		$html.='</div>';
 
 		return $html;
@@ -167,23 +253,15 @@
 		
 		return $resultNbDislike[0];
 	}
-		/*if($null == 2  ){
-			echo '<div id="resultLike"></div><div id="resultDislike"></div>';
-			echo '<div id="result">Ce lieu n\'a pas encore de vote. Soyez le premier à voter</div>';
+	
+	function displayCategories($dbh){
+		$reqCategories = $dbh->prepare("SELECT * FROM categories");
+		$reqCategories->execute();
+		echo '<select name="categorie">';			
+
+		while($result = $reqCategories->fetch()){
+			echo '<option value="'.$result['id'].'">'.$result['name'].'</option>';
 		}
-		else {
-			if($resultNbLike[0] == 1){
-				echo  '<div id="resultLike">'.$resultNbLike[0].' utilisateur aime ce lieu</div>';
-			}
-			else {
-				echo '<div id="resultLike">'.$resultNbLike[0].' utilisateurs aiment ce lieu</div>';
-			}
-			if($resultNbDislike[0] == 1){
-				echo '<div id="resultDislike">'.$resultNbDislike[0].' utilisateur n\'aime pas ce lieu</div>';
-			}
-			else {
-				echo '<div id="resultDislike">'.$resultNbDislike[0].' utilisateurs n\'aiment pas ce lieu</div>';
-			}
-			echo '<div id="result"></div>';
-		}*/
+		echo '</select>';
+	}
 ?>

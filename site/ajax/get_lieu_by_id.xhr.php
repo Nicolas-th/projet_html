@@ -19,6 +19,7 @@
 
 		if($infos_lieu!=false && is_array($infos_lieu)){
 			$retour['infos'] = $infos_lieu[0];
+			$retour['infos']['href'] = getRewrite($retour['infos']['name'],$retour['infos']['id']);
 			$retour['code'] = 200;
 		}else{
 			$retour['code'] = 404;

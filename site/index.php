@@ -17,8 +17,9 @@ else:
 		<title>Find It Out !</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="assets/css/global.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/simplegrid.css" />
-		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="assets/css/index.css" />
 	</head>
 	<body>
 		<div class="md-modal md-effect-1" id="connexion-modal">
@@ -33,7 +34,7 @@ else:
 			 		 	<div id="sep">
 			 		 		<p>ou</p>
 			 		 	</div>
-						<a id="btn-facebook" onclick="popup('<?php echo $loginUrl; ?>')" href="#">Connexion avec <strong>Facebook</strong></a>
+						<a id="btn-facebook" href="<?php echo $loginUrl; ?>">Connexion avec <strong>Facebook</strong></a>
 			 		</form>
 			</div>
 		</div>
@@ -44,8 +45,8 @@ else:
 		 		 <a  href="#" class="md-close"><img src="imgs/close.png" alt="close"/></a>
 		 		 <form method="post" action="signin.php" id="signinForm">
 	 		 		<div id="messageSignin"></div>
-		 		 	<input type="text" name="nom" placeholder="Nom" id="name" /><br>
-		 		 	<input type="text" name="prenom" placeholder="Prénom" id="surname" /><br>
+		 		 	<input type="text" name="nom" placeholder="Nom" id="name" required /><br>
+		 		 	<input type="text" name="prenom" placeholder="Prénom" id="surname" required /><br>
 		 		 	<input type="text" name="pseudo" placeholder="Pseudo" id="pseudo" required /><br>
 		 		 	<input type="email" name="mail" id="mail" placeholder="email" required /><br>
 		 		 	<input type="password" name="password1" id="pass1" placeholder="Mot de passe" required /><br>
@@ -221,7 +222,7 @@ else:
 	
 			<div class="grid">
 				<div class="col-1-1">
-					<a id="essayer" href="#">Essayer !</a>
+					<a id="essayer" href="home.php">Essayer !</a>
 				</div>
 			</div>
 	
@@ -237,7 +238,8 @@ else:
 
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script type="text/javascript" src="js/classes.js"></script> 
+		<script type="text/javascript" src="js/autocompletion.js"></script> 
+		<script type="text/javascript" src="js/carte.js"></script> 
 		<script type="text/javascript" src="js/login.js"></script> 
 		<script type="text/javascript" src="js/firstpage.js"></script>
 		<script>
@@ -262,6 +264,16 @@ else:
 		     fjs.parentNode.insertBefore(js, fjs);
 		   }(document, 'script', 'facebook-jssdk'));
 	   </script>
+	   <script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-46020182-1', 'find-it-out.fr');
+		  ga('send', 'pageview');
+
+	</script>
 	</body>
 </html>
 <?php endif ?>
