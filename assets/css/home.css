@@ -1,0 +1,844 @@
+@font-face {
+    font-family: 'LatoLight';
+    src: url('../fonts/Lato-Light/lato-lig.eot');
+    src: url('../fonts/Lato-Light/lato-lig.eot') format('embedded-opentype'),
+         url('../fonts/Lato-Light/lato-lig.woff') format('woff'),
+         url('../fonts/Lato-Light/lato-lig.ttf') format('truetype'),
+         url('../fonts/Lato-Light/lato-lig.svg#LatoLight') format('svg');
+}
+
+@font-face {
+    font-family: 'OpenSansSemibold';
+    src: url('../fonts/opensans-semibold.eot');
+    src: url('../fonts/opensans-semibold.eot') format('embedded-opentype'),
+         url('../fonts/opensans-semibold.woff') format('woff'),
+         url('../fonts/opensans-semibold.ttf') format('truetype'),
+         url('../fonts/opensans-semibold.svg#OpenSansSemibold') format('svg');
+}
+
+@font-face {
+    font-family: 'OpenSansRegular';
+    src: url('../fonts/opensans-regular.eot');
+    src: url('../fonts/opensans-regular.eot') format('embedded-opentype'),
+         url('../fonts/opensans-regular.woff') format('woff'),
+         url('../fonts/opensans-regular.ttf') format('truetype'),
+         url('../fonts/opensans-regular.svg#OpenSansRegular') format('svg');
+}
+
+
+html { 
+	width: 100%;
+	height: 100%;
+}
+body { 
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'LatoLight',Verdana,Arial;
+	font-size:18px;
+	color:white; 
+	-webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	overflow: hidden;
+}
+
+#map-canvas { display:block; height: 100%; z-index:1; }      
+
+
+#popup{
+  width:100%;
+  height:100%;
+  box-sizing : border-box;
+  padding-bottom:44px;
+  background-color:rgba(151,151,151,0.9);
+  z-index:1000;
+  position:absolute;
+  overflow:auto;
+  max-width:280px;
+	
+}
+
+/**********Bouton masquage sidebar de gauche****************/
+
+#bouton, #bouton2{
+  width:25px;
+  height:25px;
+  background-size:cover;
+  cursor:pointer;
+  position:absolute;
+  top:7px;
+  left:7px;
+  z-index: 120;
+}
+
+/***********Sidebar de gauche : création d'itinéraires et détection des lieux**********/
+
+#popup p{
+	display: block;
+	width: 230px;
+	margin: 10px auto;
+}
+
+#popup > p:nth-child(2){
+	padding:0;
+	margin:40px 0px 10px 20px;
+	width:200px;
+}
+
+#popup:nth-child(2){
+	margin:0 auto;
+}
+
+#popup input[type=text]{
+  border-radius: 9px;
+  background-color:white;
+  outline:none;
+  border:none;
+  width:200px;
+  height:30px;
+  line-height:30px;
+  padding-left:15px;
+  padding-right:15px;
+  margin: 0 auto;
+  display: block;
+}
+
+#popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire, #modifier_itineraire{
+  border-radius:7px;
+  background-color:#4ece9d;
+  border:none;
+  color:white;
+  font-size:15px;
+  font-family:'OpenSansRegular';
+  cursor:pointer;
+  min-width:100px;
+  -webkit-appearance: none;
+}
+
+#popup input[type=submit],#demarrer_itineraire,#enregistrer_itineraire{
+	background-color:#4ece9d;
+	-webkit-appearance: none;
+}
+
+#changeAvatar form div{
+    width: 200px;
+    height: 30px;
+    margin: 0 auto;
+    border-radius:6px;
+    background:url("../img/edit_profile_picture.png") no-repeat;
+    overflow: hidden;
+    cursor : pointer;
+}
+
+#popup_right #changeAvatar form input[name=avatar]{
+	display: block !important;
+	width: 157px !important;
+	height: 57px !important;
+	opacity: 0 !important;
+	overflow: hidden !important;
+	cursor: pointer;
+}
+
+#popup_right #changeAvatar form input[type=submit].hide{
+	display: none;
+}
+
+#modifier_itineraire{
+	background-color:#F39200;
+}
+
+#formulaire_itineraire .ligne, .actions_itineraire{
+	width: 230px;
+	position: relative;
+	margin: 0 auto;
+}
+
+.actions_itineraire button+button{
+	position: absolute;
+	right: 0;
+}
+
+#formulaire_itineraire input[type=submit]{
+	display: inline-block;
+	width:100px;
+	position: absolute;
+	right: 0;
+	vertical-align: middle;
+}
+
+#aucun_lieu{
+	display: block;
+	color:#4ece9d;
+	font-weight: bold;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.choix_transport{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#marche{
+	background:url('../img/feet.svg') no-repeat;
+}
+
+#velo{
+	background:url('../img/velo.svg') no-repeat;
+}
+
+#metro{
+	background:url('../img/subway.svg') no-repeat;
+}
+
+a#metro.actif{
+	background:url('../img/subway_active.svg') no-repeat;
+	background-size:cover;
+}
+
+a#velo.actif{
+	background:url('../img/velo_active.svg') no-repeat;
+	background-size:cover;
+}
+
+a#marche.actif{
+	background:url('../img/feet_active.svg') no-repeat;
+	background-size:cover;	
+}
+
+#marche,#velo,#metro{
+	display:inline-block;
+	width:25px;
+	height:25px;
+	background-size:100% 100%;
+	margin-right:5px;
+}
+
+#position{
+	display: block;
+	width: 15px;
+	height: 15px;
+	text-indent: -999999px;
+	position: absolute;
+	right: 30px;
+	margin-top : -23px;
+	background:url('../img/icone-gps.png') no-repeat center left;
+	background-size:auto 100%;
+	display:block;
+	border:none;
+	font-size:12px;
+	cursor:pointer;
+	color:#474747;
+	margin-left:20px;
+	margin-bottom:10px;
+	float: right;
+}
+
+#position:hover{
+	color:orange;
+}
+      
+input::-webkit-input-placeholder {font-family: 'LatoLight';font-size:14px; color:#808184;}
+input::-moz-placeholder {color: rgba(0,5,143,.5);}
+input:-moz-placeholder {color: rgba(0,5,143,.5);}
+input:-ms-input-placeholder {color: rgba(0,5,143,.5);}
+
+#formulaire_itineraire #lieux_depart{
+	padding-right: 25px;
+	width: 190px;
+}
+
+#resultats_lieux_arrive{
+	margin-bottom: 20px;
+}
+
+.autocomplete{
+	width: 230px;
+	margin: 10px auto;
+	padding : 0;
+	border-radius: .6em;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+	box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.autocomplete li{
+	display: block;
+	padding: 0 10px;
+	height: 32px;
+	line-height: 32px;
+	overflow:hidden;
+	border: 1px solid #ccc;
+	font-weight: 700;
+	color: #222;
+	text-shadow: 0 1px 0 #fff;
+	list-style: none;
+	font-family:'OpenSansSemibold';
+	font-size:13px;
+	background: #eee;
+	cursor: pointer;
+}
+
+.autocomplete li:hover{
+	background: #E0E0E0;
+}
+
+.autocomplete li.actif{
+	background: #E0E0E0;
+}
+
+.autocomplete li:first-child{
+	border-top-left-radius: .6em;
+	border-top-right-radius: .6em;
+}
+
+.autocomplete li:last-child{
+	border-bottom-left-radius: .6em;
+	border-bottom-right-radius: .6em;
+}
+
+
+#resultat_lieux ul{
+	padding: 0;
+	margin: 0 auto;
+	display: block;
+	width: 230px;
+}
+
+#resultat_lieux ul li{
+	background-color:white;
+	list-style: none;
+	width:230px;
+	height:30px;
+	margin:10px 0;
+	border-radius:9px;
+}
+
+#resultat_lieux ul li, #resultat_lieux ul li label{
+	cursor: pointer;
+}
+
+#guidage_itineraire{
+	display: none;
+}
+
+#popup ul li label{
+	color:#4c4c4c;
+	font-size:14px;
+}
+
+ul li img{
+	position:relative;
+	top:5px;
+}
+
+.icons{
+float:right;
+margin-right:4px;
+}
+
+.ajouter_lieu, .voir_lieu{
+	position:relative;
+	top:6px;
+	left:-1px;
+	width:18px;
+	height:18px;
+	display:inline-block;
+	text-indent: -9999px;
+}
+
+.ajouter_lieu{
+	background:url('../img/more.svg');
+	background-size:cover;
+	margin-right:2px;
+}
+
+a.ajouter_lieu.actif{
+	background:url('../img/less.svg');
+	background-size:cover;
+}
+
+.voir_lieu:active{
+	background:url('../img/see_active.svg');
+	background-size:cover;
+}
+
+/**********Instructions itinéraires*******/
+
+.instructions_itineraire ul li{
+	list-style: none;
+	margin-bottom:10px;
+	position:relative;
+	margin-left:-20px;
+	margin-right:10px;
+}
+
+/************* profil ************/
+
+#popup_right{
+	display: none;
+	width:100%;
+    height:100%;
+    padding:0 20px;
+    box-sizing : border-box;
+    overflow:auto;
+    background-color:rgba(151,151,151,0.9);
+	z-index:1000;
+	position:absolute;
+	/*right:0px; /* - 280 pour la masquer */
+	right: -280px;
+	max-width:280px;
+}
+
+.mask{
+	width:120px;
+	height:120px;
+	border-radius: 60px;
+	margin:5px auto;
+}
+
+#popup_right p{
+	font-size:15px;
+	padding:0;
+	margin:0;
+}
+
+#popup_right h3, #popup_right h4{
+	text-align:center;
+}
+
+#popup_right h4 {
+	margin-top: -20px;
+	font-family:'LatoLight';
+}
+
+#popup_right > p:not(#profile_picture){
+	font-family: 'OpenSansSemibold',Verdana,Arial;
+	padding-left:20px;
+}
+
+#popup_right ul{
+	padding:0;
+}
+#popup_right ul li{
+	list-style:none;
+	font-family: 'OpenSansRegular';
+	
+}
+
+/*
+#sidebar_profile{
+	padding:20px;
+}
+*/
+
+#create_place{
+	display:block;
+	width:25px;
+	height:25px;
+	float:right;
+	background:url('../img/add_place.svg');
+	background-size:cover;
+	margin-top:7px;
+	margin-right:15px;
+}
+
+#sidebar_profile ul li a{
+	font-size: 14px;
+	text-decoration:none;
+	color:white;
+}
+
+hr + p{
+	font-family:'OpenSansRegular',Verdana,Arial;
+}
+
+label.place{ 
+	color:white;
+	margin-left:10px;
+	
+}
+
+.itinerary{
+	margin-bottom: 15px;
+	
+}
+
+.itinerary p{
+	font-family:'LatoLight';
+}
+
+.saved{
+	display:none;
+	float:left;
+	width:20px;
+	height:20px;
+	background:url('../img/itinerary.svg') no-repeat;
+	background-size:cover;
+	position:relative;
+	top:10px;
+}
+
+.trash{
+	width: 20px;
+	display: inline-block;
+	height: 20px;
+	background: url('../img/trash.svg') no-repeat;
+	background-size: 18px 18px;
+	position: relative;
+	top: 5px;	
+}
+
+h5{
+	display: inline-block;
+	line-height: 20px;
+	-webkit-margin-before: 0;
+	-webkit-margin-after: 0;
+}
+
+#pictures{
+	margin:15px auto 15px auto;
+}
+
+#pictures div{
+	width:40px;
+	line-height:40px;
+	height:40px;
+	margin:2px;
+	border-radius:20px;
+	display:inline-block;
+}
+
+#pictures div img{
+	width: 60px;
+	height: auto;
+}
+
+#pictures div{
+	overflow:hidden;
+}
+
+#other_pictures{
+	width:40px;
+	height:40px;
+	display:inline-block;
+	margin-left:4px;
+	margin-bottom:3px;
+	background:url('../img/other_pictures.svg') no-repeat;
+}
+
+hr{
+	opacity:0.5;
+	clear:both;	
+}
+
+#popup_right form input[type=submit], .edit_itineraries, .edit_added_places{
+    border-radius:6px;
+    background-color:#4ece9d;
+    border:none;
+    color:white;
+    font-size:14px;
+    line-height:14px;
+    font-family:'OpenSansRegular';
+    cursor:pointer;
+    width:95px;
+    height:20px;
+    margin-top:10px;
+    margin-right:20px;
+	margin-bottom:15px;
+	-webkit-appearance: none;
+}
+
+.edit_itineraries, .edit_added_places{
+	display:block;
+	text-decoration:none;
+	text-align:center;
+	padding-top:3px;
+    
+}
+
+#popup_right form input[type=submit],#save_infos,#save_password{
+	display:none;
+}
+
+#popup_right #changeAvatar input[type=submit] {
+	position: absolute;
+	margin-top: -51px;
+	width: 38px;
+	height: 31px;
+	margin-left: 200px;
+	background-color: #49C495;
+	border-radius: 0px 6px 6px 0px;
+	-webkit-appearance: none;
+	
+}
+
+
+/************* profile settings ************/
+
+#popup_right:first-child{
+	border:1px solid red;
+}
+
+#popup_right form input[type=text],#popup_right form input[type=email],#hidden_password input[type=password]{
+	width:140px;
+	border-radius:6px;
+	background:grey;
+	border:none;
+	margin-right: 20px;
+	color:#FFF;
+	padding-left:5px;
+
+}
+
+
+
+/*div.upload {
+    width: 160px;
+    height: 30px;
+    background:url('../img/edit_avatar.svg') no-repeat;
+    border-radius:7px;
+    overflow: hidden;
+    margin:0px 25px;
+
+}
+
+
+div.upload input {
+    display: block !important;
+    width: 157px !important;
+    height: 57px !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+}*/
+
+
+#avatar::-webkit-file-upload-button {
+  visibility: hidden;
+}
+#avatar:before {
+	content: 'Changer de photo';
+	display: inline-block;
+	background-color: #4ece9d;
+	border-radius: 6px 0px 0px 6px;
+	width: 155px;
+	padding: 7px 0px;
+	outline: none;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	cursor: pointer;
+	margin: 0px auto;
+	font-size: 13px;
+	padding-left: 26px;
+	margin-left: 25px;
+	height:17px;
+}
+#avatar:hover:before {
+ background-color: #4ece9d;
+}
+#avatar:active:before {
+  background-color: #4ece9d;
+}
+
+.conteneur_progress_bar {
+	padding: 1px; 
+	position:relative;
+	width:145px;
+	border-radius: 3px;
+	margin: 10px;
+	display:none;
+	text-align:left;
+	margin: 0px 25px;
+}
+
+.progress_bar {
+	height:5px;
+	background-color: #FFF;
+	width:1%;
+}
+
+.progress_value {
+	margin: 0px auto;
+	position:absolute;
+	display:inline-block;
+	color: #FFF;
+	
+	margin-top: -14px;
+	width: 38px;
+	height: 31px;
+	margin-left: 160px;
+}
+
+#edit p, #edit_password p, #partage_activite p{
+	display:inline-block;
+	font-size:15px;
+	font-family:"OpenSansSemibold",Verdana,Arial;
+	padding-right:40px;
+	padding-bottom:15px;
+	
+}
+
+#partage_activite{
+	margin-top: 20px;
+}
+
+#partage_activite #social_activity input[type=submit]{
+	display: block;
+}
+
+.response {
+	color: #FFF; 
+	font-weight: 700;
+	text-align: center;
+}
+
+p + img{
+	width:18px;
+	height:18px;
+	position:relative;
+	cursor:pointer;
+	top:4px;
+}
+
+#update_info label{
+	font-size:15px;
+	float:left;
+}
+
+input:-webkit-autofill{
+	background-color:grey !important;
+}
+
+.col{
+	float:left;
+}
+
+#btn-facebook{
+	display: block;
+	margin: 0 auto;
+	height: 36px;
+	width: 202px;
+	text-align: center;
+	line-height: 36px;
+	color: white;
+	background-color: #46629e;
+	margin-top: 5px;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+/* Chargement des lieux en ajax */
+
+#navigation-ajax body{
+	background: transparent;
+}
+
+#navigation-ajax{
+	height: 80%;
+	overflow-y:auto;
+}
+
+#navigation-ajax #container-lieu{
+	width: 100%;
+	max-width: 100%;
+	margin:0;
+}
+
+#navigation-ajax .md-content{
+	padding:0;
+}
+
+/* Modal enregistrement lieu */
+.md-modal.little-modal{
+	width: 400px;
+	left: 50%;
+	color: #656665;
+}
+
+.little-modal .md-content{
+	position: relative;
+	border: solid 1px #e4e4e4;
+	text-align: center;
+	font-size: 14px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	-webkit-box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.1);
+	background-color: white;
+	border-radius: 6px;
+}
+
+.little-modal .md-content p{
+	font-family: LatoLight;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	margin: 15px 0;
+}
+
+.little-modal .md-content input{
+	margin: 10px auto;
+	height: 36px;
+	width: 202px;
+	border: solid 1px #e4e4e4;
+	border-radius: 6px;
+	text-align: center;
+}
+
+.little-modal .md-content input[type=submit] {
+	padding: 5px 0;
+	background-color: #4ece9c;
+	display: block;
+	color: white;
+	text-decoration: none;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+/* Loader */
+.loader{
+	position: absolute;
+	z-index: 99999;
+	top: 50%;
+	left: 50%;
+	margin: -125px 0 0 -125px;
+	visibility: hidden;
+	opacity: 0;
+}
+.loader.show{
+	visibility: visible;
+	opacity: 1;
+}
+.loader p{
+	color:#FFF;
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	font-size: 1em;
+}
+
+/*A revoir*/
+#hidden_password, #update_info{
+	position:relative;
+	left:20px;
+	width:240px;
+	
+}
+
+#update_info input{
+	float:right;
+}
+
+
+#hidden_password{
+	display:none;
+}
+

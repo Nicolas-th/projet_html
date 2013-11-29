@@ -1,0 +1,110 @@
+/*------------ Toutes les pages ------------*/
+
+.logout{
+	color:blue !important;
+}
+
+.logout:hover{
+	color:lightblue !important;
+}
+
+
+h1 {
+	margin: 30px 0;
+	color:#3399CC;
+}
+
+h3{
+	color:#3366CC;
+}
+
+h4{
+	color:#3366CC;
+}
+
+img{
+    border-radius: 25px;
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+strong{
+	color: #333333;
+}
+
+.btn-danger{
+	margin-top:5px;
+}
+
+/*------------ Page 'utilisateurs' ------------*/
+
+.user{
+	margin-top:20px;
+}
+
+/*------------ Page 'lieux' ------------*/
+
+.span4{
+	line-height: 1.4;
+
+}
+
+.lieu{
+	border-bottom: 1px solid #ccc;
+	margin-top:30px;
+	padding-bottom: 20px;
+}
+
+#description{
+    height: 60px;
+    overflow: auto;
+}
+
+#adresse{
+	height:30px;
+}
+
+
+/*------------ Page 'commentaires' ------------*/
+
+#bloc-com-signales{
+	border-right:1px solid #ccc;
+}
+
+h3.com-signales{
+	color:#B22222;
+}
+
+.com-signale{
+	margin-top:20px;
+}
+
+.com-signale h4{
+	color:#000000;
+}
+
+.nickname-signale{
+	color:#B22222;
+}
+
+.nickname{
+	color:#000000;
+}
+
+.comment{
+    height: 100px;
+    margin-top: 20px;
+    overflow: auto;
+}
+
+@media screen and (max-width: 768px){
+
+	#bloc-com-signales{
+		border-right:none;
+		border-bottom:1px solid #ccc;
+		padding-bottom:20px;
+	}
+
+}

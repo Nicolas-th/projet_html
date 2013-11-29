@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+<polygon fill="#DF7CB0" points="19.741,0.013 36.123,19.741 19.741,39.686 "/>
+<polyline fill="#E981B2" points="19.741,39.584 19.741,0.116 3.358,19.638 "/>
+<g>
+	<defs>
+		<circle id="XMLID_14_" cx="19.741" cy="16.679" r="5.171"/>
+	</defs>
+	<use xlink:href="#XMLID_14_"  overflow="visible" fill="#FFFFFF"/>
+	<clipPath id="XMLID_2_">
+		<use xlink:href="#XMLID_14_"  overflow="visible"/>
+	</clipPath>
+	<rect x="19.637" y="10.086" clip-path="url(#XMLID_2_)" fill="#F3F3F4" width="6.18" height="14.866"/>
+</g>
+</svg>

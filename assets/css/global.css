@@ -1,0 +1,81 @@
+.error{
+	color:#e84526;
+}
+
+.confirmation{
+	color:#4ece9d;
+}
+
+.hide{
+	display: none;
+}
+
+header{
+	width:100%;
+	height:40px;
+	background-color:#4ece9d; 
+	z-index:2000;
+}
+
+header img{
+	position:relative;
+	left:50px;
+	top:3px;
+}
+
+@media screen and (max-width: 640px) {
+  header img{
+    position:relative;
+	left:38px;
+	top:2px;
+  }
+}
+header .icon{
+	float:right;
+	margin-top:6px;
+	margin-right:20px;
+	width:25px;
+	height:25px;
+	display:inline-block;
+	cursor:pointer;
+}
+      
+header div:nth-child(4){
+  background:url('../img/personne.svg') no-repeat;
+  background-size:cover; 
+}
+
+header div:nth-child(3){
+  background:url('../img/rouage.svg') no-repeat;
+  background-size:cover; 
+  
+}
+
+header div:nth-child(1){
+  background:url('../img/logout.svg') no-repeat; 
+  background-size:cover;   
+}
+
+#bouton{
+	width:25px;
+	height:25px;
+	background-size:cover;
+	cursor:pointer;
+	position:absolute;
+	top:7px;
+	left:7px;
+	z-index: 120;
+	background:url('../img/menu.svg') no-repeat;
+	background-size: 100% 100%;
+	text-indent: -9999px;
+}
+
+header .connexion{
+	display: block;
+	float: right;
+	margin-right: 20px;
+	margin-top: 6px;
+	text-decoration: none;
+	font-weight: bold;
+	color:#FFF;
+}

@@ -1,0 +1,485 @@
+@font-face {
+    font-family: 'BariolRegular';
+    src: url('../fonts/bariol_regular.eot') format('embedded-opentype'),
+         url('../fonts/bariol_regular.woff') format('woff'),
+         url('../fonts/bariol_regular.ttf') format('truetype'),
+         url('../fonts/bariol_regular.svg#BariolRegular') format('svg');
+}
+
+@font-face {
+	font-family: 'LatoBold';
+    src: url('../fonts/lato-bol.eot') format('embedded-opentype'),
+         url('../fonts/lato-bol.woff') format('woff'),
+         url('../fonts/lato-bol.ttf') format('truetype'),
+         url('../fonts/lato-bol.svg#LatoBold') format('svg');
+}
+
+@font-face {
+    font-family: 'LatoLight';
+    src: url('../fonts/lato-lig.eot') format('embedded-opentype'),
+         url('../fonts/lato-lig.woff') format('woff'),
+         url('../fonts/lato-lig.ttf') format('truetype'),
+         url('../fonts/lato-lig.svg#LatoLight') format('svg');    
+}
+
+@font-face {
+    font-family: 'OpenSansRegular';
+    src: url('../fonts/opensans-regular.eot') format('embedded-opentype'),
+         url('../fonts/opensans-regular.woff') format('woff'),
+         url('../fonts/opensans-regular.ttf') format('truetype'),
+         url('../fonts/opensans-regular.svg#OpenSansRegular') format('svg');
+}
+
+@font-face {
+    font-family: 'OpenSansSemibold';
+    src: url('../fonts/opensans-semibold.eot') format('embedded-opentype'),
+         url('../fonts/opensans-semibold.woff') format('woff'),
+         url('../fonts/opensans-semibold.ttf') format('truetype'),
+         url('../fonts/opensans-semibold.svg#OpenSansSemibold') format('svg');
+}
+
+html,body{
+	height:100%;
+}
+
+body{
+	background: url('../img/map_background.jpg');
+	background-size: cover;
+	background-attachment:fixed;
+}
+
+body, p{
+	margin:0;
+	font-family:LatoLight;
+	color:#ffffff;
+}
+
+#container-lieu, #container{
+	max-width:540px;
+	background-color:#a7a7a7;
+	margin:2px auto;
+	padding-bottom: 20px;
+}
+
+.cover{
+	width: 100%;
+	height: 120px;
+	line-height: 120px;
+}
+
+.cover img{
+	width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
+
+h1{
+	text-align: center;
+	font-size:27px;
+	font-weight: normal;
+}
+
+hr{
+	width:86.3%;
+	margin: 0 auto;
+	border:1px solid #c1c1c1;
+}
+
+#bouton{
+	text-indent: 0;
+	color:#FFF;
+	background : none;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#adresse{
+	margin-top:20px;
+	text-align: center;
+}
+
+#icone-lieu{
+	margin-right:14px;
+}
+
+h2{
+	font-family:OpenSansRegular;
+	font-size:15px;
+	font-weight:normal;
+	display: inline;
+	vertical-align: top;
+	line-height:1.6;
+}
+
+#description{
+	margin-top:34px;
+	font-size:14px;
+	text-align: center;
+}
+
+/*zone affichage vote */
+
+#votes{
+	margin-top:40px;
+	text-align:center;
+}
+
+#votes-positifs, #votes-negatifs{
+	display: inline-block;
+    margin-top: 50px;
+    vertical-align: top;
+}
+
+#container-canvas{
+    display: inline;
+    margin: 0 20px;
+    z-index: 10;
+}
+
+/*boutons like et dislike */
+
+#button-validate{
+	margin-top:15px;
+	margin-bottom:0.8em;
+	text-align: center;
+}
+
+#button-validate input{
+	margin-top: 0.5em;
+ 	background-color: #4ECE9C;
+    border: medium none;
+    border-radius: 6px 6px 6px 6px;
+    color: #FFFFFF;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* zone photos */
+
+#photos-lieu{
+	margin-top:40px;
+	text-align: center;
+}
+
+#photos-lieu a{
+	color:#FFF;
+}
+
+.photo-lieu{
+	width:60px;
+	height:60px;
+	display:inline-block;
+	border-radius:30px;
+	margin-right:14px;
+	border: 1px solid;
+}
+
+.photo-lieu:last-child{
+	margin-right:0;
+}
+
+#voir-photos{
+	float:right;
+	margin-top:20px;
+	margin-right:30px;
+	cursor:pointer;
+}
+
+#photos-lieu p{
+	text-align: center;
+}
+
+#video_content p{
+	text-align: center;
+}
+
+/* Upload */
+#upload_medias>div:not(.conteneur_progress_bar){
+	float: left;
+	width: 50%;
+}
+
+#upload_medias form div{
+    width: 157px;
+    height: 57px;
+    margin: 0 auto;
+    background: url(https://lh6.googleusercontent.com/-dqTIJRTqEAQ/UJaofTQm3hI/AAAAAAAABHo/w7ruR1SOIsA/s157/upload.png);
+    overflow: hidden;
+    cursor : pointer;
+}
+
+#upload_medias form div input[type=file]{
+    display: block !important;
+    width: 157px !important;
+    height: 57px !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    cursor : pointer;
+}
+
+#upload_medias form input[type=submit].hide{
+	display: none;
+}
+
+#upload_medias .conteneur_progress_bar{
+	border: 1px solid #ff850b;
+	padding: 1px; 
+	position:relative;
+	width:400px;
+	border-radius: 3px;
+	margin: 10px;
+	display:none;
+	text-align:left;
+}
+
+#upload_medias .progress_bar{
+	height:20px;
+	border-radius: 3px;
+	background-color: #ff850b;
+	width:1%;
+}
+
+#upload_medias .progress_value{
+	top:3px;
+	left:50%;
+	position:absolute;
+	display:inline-block;
+	color: #000000;
+}
+
+#upload_medias .conteneur_progress_bar{
+	margin: 20px auto 10px auto;
+	clear : both;
+}
+
+#upload_medias .response{
+	display: block;
+	text-align: center;
+}
+
+/*boutons réseaux sociaux*/
+
+#boutons-sociaux{
+	margin-left:10%;
+	margin-top:2em;
+}
+
+@media screen and (max-width: 750px){
+	
+	#boutons-sociaux{
+		margin-left:22%;
+		margin-top:1em;
+	}
+
+	#boutons-sociaux{
+		margin-left: 38%;
+	}
+
+	#boutons-sociaux .col-4-12{
+		margin-top:0.5em;
+	}
+
+}
+
+/*zone des commentaires */
+
+#voir-commentaires{
+	display: block;
+	margin:10px auto;
+	text-align: center;
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+.commentaire{
+	margin-bottom:20px;
+	overflow: hidden;
+	margin-top: 20px;
+}
+
+.commentaire>div{
+	float: left;
+}
+
+.commentaire>div:first-child{
+	margin-right: 15px;
+}
+
+.commentaire>div:first-child>img{
+	width: 60px;
+	height: 60px;
+	border-radius: 30px;
+}
+
+.commentaire-header p{
+	display: inline-block;
+	font-family:OpenSansRegular, Arial;
+}
+
+.commentaire-header p:first-child{
+	font-size:1em;
+}
+
+.commentaire-header p:nth-child(2){
+	font-size:0.6em;
+	margin-left:10px;
+}
+
+.commentaire-content{
+	margin-top:5px;
+	font-size:15px;
+	font-family:OpenSansRegular, Arial;
+}
+
+.signaler{
+	margin-top:4px;
+	font-size:12px;
+	color:#eaeaea;
+}
+
+.signalement{
+	margin-top:4px;
+	font-size:12px;
+	color:#eaeaea;
+}
+
+#leave-comment{
+	margin-top:40px;
+	overflow: hidden;
+}
+
+#leave-comment>div{
+	float: left;
+}
+
+#leave-comment>div:first-child{
+	margin-top: 20px;
+	margin-right: 15px;
+}
+
+#leave-comment>div:first-child>img{
+	width: 60px;
+	height: 60px;
+	border-radius: 30px;
+}
+
+#leave-comment>div:nth-child(2){
+	width: 80%;
+}
+
+#leave-comment h3{
+	margin: 0;
+}
+
+#leave-comment form, #leave-comment form input{
+	margin:0;
+}
+
+#leave-comment form input[type=submit]{
+	float: right;
+	cursor:pointer;
+	margin-top: 0.4em;
+}
+
+#leave-comment form textarea{
+	width: 100%;
+	min-height: 60px;
+}
+
+/*------------------------------------------------------------*/
+/* ---------------- page 'create-place.php'  ---------------- */
+
+form{
+	margin-top:30px;
+}
+
+#form-ajout-lieux label{
+	text-align: right;
+	margin-right:10px;
+	width: 28%;
+	display:inline-block;
+}
+
+#form-ajout-lieux label[for="description"]{
+	vertical-align: top;
+}
+
+#form-ajout-lieux input:not(.submit), #form-ajout-lieux textarea, #form-ajout-lieux select{
+	width:40%;
+}
+
+#form-ajout-lieux input[type="submit"]{
+	background-color: #4ECE9C;
+    border: 1px solid #4ECE9C;
+    border-radius: 4px 4px 4px 4px;
+    color: #FFFFFF;
+    margin-top: 30px;
+    margin-left: 42%;
+    cursor:pointer;
+}
+
+#form-ajout-lieux div#fields-select-submit{
+	margin-top:10px;
+	margin-bottom:20px;
+}
+
+
+/* 540px : largeur du container*/
+
+@media screen and (max-width: 540px){
+
+	#description{
+		margin-top:10px;
+	}
+
+	.photo-lieu{
+		margin:0;
+	}
+}	
+
+
+@media screen and (max-width: 404px){
+
+	#votes-positifs, #votes-negatifs{
+		margin:0;
+	}
+
+	#container-canvas{
+		display: block;
+		margin: 10px 0;
+	}
+
+	/*page 'create place'*/
+
+	#form-ajout-lieux label{
+		display:inline;
+	}
+
+	#form-ajout-lieux input:not(.submit), #form-ajout-lieux textarea, #form-ajout-lieux select{
+		width:100%;
+		text-align: left;
+		display:block;
+	}
+
+	#form-ajout-lieux input:not(.submit), textarea{
+		margin-top: 2px;
+    	width: 100%;
+	}
+
+	#form-ajout-lieux input[type="submit"]{
+		margin-left: 36%;
+	}
+}
+
+
+
+@media screen and (max-width: 208px){
+
+	div#fields-select-submit select{
+		width:100%;
+	}
+
+	div#fields-select-submit:nth-child(2){
+		margin-top:10px;
+	}
+}
