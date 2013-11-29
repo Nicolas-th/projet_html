@@ -6,11 +6,6 @@ require_once('config/config.php');
 /*----------------------ACCÈS À FACEBOOK---------------------*/
 require_once('config/fb_config.php'); 
 
-/*---------------------CONNEXION AU SITE---------------------*/
-if(!(isset($_SESSION["nickname"]) || isset($_SESSION["fb_id"]))){
-	//header('Location: index.php');
-}
-
 /*-------- SÉLÉCTION DES INFORMATION DE L'UTILISATEUR -------*/
 require_once('includes/profile.inc.php');
 
@@ -23,20 +18,12 @@ require_once('classes/Mobile_Detect.class.php');
 
 $detectMobile = new Mobile_Detect();
 
-
-function getPlaces($str) {
-		$clean = explode(",",$str);
-		
-		$clean[0] = preg_replace("/[^0-9\/_|+ .-]/", '', $clean[0]);
-		$clean[0] = strtolower(trim($clean[0], '-'));
-		$clean[0] = preg_replace("/[\/_|+ -]+/", '-', $clean[0]);
-		
-		$clean[1] = preg_replace("/[^0-9\/_|+ .-]/", '', $clean[1]);
-		$clean[1] = strtolower(trim($clean[1], '-'));
-		$clean[1] = preg_replace("/[\/_|+ -]+/", '-', $clean[1]);
-	
-		return $tableau = array($clean[0], $clean[1]);
+if(isset($itineraire_charge) && is_array($itineraire_charge) && count($itineraire_charge)>0){
+	$itineraire['position_start'] =  json_decode($itineraire_charge[0]['position_start'],true);
+	$itineraire['position_end'] =  json_decode($itineraire_charge[0]['position_end'],true);
+	$itineraire['lieux'] =  json_decode($itineraire_charge[0]['places'],true);
 }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -86,6 +73,26 @@ function getPlaces($str) {
 
 	    <input type="text" name="lieux_arrive" id="lieux_arrive"  autocomplete="off" placeholder="Lieu de destination"/>
 	    <input type="hidden" name="ref_lieux_arrive" id="ref_lieux_arrive" class="ref_lieu"/>
+
+		<?php
+			// Si on charge un itineraire on ajoute les informations pour que le javascript puisse le charger aussi
+			if(isset($itineraire)){
+				echo('<input type="hidden" name="longitude_depart_itineraire" value="'.$itineraire['position_start']['position']['longitude'].'" />');
+				echo('<input type="hidden" name="latitude_depart_itineraire" value="'.$itineraire['position_start']['position']['latitude'].'" />');
+				echo('<input type="hidden" name="longitude_arrivee_itineraire" value="'.$itineraire['position_end']['position']['longitude'].'" />');
+				echo('<input type="hidden" name="latitude_arrivee_itineraire" value="'.$itineraire['position_end']['position']['latitude'].'" />');
+				
+				echo('<input type="hidden" name="lieux_itineraire" value="'.implode(';',$itineraire['lieux']).'" />');
+
+				echo('<input type="hidden" name="adresse_depart_itineraire" value="'.$itineraire['position_start']['adresse'].'" />');
+				echo('<input type="hidden" name="ville_depart_itineraire" value="'.$itineraire['position_start']['ville'].'" />');
+
+				echo('<input type="hidden" name="adresse_arrivee_itineraire" value="'.$itineraire['position_end']['adresse'].'" />');
+				echo('<input type="hidden" name="ville_arrivee_itineraire" value="'.$itineraire['position_end']['ville'].'" />');
+			}
+
+		?>
+
 	    <ul id="resultats_lieux_arrive" class="autocomplete"></ul>
     
 	        
@@ -153,11 +160,6 @@ if(isset($_SESSION["id"])){
 				 	<a href="<?= getRewrite($profile_place['name'],$profile_place['id'])?>" class="place"><?= $profile_place['name']?></a>	
 			  	</li>
 			<?php } ?>
-		  
-	  		<a class="edit_added_places" href="#">modifier</a>
-	  	
-	  		<form method="post" action="#">
-	  	<input  type="submit" value="enregistrer">	 
 	  	</form> 	
 	  </ul> 
 	  <?php } ?>
@@ -173,13 +175,19 @@ if(isset($_SESSION["id"])){
 				foreach ($select_profile_routes as $select_profile_route) {
 					$id_profile_route = $select_profile_route['id'];
 					$profile_route = $dbh -> query("SELECT * FROM routes WHERE id LIKE '$id_profile_route'")->fetch();
-					$places = getPlaces($profile_route['places']);					
+					$tab_places = json_decode($profile_route['places']);					
+					//$places = $tab_places[];					
 			?>	
 			<li class="itinerary"> <!-- A comparer avec fichier local -->
-					<a href="#"></a>
-					<h5><?= $profile_route['name']?></h5>
-					<div class="saved"></div>	
+			<a div="#delete-route" href="#"></a>
+			
+				<form id="deleteRoute" method="post" action="includes/edit-profile.inc.php">
+					<input type="hidden" name="delete_route" id="delete_route" value="<?= $profile_route['name'] ?>" /> <br />
+				</form>	
 					
+					<a href="<?php echo(getUrlItineraire($profile_route['name'],$profile_route['id'])) ?>"><h5><?= $profile_route['name']?></h5></a>
+					<div class="saved"></div>	
+				
 			</li>
 			 <?php } ?>
 	  	<a class="edit_itineraries" href="#">modifier</a>

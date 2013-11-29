@@ -110,10 +110,80 @@ $(function () {
                                 click : function(params){
                                     carte.transition.open({
                                         element: '#navigation-ajax'
-                                  },params.href);
+                                    },params.href);
                                 }
                             });
                         }
+                    }
+                    // On vérifie si un itinéraire est chargé
+                    if($('input[name=longitude_depart_itineraire]').length>0){
+                        var points = {
+                            depart : {
+                                position: {
+                                    latitude : $('input[name=latitude_depart_itineraire]').val(),
+                                    longitude : $('input[name=longitude_depart_itineraire]').val()
+                                },
+                                adresse : $('input[name=adresse_depart_itineraire]').val(),
+                                ville : $('input[name=ville_depart_itineraire]').val(),
+                                name : 'Départ',
+                                categorie : 'depart',
+                                type : 'borne'
+                            },
+                            arrivee : {
+                                position: {
+                                    latitude : $('input[name=latitude_arrivee_itineraire]').val(),
+                                    longitude : $('input[name=longitude_arrivee_itineraire]').val()
+                                },
+                                adresse : $('input[name=adresse_arrivee_itineraire]').val(),
+                                ville : $('input[name=ville_arrivee_itineraire]').val(),
+                                name : 'Arrivée',
+                                categorie : 'arrivee',
+                                type : 'borne'
+                            }
+                        };
+                        carte.points.depart = points.depart;
+                        carte.points.arrivee = points.arrivee;
+                        carte.map.traceItineraire({
+                            points: {
+                                depart : points.depart.position,
+                                arrivee : points.arrivee.position
+                            },
+                            type: 'itineraires_lieux',
+                            finished: function (params) {
+
+                                // On affiche la durée estimée de l'itinéraire
+                                ajoutDuree({
+                                    duree : carte.map.getDureeItineraire(params)
+                                });
+
+                                // On récupère les potentiels lieux insolites choisis
+                                var points = carte.map.getPointsItineraire(params);
+                                lancerRechercheLieux({
+                                    points : points,
+                                    finished : function(){
+                                        arreterLoader();
+
+                                        // On active les différents lieux contenus dans l'itinéraire
+                                        if($('input[name=lieux_itineraire]').val().length>0){
+                                            var lieux = $('input[name=lieux_itineraire]').val().split(';');
+                                            for(key in lieux){
+                                                $('#'+lieux[key]).find('.ajouter_lieu').addClass('actif');
+                                            }
+                                        }
+                                        tracerItineraires();
+                                    }
+                                });
+                            },
+                            noResults : function(){
+                                arreterLoader();
+                                alert('Pas de résultats');
+                                arreterLoader();
+                            },
+                            error : function(){
+                                arreterLoader();
+                                alert('Une erreur s\'est produite...');
+                            }
+                        });
                     }
                 }
             });

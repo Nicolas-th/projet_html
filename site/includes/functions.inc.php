@@ -130,9 +130,57 @@
 		global $dir_lieux;
 		$title = str_replace(' ', "-", $title);
 		$title = strtolower($title);
+		$title = preg_replace(
+			array(
+			'/à/', '/â/', '/ä/', '/á/', '/ã/', '/å/',
+			'/î/', '/ï/', '/ì/', '/í/',
+			'/ô/', '/ö/', '/ò/', '/ó/', '/õ/', '/ø/',
+			'/ù/', '/û/', '/ü/', '/ú/',
+			'/é/', '/è/', '/ê/', '/ë/',
+			'/ç/', '/ÿ/', '/ñ/',
+			),
+			array(
+			'a', 'a', 'a', 'a', 'a', 'a',
+			'i', 'i', 'i', 'i',
+			'o', 'o', 'o', 'o', 'o', 'o',
+			'u', 'u', 'u', 'u',
+			'e', 'e', 'e', 'e',
+			'c', 'y', 'n',
+			),
+			$title
+			);
 		$title .='-'.$id.'.html';
 		$title = $dir_lieux.$title;
 		return $title;
+	}
+
+	function getUrlItineraire($name,$id){
+		global $chemin_relatif_site;
+		global $dir_itineraires;
+		$name = str_replace(' ', "-", $name);
+		$name = strtolower($name);
+		$name = preg_replace(
+			array(
+			'/à/', '/â/', '/ä/', '/á/', '/ã/', '/å/',
+			'/î/', '/ï/', '/ì/', '/í/',
+			'/ô/', '/ö/', '/ò/', '/ó/', '/õ/', '/ø/',
+			'/ù/', '/û/', '/ü/', '/ú/',
+			'/é/', '/è/', '/ê/', '/ë/',
+			'/ç/', '/ÿ/', '/ñ/',
+			),
+			array(
+			'a', 'a', 'a', 'a', 'a', 'a',
+			'i', 'i', 'i', 'i',
+			'o', 'o', 'o', 'o', 'o', 'o',
+			'u', 'u', 'u', 'u',
+			'e', 'e', 'e', 'e',
+			'c', 'y', 'n',
+			),
+			$name
+			);
+		$url = 'itineraire-'.$name.'-'.$id.'.html';
+		$url = $chemin_relatif_site.$url;
+		return $url;
 	}
 
 	function getUrlMedia($url_file,$id_lieu,$type='img'){
@@ -204,5 +252,16 @@
 		$resultNbDislike = $reqNbDislike->fetch();
 		
 		return $resultNbDislike[0];
+	}
+	
+	function displayCategories($dbh){
+		$reqCategories = $dbh->prepare("SELECT * FROM categories");
+		$reqCategories->execute();
+		echo '<select name="categorie">';			
+
+		while($result = $reqCategories->fetch()){
+			echo '<option value="'.$result['id'].'">'.$result['name'].'</option>';
+		}
+		echo '</select>';
 	}
 ?>
